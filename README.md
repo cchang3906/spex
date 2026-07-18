@@ -1,6 +1,5 @@
 ## spex
 
-**Site: https://lawrence-deliver-bull-trends.trycloudflare.com** · [report](speculator/evals/report.md) · [raw traces](speculator/bench-runs)
 
 A speculative execution layer for a coding agent's tool calls.
 
@@ -24,15 +23,6 @@ The claim: same model, same prompts, the verification wait deleted.
 <img width="3584" height="2240" alt="Spex Demo Video" src="https://github.com/user-attachments/assets/9407a262-f4cd-4ad6-8ae9-81863acf2ebf" />
 
 The predicted tool-call savings were 8.5 seconds. But dynamic tooling also prevented a package-version conflict and the multi-turn troubleshooting it would have triggered, bringing the total time saved to about 17 seconds. See below for more detailed reasoning.
-
-## the site
-
-The blog presenting the system and the live benchmark evidence:
-https://lawrence-deliver-bull-trends.trycloudflare.com
-
-It is also in this repo: `cd blog && npm install && npm run dev`, or serve the
-prebuilt `blog/dist/` with any static server. All eval numbers on the site
-are computed from the same committed dataset as this README.
 
 ## measured results
 
@@ -134,3 +124,12 @@ We did not have time to fully implement it, but a future version could include a
   (`documentation/cli-ui-mvp.md`), the dashboard handoff, and the
   implementation plan.
 - `schemas/` generated app-server protocol bindings (codex-cli 0.144.4).
+
+## the site
+
+The blog presenting the system and the live benchmark evidence:
+https://lawrence-deliver-bull-trends.trycloudflare.com
+
+It is also in this repo: `cd blog && npm install && npm run dev`, or serve the
+prebuilt `blog/dist/` with any static server. All eval numbers on the site
+are computed from the same committed dataset as this README.
