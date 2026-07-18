@@ -36,13 +36,15 @@ fi
 
 PYBIN=$(command -v python3.11 || command -v python3.12 || command -v python3)
 $PYBIN -m venv .venv
+WHEELS="${SPEX_WHEELS:-$HOME/.cache/spex-wheels}"
 pins=""
 case "$repo" in
   pallets/flask) pins='werkzeug<3 jinja2<3.2 click<8.2' ;;
 esac
 ver=$(python3 -c "import json;print(json.load(open('$meta'))['$inst'].get('version','0'))")
-SETUPTOOLS_SCM_PRETEND_VERSION="${ver}.0" ./.venv/bin/pip -q install -e . $pins 2>&1 | tail -1
-if ! ./.venv/bin/python -c "import pytest" 2>/dev/null; then ./.venv/bin/pip -q install "pytest<8"; fi
+if [ -d "$WHEELS" ]; then ./.venv/bin/pip -q install --no-index --find-links "$WHEELS" setuptools wheel 2>/dev/null || true; fi
+SETUPTOOLS_SCM_PRETEND_VERSION="${ver}.0" ./.venv/bin/pip -q install --no-build-isolation -e . $pins 2>&1 | tail -1 || SETUPTOOLS_SCM_PRETEND_VERSION="${ver}.0" ./.venv/bin/pip -q install -e . $pins 2>&1 | tail -1
+if ! ./.venv/bin/python -c "import pytest" 2>/dev/null; then ./.venv/bin/pip -q install "pytest<8" 2>/dev/null || ./.venv/bin/pip -q install --no-index --find-links "$WHEELS" "pytest<8"; fi
 git init -q && git add -A && git -c user.name="Dev" -c user.email="dev@example.com" -c commit.gpgsign=false commit -qm "initial commit"
 
 f2p=$(python3 - "$meta" "$inst" <<'PYF2P'
