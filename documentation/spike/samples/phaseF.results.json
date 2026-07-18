@@ -1,0 +1,23 @@
+{
+  "threadId": "019f686f-5853-7742-8c77-8003507b1acb",
+  "session1": {
+    "turnStatus": "completed",
+    "finalText": "OK"
+  },
+  "resume": {
+    "ok": true,
+    "model": "gpt-5.6-sol"
+  },
+  "session2": {
+    "turnStatus": "completed",
+    "toolCallReceived": true,
+    "toolCallParams": {
+      "tool": "prefetch_verify",
+      "arguments": {
+        "kind": "test"
+      }
+    },
+    "finalText": "Exit code: 0"
+  },
+  "dynamicToolsSurvivedResume": true
+}

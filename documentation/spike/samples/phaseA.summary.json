@@ -1,0 +1,51 @@
+{
+  "attempts": [
+    {
+      "label": "thread/start dynamicTools",
+      "threadStart": "accepted",
+      "listed": true,
+      "roundTrip": {
+        "status": "completed",
+        "toolCallReceived": true,
+        "toolCallParams": {
+          "tool": "prefetch_verify",
+          "arguments": {
+            "kind": "test"
+          },
+          "callId": "call_RsICcRGu7ep0n70DoZFwo6xh"
+        },
+        "dynToolItems": [
+          {
+            "type": "dynamicToolCall",
+            "id": "call_RsICcRGu7ep0n70DoZFwo6xh",
+            "tool": "prefetch_verify",
+            "arguments": {
+              "kind": "test"
+            },
+            "status": "completed",
+            "success": true
+          }
+        ],
+        "finalText": "Exit code: 0"
+      },
+      "probeStatus": "completed",
+      "probeText": "web.run\nimage_gen.imagegen\nfunctions.exec_command\nfunctions.write_stdin\nfunctions.list_mcp_resources\nfunctions.list_mcp_resource_templates\nfunctions.read_mcp_resource\nfunctions.update_plan\nfunctions.request_user_input\nfunctions.list_available_plugins_to_install\nfunctions.request_plugin_install\nfunctions.view_image\nfunctions.get_goal\nfunctions.create_goal\nfunctions.update_goal\nfunctions.prefetch_verify\nfunctions.apply_patch\ntool_search.tool_search_tool\nmulti_tool_use.parallel"
+    }
+  ],
+  "models": [
+    "gpt-5.5",
+    "gpt-5.4",
+    "gpt-5.4-mini"
+  ],
+  "account": {
+    "account": {
+      "type": "chatgpt",
+      "email": "krsnucc21@gmail.com",
+      "planType": "plus"
+    },
+    "requiresOpenaiAuth": true
+  },
+  "approvals": [],
+  "unhandledServerRequests": [],
+  "G0": "PASS"
+}

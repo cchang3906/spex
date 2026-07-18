@@ -1,0 +1,71 @@
+[
+  {
+    "policy": "untrusted",
+    "resolvedPolicy": "untrusted",
+    "turnStatus": "completed",
+    "approvalRequests": [
+      {
+        "method": "item/commandExecution/requestApproval",
+        "command": "/bin/zsh -lc \"python3 -c \\\"print('probe-two')\\\"\""
+      }
+    ],
+    "commandsExecuted": [
+      {
+        "command": "/bin/zsh -lc 'echo probe-one'",
+        "exitCode": 0
+      },
+      {
+        "command": "/bin/zsh -lc \"python3 -c \\\"print('probe-two')\\\"\"",
+        "exitCode": 0
+      }
+    ]
+  },
+  {
+    "policy": "on-request",
+    "resolvedPolicy": "on-request",
+    "turnStatus": "completed",
+    "approvalRequests": [],
+    "commandsExecuted": [
+      {
+        "command": "/bin/zsh -lc 'echo probe-one'",
+        "exitCode": 0
+      },
+      {
+        "command": "/bin/zsh -lc \"python3 -c \\\"print('probe-two')\\\"\"",
+        "exitCode": 0
+      }
+    ]
+  },
+  {
+    "policy": "on-failure",
+    "resolvedPolicy": "on-failure",
+    "turnStatus": "completed",
+    "approvalRequests": [],
+    "commandsExecuted": [
+      {
+        "command": "/bin/zsh -lc 'echo probe-one'",
+        "exitCode": 0
+      },
+      {
+        "command": "/bin/zsh -lc \"python3 -c \\\"print('probe-two')\\\"\"",
+        "exitCode": 0
+      }
+    ]
+  },
+  {
+    "policy": "never",
+    "resolvedPolicy": "never",
+    "turnStatus": "completed",
+    "approvalRequests": [],
+    "commandsExecuted": [
+      {
+        "command": "/bin/zsh -lc 'echo probe-one'",
+        "exitCode": 0
+      },
+      {
+        "command": "/bin/zsh -lc \"python3 -c \\\"print('probe-two')\\\"\"",
+        "exitCode": 0
+      }
+    ]
+  }
+]

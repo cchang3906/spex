@@ -1,0 +1,31 @@
+{
+  "unittest": {
+    "ok": true,
+    "exitCode": 1,
+    "output": "    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: 6.0 != 4.0 within 7 places (2.0 difference)\n\n----------------------------------------------------------------------\nRan 3 tests in 0.011s\n\nFAILED (failures=1, errors=1)\n"
+  },
+  "writeInsideRoot": {
+    "ok": true,
+    "exitCode": 0,
+    "output": "wrote\n"
+  },
+  "writeOutsideRoot": {
+    "ok": true,
+    "exitCode": 1,
+    "output": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    open('/Users/cchang3906/spike_should_fail.txt','w').write('x')\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nPermissionError: [Errno 1] Operation not permitted: '/Users/cchang3906/spike_should_fail.txt'\n"
+  },
+  "networkBlocked": {
+    "ok": true,
+    "exitCode": 6,
+    "output": "curl: (6) Could not resolve host: example.com\n"
+  },
+  "terminate.execResult": {
+    "ok": true,
+    "exitCode": 137,
+    "output": ""
+  },
+  "terminate.call": {
+    "ok": true,
+    "result": {}
+  }
+}
