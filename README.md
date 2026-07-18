@@ -57,7 +57,12 @@ Where does the saving come from? It scales with what your tests cost:
   nothing is saved. That is the point of the control: the effect is real
   verification burden moved off the clock, not an artifact of the harness.
 - 78 percent of verification calls (47 of 60) were answered from speculation.
-- Top ranked prediction matched what Codex asked for in 46 of 46 cases.
+- Prediction accuracy, live: top-1 and top-3 both 46 of 46 (100 percent),
+  every prediction preceding an ask named what Codex actually asked for.
+- Prediction accuracy, offline: top-3 recall 75.4 percent on 2,766 held out
+  events the table never trained on (`python3 mining/eval.py`, receipt in
+  `speculator/evals/output/`). Offline measures how often the table fires at
+  all; live measures that when it fired, it was right.
 - Tokens are neutral by construction: a served result is byte identical to
   what the terminal would have printed.
 - Every number recomputes from the committed raw traces via the extraction
