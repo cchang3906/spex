@@ -7,6 +7,7 @@ Keep allow-listed target classes with support >= MIN_SUPPORT and p >= TAU.
 """
 import json
 import os
+import sys
 from collections import Counter, defaultdict
 
 DATA = os.path.join(os.path.dirname(__file__), "..", "data")
@@ -17,11 +18,20 @@ ALLOW = {"TEST", "LINT", "TYPECHECK", "BUILD"}
 
 
 def main():
+    exclude = set()
+    out_name = "pattern_table.json"
+    if "--exclude" in sys.argv:
+        i = sys.argv.index("--exclude")
+        exclude = set(sys.argv[i + 1].split(","))
+        out_name = "pattern_table_bench.json"
     denom = Counter()
     num = defaultdict(Counter)
-    n_traj = n_events = 0
+    n_traj = n_events = n_excluded = 0
     for line in open(os.path.join(DATA, "normalized_train.jsonl")):
         r = json.loads(line)
+        if r.get("instance") in exclude:
+            n_excluded += 1
+            continue
         sigs = [e["sig"] for e in r["events"]]
         classes = [e["sig"].split("(")[0] for e in r["events"]]
         n_traj += 1
@@ -45,7 +55,10 @@ def main():
              "minedFrom": {"trajectories": n_traj, "events": n_events,
                            "source": "swe-bench/experiments verified: 2x sweagent (gpt-4, claude-4-sonnet), 2x openhands (claude-4-sonnet, gpt-5), 1x mini-swe-agent (claude-opus-4-5)"},
              "patterns": patterns}
-    out = os.path.join(DATA, "pattern_table.json")
+    if exclude:
+        table["excludedInstances"] = sorted(exclude)
+        table["excludedTrajectories"] = n_excluded
+    out = os.path.join(DATA, out_name)
     json.dump(table, open(out, "w"), indent=1)
     print(f"{len(patterns)} patterns from {n_traj} trajs / {n_events} events -> {out}")
     for pat in patterns[:12]:

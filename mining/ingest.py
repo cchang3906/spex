@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from normalize import classify, _basename  # noqa: E402
 
 DATA = os.path.join(os.path.dirname(__file__), "..", "data")
-RAW = sys.argv[1] if len(sys.argv) > 1 else "/Users/cchang3906/Desktop/Github/traj-data/evaluation/verified"
+RAW = sys.argv[1] if len(sys.argv) > 1 else "mining/raw"
 
 EXT_MAP = {
     "py": ("py", "pyi"),

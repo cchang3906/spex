@@ -34,13 +34,13 @@ Wrong guesses cost laptop CPU, never correctness and never tokens. Speculative r
 ## repo map
 
 ```
-src/          daemon, cli renderer, dashboard
-test/         unit tests, node --test
-mining/       corpus to pattern table, plus the offline recall evals
-evals/        simulation suite, results, benchmark plan
-scripts/      a/b benchmark harness, instance to repo generator, trace formatter
-data/         pattern tables, benchmark instances, normalized corpora
-bench-runs/   raw event trace per benchmark run, formatted timelines, extraction map
+speculator/src/       daemon, cli renderer, dashboard
+speculator/test/      unit tests, node --test
+speculator/evals/     simulation suite, results, benchmark plan
+speculator/scripts/   a/b benchmark harness, repo generator, trace formatter
+speculator/bench-runs/  raw event trace per run, formatted timelines, extraction map
+mining/               corpus to pattern table, plus the offline recall evals (repo root)
+data/                 pattern tables, benchmark instances, normalized corpora (repo root)
 ```
 
 ## reproduce

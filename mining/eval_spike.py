@@ -86,6 +86,7 @@ def main():
         table.setdefault(tuple(p["context"]), []).append((p["predicts"], p["p"]))
 
     total = hit2 = 0
+    edit_total = edit_hit = 0
     for f in ("phaseB.jsonl", "phaseG.jsonl"):
         for tid, sigs in streams_from_log(os.path.join(SAMPLES, f)).items():
             print(f"{f} thread {tid[:8]}…: {sigs}")
@@ -95,8 +96,12 @@ def main():
                     preds = [c for c, _ in predict(table, sigs[max(0, i - K):i])[:2]]
                     ok = sigs[i].split("(")[0] in preds
                     hit2 += ok
+                    if sigs[i - 1].startswith("EDIT"):
+                        edit_total += 1
+                        edit_hit += ok
                     print(f"   ctx={sigs[max(0, i - K):i]} -> true={sigs[i]} pred={preds} {'HIT' if ok else 'MISS'}")
     print(f"\nCodex spike streams: top-2 recall {hit2}/{total} = {hit2/max(total,1):.0%}")
+    print(f"post-EDIT contexts only: {edit_hit}/{edit_total} = {edit_hit/max(edit_total,1):.0%}")
 
 
 if __name__ == "__main__":

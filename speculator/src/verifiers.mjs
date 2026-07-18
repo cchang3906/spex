@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const cfg = JSON.parse(fs.readFileSync(new URL('../data/verb_classes.json', import.meta.url)));
+const cfg = JSON.parse(fs.readFileSync(new URL('../../data/verb_classes.json', import.meta.url)));
 const LEARNABLE = ['TEST', 'LINT', 'TYPECHECK', 'BUILD'];
 
 function tokenize(str) {

@@ -33,7 +33,7 @@ export async function boot(repoDir, sinks = []) {
   const executor = createExecutor(transport.send);
   const cache = createCache(emit);
   const verifiers = createVerifiers(repoDir);
-  const predictor = createPredictor(process.env.SPEX_TABLE ?? fileURLToPath(new URL('../data/pattern_table.json', import.meta.url)));
+  const predictor = createPredictor(process.env.SPEX_TABLE ?? fileURLToPath(new URL('../../data/pattern_table.json', import.meta.url)));
 
   const scheduler =
     baseline || process.env.SPEX_OFF === '1'
