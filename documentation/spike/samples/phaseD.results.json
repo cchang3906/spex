@@ -12,7 +12,7 @@
   "writeOutsideRoot": {
     "ok": true,
     "exitCode": 1,
-    "output": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    open('/Users/cchang3906/spike_should_fail.txt','w').write('x')\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nPermissionError: [Errno 1] Operation not permitted: '/Users/cchang3906/spike_should_fail.txt'\n"
+    "output": "Traceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n    open('/Users/dev/spike_should_fail.txt','w').write('x')\n    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nPermissionError: [Errno 1] Operation not permitted: '/Users/dev/spike_should_fail.txt'\n"
   },
   "networkBlocked": {
     "ok": true,

@@ -1,0 +1,53 @@
+phaseB.jsonl thread 019f6860…: ['READ(passed)', 'GIT_RO(passed)', 'GREP(passed)', 'TEST(failed)', 'READ(passed)', 'READ(passed)', 'READ(passed)', 'EDIT(py)', 'TEST(passed)']
+   ctx=['READ(passed)', 'GIT_RO(passed)', 'GREP(passed)'] -> true=TEST(failed) pred=[] MISS
+   ctx=['READ(passed)', 'READ(passed)', 'EDIT(py)'] -> true=TEST(passed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f6861…: ['GREP(passed)', 'GIT_RO(passed)', 'READ(passed)', 'READ(passed)', 'EDIT(py)', 'TEST(passed)']
+   ctx=['READ(passed)', 'READ(passed)', 'EDIT(py)'] -> true=TEST(passed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f6861…: ['GREP(passed)', 'GREP(passed)', 'READ(passed)', 'READ(passed)', 'EDIT(py)', 'TEST(failed)', 'EDIT(py)', 'TEST(passed)']
+   ctx=['READ(passed)', 'READ(passed)', 'EDIT(py)'] -> true=TEST(failed) pred=['TEST'] HIT
+   ctx=['EDIT(py)', 'TEST(failed)', 'EDIT(py)'] -> true=TEST(passed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f68eb…: ['TEST(failed)', 'GREP(passed)', 'READ(passed)', 'GIT_RO(passed)', 'EDIT(py)', 'TEST(passed)', 'GIT_RO(passed)']
+   ctx=['READ(passed)', 'GIT_RO(passed)', 'EDIT(py)'] -> true=TEST(passed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f68ec…: ['GREP(passed)', 'GIT_RO(passed)', 'EDIT(py)', 'TEST(passed)']
+   ctx=['GREP(passed)', 'GIT_RO(passed)', 'EDIT(py)'] -> true=TEST(passed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f68ec…: ['GIT_RO(passed)', 'EDIT(py)', 'TEST(failed)', 'GIT_RO(passed)']
+   ctx=['GIT_RO(passed)', 'EDIT(py)'] -> true=TEST(failed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f68ec…: ['GREP(passed)', 'TEST(failed)', 'GIT_RO(passed)', 'EDIT(py)', 'TEST(passed)', 'GIT_RO(passed)']
+   ctx=['GREP(passed)'] -> true=TEST(failed) pred=[] MISS
+   ctx=['TEST(failed)', 'GIT_RO(passed)', 'EDIT(py)'] -> true=TEST(passed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f68ed…: ['GREP(passed)', 'EDIT(py)', 'TEST(passed)']
+   ctx=['GREP(passed)', 'EDIT(py)'] -> true=TEST(passed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f68ed…: ['GREP(passed)', 'EDIT(py)', 'TEST(failed)', 'GIT_RO(passed)', 'GREP(passed)']
+   ctx=['GREP(passed)', 'EDIT(py)'] -> true=TEST(failed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f68ee…: ['GREP(passed)', 'TEST(failed)', 'GIT_RO(passed)', 'EDIT(py)', 'TEST(passed)', 'GIT_RO(passed)']
+   ctx=['GREP(passed)'] -> true=TEST(failed) pred=[] MISS
+   ctx=['TEST(failed)', 'GIT_RO(passed)', 'EDIT(py)'] -> true=TEST(passed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f68ef…: ['GREP(passed)', 'EDIT(py)', 'TEST(passed)']
+   ctx=['GREP(passed)', 'EDIT(py)'] -> true=TEST(passed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f68ef…: ['GIT_RO(passed)', 'EDIT(py)', 'GIT_RO(passed)', 'TEST(failed)']
+   ctx=['GIT_RO(passed)', 'EDIT(py)', 'GIT_RO(passed)'] -> true=TEST(failed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f68f0…: ['TEST(failed)', 'GIT_RO(passed)', 'EDIT(py)', 'TEST(passed)']
+   ctx=['TEST(failed)', 'GIT_RO(passed)', 'EDIT(py)'] -> true=TEST(passed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f68f0…: ['GREP(passed)', 'EDIT(py)', 'TEST(passed)']
+   ctx=['GREP(passed)', 'EDIT(py)'] -> true=TEST(passed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f68f0…: ['GREP(passed)', 'EDIT(py)', 'TEST(failed)', 'GIT_RO(passed)']
+   ctx=['GREP(passed)', 'EDIT(py)'] -> true=TEST(failed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f68f1…: ['GREP(passed)', 'TEST(failed)', 'GIT_RO(passed)', 'EDIT(py)', 'TEST(passed)', 'GIT_RO(passed)']
+   ctx=['GREP(passed)'] -> true=TEST(failed) pred=[] MISS
+   ctx=['TEST(failed)', 'GIT_RO(passed)', 'EDIT(py)'] -> true=TEST(passed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f68f2…: ['GREP(passed)', 'EDIT(py)', 'TEST(passed)']
+   ctx=['GREP(passed)', 'EDIT(py)'] -> true=TEST(passed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f68f2…: ['GREP(passed)', 'EDIT(py)', 'TEST(failed)']
+   ctx=['GREP(passed)', 'EDIT(py)'] -> true=TEST(failed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f68f3…: ['GREP(passed)', 'TEST(failed)', 'GIT_RO(passed)', 'EDIT(py)', 'TEST(passed)', 'GIT_RO(passed)']
+   ctx=['GREP(passed)'] -> true=TEST(failed) pred=[] MISS
+   ctx=['TEST(failed)', 'GIT_RO(passed)', 'EDIT(py)'] -> true=TEST(passed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f68f4…: ['GREP(passed)', 'EDIT(py)', 'TEST(passed)']
+   ctx=['GREP(passed)', 'EDIT(py)'] -> true=TEST(passed) pred=['TEST'] HIT
+phaseB.jsonl thread 019f68f4…: ['GREP(passed)', 'EDIT(py)', 'TEST(failed)', 'GIT_RO(passed)']
+   ctx=['GREP(passed)', 'EDIT(py)'] -> true=TEST(failed) pred=['TEST'] HIT
+phaseG.jsonl thread 019f6879…: ['GREP(passed)', 'GIT_RO(passed)', 'GIT_RO(passed)', 'EDIT(py)', 'TEST(declined)']
+   ctx=['GIT_RO(passed)', 'GIT_RO(passed)', 'EDIT(py)'] -> true=TEST(declined) pred=['TEST'] HIT
+
+Codex spike streams: top-2 recall 23/28 = 82%
+post-EDIT contexts only: 22/22 = 100%

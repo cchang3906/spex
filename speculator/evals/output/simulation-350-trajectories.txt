@@ -1,0 +1,18 @@
+simulate: replay of normalized_validation.jsonl through real predictor + scheduler + cache
+assumptions: verifiers.resolve faked to a nominal argv for all four kinds (this eval
+measures prediction and scheduling, not argv resolution); verification duration fixed at
+7000ms, virtual clock advances 3000ms per event. duration free metrics: trigger
+coverage, would be hit rate, abstain breakdown, speculations per trajectory, wasted speculations.
+
+┌─────────┬───────┬───────┬──────┬──────────┬─────────────┬────────┬──────────┬───────────┬────────┬─────────┬───────────┬─────────┬───────────┐
+│ (index) │ set   │ trajs │ asks │ hit rate │ trigger cov │ reused │ promoted │ spec/traj │ wasted │ ab:exec │ ab:policy │ ab:conf │ ab:budget │
+├─────────┼───────┼───────┼──────┼──────────┼─────────────┼────────┼──────────┼───────────┼────────┼─────────┼───────────┼─────────┼───────────┤
+│ 0       │ 'all' │ 350   │ 2767 │ '39.9%'  │ '76.4%'     │ 69     │ 1035     │ '5.33'    │ 760    │ 0       │ 0         │ 1175    │ 0         │
+└─────────┴───────┴───────┴──────┴──────────┴─────────────┴────────┴──────────┴───────────┴────────┴─────────┴───────────┴─────────┴───────────┘
+┌─────────┬──────────────────┬───────┬──────┬──────────┬─────────────┬────────┬──────────┬───────────┬────────┬─────────┬───────────┬─────────┬───────────┐
+│ (index) │ set              │ trajs │ asks │ hit rate │ trigger cov │ reused │ promoted │ spec/traj │ wasted │ ab:exec │ ab:policy │ ab:conf │ ab:budget │
+├─────────┼──────────────────┼───────┼──────┼──────────┼─────────────┼────────┼──────────┼───────────┼────────┼─────────┼───────────┼─────────┼───────────┤
+│ 0       │ 'sweagent'       │ 140   │ 905  │ '49.5%'  │ '88.6%'     │ 12     │ 436      │ '5.79'    │ 363    │ 0       │ 0         │ 774     │ 0         │
+│ 1       │ 'openhands'      │ 140   │ 1447 │ '41.8%'  │ '77.5%'     │ 35     │ 570      │ '6.64'    │ 325    │ 0       │ 0         │ 212     │ 0         │
+│ 2       │ 'mini-swe-agent' │ 70    │ 415  │ '12.3%'  │ '46.0%'     │ 22     │ 29       │ '1.76'    │ 72     │ 0       │ 0         │ 189     │ 0         │
+└─────────┴──────────────────┴───────┴──────┴──────────┴─────────────┴────────┴──────────┴───────────┴────────┴─────────┴───────────┴─────────┴───────────┘

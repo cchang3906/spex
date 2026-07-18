@@ -40,7 +40,7 @@
   "account": {
     "account": {
       "type": "chatgpt",
-      "email": "krsnucc21@gmail.com",
+      "email": "user@example.com",
       "planType": "plus"
     },
     "requiresOpenaiAuth": true

@@ -114,13 +114,13 @@
     {
       "type": "agentMessage",
       "id": "msg_0d136b7bb1b8c65f016a582fb6c2a88193b43c9c7148494e1d",
-      "text": "Fixed `average()` in [calc.py](/private/tmp/claude-501/-Users-cchang3906-Desktop-Github-ramp-hackathon/29719257-9873-4d48-be2d-bbfa110e598a/scratchpad/toyrepo/calc.py:5) to divide by `len(values)`.\n\nFinal test result: `python3 -m unittest discover` passed — **3 tests run, 0 failures**."
+      "text": "Fixed `average()` in [calc.py](/private/tmp/claude-501/-Users-dev-workspace/29719257-9873-4d48-be2d-bbfa110e598a/scratchpad/toyrepo/calc.py:5) to divide by `len(values)`.\n\nFinal test result: `python3 -m unittest discover` passed — **3 tests run, 0 failures**."
     }
   ],
   "agentMessagesAfterSteer": 1,
   "steerConsumedAsItemIndex": 14,
   "unittestExecuted": [],
-  "finalText": "Fixed `average()` in [calc.py](/private/tmp/claude-501/-Users-cchang3906-Desktop-Github-ramp-hackathon/29719257-9873-4d48-be2d-bbfa110e598a/scratchpad/toyrepo/calc.py:5) to divide by `len(values)`.\n\nFinal test result: `python3 -m unittest discover` passed — **3 tests run, 0 failures**.",
+  "finalText": "Fixed `average()` in [calc.py](/private/tmp/claude-501/-Users-dev-workspace/29719257-9873-4d48-be2d-bbfa110e598a/scratchpad/toyrepo/calc.py:5) to divide by `len(values)`.\n\nFinal test result: `python3 -m unittest discover` passed — **3 tests run, 0 failures**.",
   "approvals": [
     {
       "method": "item/commandExecution/requestApproval",
