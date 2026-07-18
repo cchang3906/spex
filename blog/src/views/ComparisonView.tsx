@@ -62,7 +62,7 @@ const metrics: MetricDef[] = [
   },
   {
     label: "Tokens",
-    hint: "Codex's own usage totals per run. Expected delta is about zero.",
+    hint: "Codex's own usage totals per run. Neutral by construction; observed deltas vary by environment.",
     pick: (row) => row.tokens,
     format: formatTokens,
     betterWhen: "lower",

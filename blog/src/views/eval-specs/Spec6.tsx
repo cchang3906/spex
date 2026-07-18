@@ -85,7 +85,7 @@ const axes: SpecAxis[] = [
     name: "overhead and safety",
     question: "What does being wrong cost?",
     definition:
-      "Wrong guesses burn laptop CPU, never correctness. We report the burn as a rate, and we audit that speculation could never have touched anything: only test, lint, and typecheck commands are ever admitted, results are quarantined until Codex explicitly asks, and both modes must end with the same bug fixed.",
+      "Wrong guesses burn laptop CPU, never correctness. We report the burn as a rate, and we audit that speculation could never have touched anything: only test, lint, typecheck, and build commands are ever admitted, results are quarantined until Codex explicitly asks, and both modes must end with the same bug fixed.",
     metricLabel: "wasted cpu, median per mode",
     pick: (row) => row.wastedMs,
     format: formatSeconds,
