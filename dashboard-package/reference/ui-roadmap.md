@@ -3,13 +3,13 @@
 the product has two audiences and gets two faces. same event stream, same daemon, two renderings.
 
 ## phase 1 · the instrument (technical dashboard) · CURRENT
-the engineer view, chosen from the ui-specs exploration (combo-4-instrument). single sheet on faint graph paper: five lane waterfall on one reconciled timeline (codex reasoning, terminal, edits; one mentalist lane per kind), FIRED rules with margin timestamps, leader line callouts on serves, the parallel annotation, numbered epoch track with kill markers, per kind matrix, event ledger, gate tally. dense, honest, reads like a profiler. this is the booth screen for anyone who leans in and the screenshot for the readme.
+the engineer view, chosen from the ui-specs exploration (combo-4-instrument). single sheet on faint graph paper: five lane waterfall on one reconciled timeline (codex reasoning, terminal, edits; one spex lane per kind), FIRED rules with margin timestamps, leader line callouts on serves, the parallel annotation, numbered epoch track with kill markers, per kind matrix, event ledger, gate tally. dense, honest, reads like a profiler. this is the booth screen for anyone who leans in and the screenshot for the readme.
 
 ## phase 2 · the user dashboard
 the consumer view: what a developer who just wants faster codex sees. principles:
 - one number leads: time saved today, huge (borrow from ui-specs/3-focus)
 - plain language, no jargon: "your tests ran before codex asked · 3 times today"
-- the rajan card (ui-specs/6-rajan) as the embeddable unit: codex activity left, a thin mentalist actions rail right (held / fired / running early / served), one status word. this card is also what goes in the readme and any web page
+- the rajan card (ui-specs/6-rajan) as the embeddable unit: codex activity left, a thin spex actions rail right (held / fired / running early / served), one status word. this card is also what goes in the readme and any web page
 - nothing about epochs, doors, or utility. those live in the instrument only
 - a single "details" link that opens the instrument for the curious
 

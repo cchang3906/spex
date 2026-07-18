@@ -33,6 +33,9 @@ export function createDashboard(port = 7777) {
     res.writeHead(200, { 'content-type': 'text/html', 'cache-control': 'no-store' });
     res.end(page);
   });
+  server.on('error', (e) => {
+    console.error(`dashboard disabled: ${e.code === 'EADDRINUSE' ? `port ${port} already in use` : e.message}`);
+  });
   server.listen(port, '127.0.0.1');
   const sink = (line) => {
     backlog.push(line);

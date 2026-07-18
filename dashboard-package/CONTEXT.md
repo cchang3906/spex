@@ -1,4 +1,4 @@
-# CONTEXT.md · mentalist instrument dashboard
+# CONTEXT.md · spex instrument dashboard
 
 You are porting this dashboard UI into a new repo. **Read `dashboard.html` end to end before writing anything.** It is the source of truth. This file tells you what it is, how it runs, and what the rules are.
 
@@ -52,7 +52,7 @@ The single number that matters is **wait hidden** — seconds of waiting removed
 3. **legend** — one 9px mono row of chip+label pairs with a bottom hairline. Chips are 12×9px marks: solid `--g3` (reasoning), solid `--g2` (terminal), 2×11px terracotta (edit), 45° green hatch (speculating), solid ink (served), grey with strikethrough (discarded), white with dashed grey border (abstain), 2×11px ink (fired), terracotta `×` (epoch kill). Connection status right-aligned in the same row.
 4. **waterfall** — the centerpiece. `.wgrid` is a `152px 1fr 40px` grid: right-aligned lane labels, the scrolling plot, then a right margin holding a `-90deg` rotated annotation with a bracket.
    - geometry: 60000ms window, 36px top margin band, 48px per lane.
-   - lanes: three fixed codex lanes (reasoning, terminal, edits) plus one mentalist lane created dynamically per speculation kind. A new kind appends a label, a row hairline, and grows the container.
+   - lanes: three fixed codex lanes (reasoning, terminal, edits) plus one spex lane created dynamically per speculation kind. A new kind appends a label, a row hairline, and grows the container.
    - x-mapping: `x = (t - origin) * k` where `k = (nowX - 4) / 60000`, `nowX = width - 12`. Now is a dashed vertical near the right edge; everything scrolls leftward past it.
    - gridlines and axis ticks every 5s, axis labels every 15s.
    - bars: `.reason` 18px grey block · `.term` 16px darker block · `.spec` green 45° hatch with a white-backed inline label · `.served` solid ink, white text · `.discard` grey with a strikethrough pseudo-element · `.abstain` white with a dashed border. Edits are 2px terracotta ticks 24px tall with a small label.

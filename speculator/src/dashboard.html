@@ -396,7 +396,7 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--ramp);outline
     $('follow').textContent = 'following'; $('follow').classList.remove('paused'); updateStats(); render();
   }
   function handle(e) {
-    if (e.type === 'reset') { appendLedger(e); finishSession('reset'); reset(); return; }
+    if (e.type === 'reset' && e.epoch === undefined) { appendLedger(e); finishSession('reset'); reset(); return; }
     if (state.closed) reset();
     const at = performance.now();
     state.events.push(e); appendLedger(e);

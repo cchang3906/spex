@@ -80,9 +80,9 @@ The design doc (`documentation/dashboard.md`) already made the call: *"if we bui
 
 ## 5. evaluation — numbers pending
 
-To be filled from `node scripts/bench.mjs 1 --swebench` (8 SWE-bench Verified instances, vanilla Codex vs Codex + Mentalist).
+To be filled from `node scripts/bench.mjs 1 --swebench` (8 SWE-bench Verified instances, vanilla Codex vs Codex + Spex).
 
-| metric | vanilla | + mentalist | delta |
+| metric | vanilla | + spex | delta |
 |---|---|---|---|
 | wall-clock per task | | | |
 | wait removed (Σ s) | | | |

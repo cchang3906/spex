@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mentalist &middot; instrument</title>
+<title>Spex &middot; instrument</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
@@ -273,7 +273,7 @@
   <!-- top strip: title + meta + inline stats + per-turn summaries -->
   <div class="strip">
     <div class="s-brand">
-      <h1>Mentalist</h1>
+      <h1>Spex</h1>
       <p>speculative test execution &middot; runs the agent&rsquo;s tests before the ask &middot; localhost</p>
     </div>
     <div class="s-meta">
@@ -309,7 +309,7 @@
     <span class="item"><span class="chip abstain"></span>abstain</span>
     <span class="item"><span class="chip fired"></span>fired</span>
     <span class="item"><span class="chip kill">&times;</span>epoch kill</span>
-    <span class="fr" id="conn-note">connecting &middot; codex + mentalist sidecar</span>
+    <span class="fr" id="conn-note">connecting &middot; codex + spex sidecar</span>
   </div>
 
   <div class="figcap">
@@ -397,7 +397,7 @@
   </div>
 
   <footer>
-    <span>live trace &middot; codex + mentalist sidecar &middot; t&#8320; <span id="f-t0">&middot;</span></span>
+    <span>live trace &middot; codex + spex sidecar &middot; t&#8320; <span id="f-t0">&middot;</span></span>
     <span id="f-sum">0 speculations &middot; 0 served &middot; 0 discarded &middot; 0 abstain</span>
     <span class="stamp"><span class="stamp-inner">
       <span class="dot" id="stamp-dot"></span>
@@ -485,7 +485,7 @@
     sw.style.background = 'var(--green)';
     const who = document.createElement('span');
     who.className = 'who';
-    who.textContent = 'mentalist ·';
+    who.textContent = 'spex ·';
     lab.append(sw, who, ' ' + kind);
     labelsEl.appendChild(lab);
     const line = document.createElement('div');
@@ -1163,7 +1163,7 @@
   function setConn(live) {
     $('stamp-dot').classList.toggle('on', live);
     $('stamp-conn').textContent = live ? 'live' : 'reconnecting';
-    $('conn-note').textContent = (live ? 'live' : 'reconnecting') + ' · codex + mentalist sidecar';
+    $('conn-note').textContent = (live ? 'live' : 'reconnecting') + ' · codex + spex sidecar';
   }
 
   const es = new EventSource('/events');

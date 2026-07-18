@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mentalist · instrument</title>
+<title>Spex · instrument</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
@@ -270,7 +270,7 @@
   <!-- top strip: title + meta + inline stats + per-turn summaries -->
   <div class="strip">
     <div class="s-brand">
-      <h1>Mentalist</h1>
+      <h1>Spex</h1>
       <p>speculative test execution &mdash; runs the agent&rsquo;s tests before the ask &middot; instrument sheet</p>
     </div>
     <div class="s-meta">
@@ -315,7 +315,7 @@
     <span class="item"><span class="chip abstain"></span>abstain</span>
     <span class="item"><span class="chip fired"></span>fired</span>
     <span class="item"><span class="chip kill">&times;</span>epoch kill</span>
-    <span class="fr">frozen 14:03:15.0 &middot; codex + mentalist sidecar</span>
+    <span class="fr">frozen 14:03:15.0 &middot; codex + spex sidecar</span>
   </div>
 
   <div class="figcap">
@@ -332,8 +332,8 @@
         <div class="lab"><span class="sw" style="background:var(--g3)"></span><span class="who">codex &middot;</span> reasoning</div>
         <div class="lab"><span class="sw" style="background:var(--g2)"></span><span class="who">codex &middot;</span> terminal</div>
         <div class="lab"><span class="sw" style="background:var(--terra)"></span><span class="who">codex &middot;</span> edits</div>
-        <div class="lab"><span class="sw" style="background:var(--green)"></span><span class="who">mentalist &middot;</span> test</div>
-        <div class="lab"><span class="sw" style="background:var(--green)"></span><span class="who">mentalist &middot;</span> lint</div>
+        <div class="lab"><span class="sw" style="background:var(--green)"></span><span class="who">spex &middot;</span> test</div>
+        <div class="lab"><span class="sw" style="background:var(--green)"></span><span class="who">spex &middot;</span> lint</div>
       </div>
 
       <div class="rows">
@@ -420,7 +420,7 @@
         <div class="note" style="left:80%; top:183px; background:#ffffff; padding:0 3px"><span class="b">promoted mid-run</span> &middot; lead 1.0s</div>
         <div class="connector" style="left:87.2%; top:191px; height:4px"></div>
 
-        <!-- row 4: mentalist test -->
+        <!-- row 4: spex test -->
         <div class="bar spec r4" style="left:23.867%; width:12.667%"><span>spec#1 &middot; pytest -q &middot; e2 &middot; conf .87</span></div>
         <div class="bar ready r4" style="left:36.533%; width:3.6%" title="ready, waiting for ask"></div>
         <div class="bar served r4" style="left:40.133%; width:5.467%">served &middot; hid 4.1s</div>
@@ -429,7 +429,7 @@
         <div class="bar spec r4" style="left:75.067%; width:11.333%"><span>spec#3 &middot; pytest -q &middot; e4 &middot; refire</span></div>
         <div class="bar served r4" style="left:86.4%; width:2.667%">promoted</div>
 
-        <!-- row 5: mentalist lint -->
+        <!-- row 5: spex lint -->
         <div class="bar abstain r5" style="left:60%; width:7.2%">abstain &middot; conf .31 &lt; &tau; .55</div>
         <div class="note" style="left:60%; top:264px">ran cold on trunk &middot; 5.4s</div>
         <div class="bar spec r5" style="left:88.4%; width:5.333%"><span>spec#4 &middot; ruff &middot; .78</span></div>
@@ -594,7 +594,7 @@
   </div>
 
   <footer>
-    <span>frozen trace &middot; ses_9f2c &middot; codex + mentalist sidecar &middot; t&#8320; 14:02:00.0</span>
+    <span>frozen trace &middot; ses_9f2c &middot; codex + spex sidecar &middot; t&#8320; 14:02:00.0</span>
     <span>4 speculations &middot; 3 served (1 reuse &middot; 1 promotion &middot; 1 warm) &middot; 1 discarded (epoch) &middot; 1 abstain &middot; +0 tokens</span>
     <span class="stamp"><span class="stamp-inner">
       <span class="dot"></span>
