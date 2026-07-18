@@ -11,7 +11,7 @@ const swebench = process.argv.includes('--swebench');
 const args = process.argv.slice(2).filter((a) => a !== '--dry' && a !== '--swebench');
 const rounds = Number(args[0] ?? 3);
 const task = args[1] ?? 'Fix the failing test in this repo and verify your fix.';
-const timeoutMs = swebench ? 420000 : 180000;
+const timeoutMs = swebench ? 900000 : 180000;
 const instances = swebench
   ? Object.entries(JSON.parse(readFileSync(join(root, '..', 'data', 'swebench-instances.json'), 'utf8'))).filter(([, r]) => r.verify)
   : [[null, null]];
