@@ -1,0 +1,12 @@
+{
+  "name": "spex",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  },
+  "description": "speculative tool execution for openai codex: it runs your tools before you ask",
+  "engines": {
+    "node": ">=20"
+  }
+}

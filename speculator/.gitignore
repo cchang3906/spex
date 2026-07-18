@@ -1,0 +1,8 @@
+node_modules/
+__pycache__/
+.prefetch/
+.venv/
+local-context/
+mining/raw/
+mining/work/
+.DS_Store
