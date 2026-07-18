@@ -3,25 +3,57 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Spex &middot; instrument</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Mentalist &middot; instrument</title>
 <style>
+  /* Geist, vendored. one variable woff2 per subset covers 400/500/600, served
+     from demo/fonts by dashboard.mjs. weights and unicode-ranges mirror the
+     google fonts build exactly, so rendering matches the cdn byte for byte.
+     glyphs outside these ranges fall back to the system stack, same as the cdn:
+     the arrow, sigma and subscript zero were never in geist's subsets. */
+  @font-face {
+    font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: swap;
+    src: url('/fonts/geist-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  @font-face {
+    font-family: 'Geist'; font-style: normal; font-weight: 400; font-display: swap;
+    src: url('/fonts/geist-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  @font-face {
+    font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: swap;
+    src: url('/fonts/geist-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  @font-face {
+    font-family: 'Geist'; font-style: normal; font-weight: 500; font-display: swap;
+    src: url('/fonts/geist-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+  @font-face {
+    font-family: 'Geist'; font-style: normal; font-weight: 600; font-display: swap;
+    src: url('/fonts/geist-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  @font-face {
+    font-family: 'Geist'; font-style: normal; font-weight: 600; font-display: swap;
+    src: url('/fonts/geist-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+
   * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
   :root {
-    --bg: #0d0d0d;
-    --ink: #e8e8e8;
-    --g1: #a0a0a0;
-    --g2: #6f6f6f;
-    --g3: #2a2a2a;
-    --grid: #1a1a1a;
+    --ink: #0a0a0a;
+    --g1: #6b6b6b;
+    --g2: #9b9b9b;
+    --g3: #ececec;
+    --grid: #f4f4f4;
     --green: #bfe3c8;
     --terra: #e08a6e;
     --sans: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     --mono: 'Geist', 'SF Mono', Menlo, Consolas, monospace;
   }
-  html, body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 12px; }
+  html, body { background: #ffffff; color: var(--ink); font-family: var(--sans); font-size: 12px; }
   body {
     background-image:
       linear-gradient(var(--g3) 1px, transparent 1px),
@@ -51,7 +83,7 @@
   /* top strip: title block + meta + stats + per-turn */
   .strip {
     display: flex; align-items: stretch;
-    border: 1px solid var(--ink); background: var(--bg);
+    border: 1px solid var(--ink); background: #ffffff;
   }
   .strip > div { border-right: 1px solid var(--g3); }
   .strip > div:last-child { border-right: none; }
@@ -100,11 +132,11 @@
   .chip.reason { background: var(--g3); }
   .chip.term { background: var(--g2); }
   .chip.edit { width: 2px; height: 11px; background: var(--terra); }
-  .chip.spec { background: repeating-linear-gradient(45deg, var(--green) 0, var(--green) 2.5px, var(--bg) 2.5px, var(--bg) 5px); border: 1px solid var(--green); }
+  .chip.spec { background: repeating-linear-gradient(45deg, var(--green) 0, var(--green) 2.5px, #fff 2.5px, #fff 5px); border: 1px solid var(--green); }
   .chip.served { background: var(--ink); }
   .chip.discard { background: var(--g3); position: relative; }
   .chip.discard::after { content: ""; position: absolute; left: 0; top: 4px; width: 100%; height: 1px; background: var(--g2); }
-  .chip.abstain { background: var(--bg); border: 1px dashed var(--g2); }
+  .chip.abstain { background: #fff; border: 1px dashed var(--g2); }
   .chip.fired { width: 2px; height: 11px; background: var(--ink); }
   .chip.kill { width: auto; height: auto; color: var(--terra); font-weight: 600; font-size: 11px; line-height: 9px; }
 
@@ -113,7 +145,7 @@
   .figcap .fl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;  color: var(--ink); font-weight: 500; }
   .figcap .fr { font-family: var(--mono); font-size: 9px; color: var(--g2); }
 
-  .wsheet { border: 1px solid var(--g3); background: var(--bg); }
+  .wsheet { border: 1px solid #ececec; background: #ffffff; }
   .wgrid { display: grid; grid-template-columns: 152px 1fr 40px; }
 
   .labels .lab {
@@ -130,8 +162,8 @@
   .rowline { position: absolute; left: 0; right: 0; height: 1px; background: var(--g3); }
   .rowline.mline { background: var(--g2); }
   .now-line { position: absolute; top: 36px; bottom: 0; width: 0; border-left: 1px dashed var(--g2); z-index: 6; }
-  .tl-follow { position: absolute; top: 6px; right: 10px; z-index: 8; font-family: var(--mono); font-size: 10px; letter-spacing: .08em;  background: var(--bg); color: var(--g1); border: 1px solid var(--g3); padding: 3px 10px; cursor: pointer; }
-  .tl-follow.paused { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .tl-follow { position: absolute; top: 6px; right: 10px; z-index: 8; font-family: var(--mono); font-size: 10px; letter-spacing: .08em;  background: #ffffff; color: var(--g1); border: 1px solid var(--g3); padding: 3px 10px; cursor: pointer; }
+  .tl-follow.paused { background: var(--ink); color: #ffffff; border-color: var(--ink); }
 
   .slayer { position: absolute; inset: 0; z-index: 2; will-change: transform; }
   .flayer { position: absolute; inset: 0; z-index: 7; pointer-events: none; }
@@ -164,22 +196,22 @@
   .edit-lab { position: absolute; font-family: var(--mono); font-size: 8px; color: var(--g1); white-space: nowrap; }
   .edit-lab .b { color: var(--ink); font-weight: 500; }
   .bar.spec {
-    background: repeating-linear-gradient(45deg, var(--green) 0, var(--green) 2.5px, var(--bg) 2.5px, var(--bg) 5px);
+    background: repeating-linear-gradient(45deg, var(--green) 0, var(--green) 2.5px, #fff 2.5px, #fff 5px);
     border: 1px solid var(--green); color: var(--ink);
   }
-  .bar.spec span { background: var(--bg); padding: 0 3px; }
-  .bar.served { background: var(--ink); color: var(--bg); letter-spacing: -0.01em; border: none; }
+  .bar.spec span { background: #ffffff; padding: 0 3px; }
+  .bar.served { background: var(--ink); color: #ffffff; letter-spacing: -0.01em; border: none; }
   .bar.discard { background: var(--g3); color: var(--g2); border: none; }
   .bar.discard::after { content: ""; position: absolute; left: 0; right: 0; top: 8px; height: 1px; background: var(--g2); }
-  .bar.abstain { background: var(--bg); border: 1px dashed var(--g2); color: var(--g2); }
-  .killx { position: absolute; font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--terra); z-index: 4; background: var(--bg); padding: 0 1px; line-height: 10px; }
+  .bar.abstain { background: #ffffff; border: 1px dashed var(--g2); color: var(--g2); }
+  .killx { position: absolute; font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--terra); z-index: 4; background: #ffffff; padding: 0 1px; line-height: 10px; }
 
-  .note { position: absolute; font-family: var(--mono); font-size: 8px; color: var(--g1); white-space: nowrap; z-index: 4; background: var(--bg); padding: 0 3px; }
+  .note { position: absolute; font-family: var(--mono); font-size: 8px; color: var(--g1); white-space: nowrap; z-index: 4; background: #ffffff; padding: 0 3px; }
   .note .b { color: var(--ink); font-weight: 500; }
 
   .callout {
     position: absolute; right: 8px;
-    background: var(--bg); border: 1px dotted var(--g1);
+    background: #ffffff; border: 1px dotted var(--g1);
     padding: 2px 6px; z-index: 8;
     font-family: var(--mono); font-size: 8.5px; color: var(--ink); white-space: nowrap;
   }
@@ -207,7 +239,7 @@
   .eseg.cur { background: var(--green); }
   .elab { position: absolute; top: 26px; font-family: var(--mono); font-size: 8px; color: var(--g2); white-space: nowrap; }
   .elab.terra { color: var(--terra); font-weight: 500; }
-  .ekill { position: absolute; top: 4px; transform: translateX(-50%); font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--terra); background: var(--bg); padding: 0 2px; line-height: 12px; z-index: 3; }
+  .ekill { position: absolute; top: 4px; transform: translateX(-50%); font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--terra); background: #ffffff; padding: 0 2px; line-height: 12px; z-index: 3; }
 
   /* empty state */
   .tl-empty {
@@ -218,7 +250,7 @@
 
   /* bottom: matrix / ledger / gate */
   .bottom { display: grid; grid-template-columns: 1fr 1.4fr 1.15fr; gap: 24px; margin-top: 24px; }
-  .bottom > div { border: 1px solid var(--g3); padding: 14px 16px; background: var(--bg); }
+  .bottom > div { border: 1px solid #ececec; padding: 14px 16px; background: #ffffff; }
   @media (max-width: 1120px) { .bottom { grid-template-columns: 1fr; gap: 24px; } }
 
   table { width: 100%; border-collapse: collapse; }
@@ -245,7 +277,7 @@
   .lmark.ink { background: var(--ink); }
   .lmark.green { background: var(--green); }
   .lmark.terra { background: var(--terra); }
-  .lmark.hollow { background: var(--bg); border: 1px solid var(--g2); }
+  .lmark.hollow { background: #ffffff; border: 1px solid var(--g2); }
   .lt { color: var(--g2); }
   .lk { color: var(--ink); font-weight: 500; letter-spacing: 0.04em; }
   .ld { color: var(--g1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -256,7 +288,7 @@
     font-family: var(--mono); font-size: 9px; color: var(--g2);
     display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
   }
-  .stamp { border: 1px solid var(--ink); padding: 2px; background: var(--bg); }
+  .stamp { border: 1px solid var(--ink); padding: 2px; background: #ffffff; }
   .stamp-inner {
     border: 1px solid var(--g3); padding: 5px 12px;
     display: flex; align-items: center; gap: 8px;
@@ -274,7 +306,7 @@
   <!-- top strip: title + meta + inline stats + per-turn summaries -->
   <div class="strip">
     <div class="s-brand">
-      <h1>Spex</h1>
+      <h1>Mentalist</h1>
       <p>speculative test execution &middot; runs the agent&rsquo;s tests before the ask &middot; localhost</p>
     </div>
     <div class="s-meta">
@@ -310,7 +342,7 @@
     <span class="item"><span class="chip abstain"></span>abstain</span>
     <span class="item"><span class="chip fired"></span>fired</span>
     <span class="item"><span class="chip kill">&times;</span>epoch kill</span>
-    <span class="fr" id="conn-note">connecting &middot; codex + spex sidecar</span>
+    <span class="fr" id="conn-note">connecting &middot; codex + mentalist sidecar</span>
   </div>
 
   <div class="figcap">
@@ -398,7 +430,7 @@
   </div>
 
   <footer>
-    <span>live trace &middot; codex + spex sidecar &middot; t&#8320; <span id="f-t0">&middot;</span></span>
+    <span>live trace &middot; codex + mentalist sidecar &middot; t&#8320; <span id="f-t0">&middot;</span></span>
     <span id="f-sum">0 speculations &middot; 0 served &middot; 0 discarded &middot; 0 abstain</span>
     <span class="stamp"><span class="stamp-inner">
       <span class="dot" id="stamp-dot"></span>
@@ -486,7 +518,7 @@
     sw.style.background = 'var(--green)';
     const who = document.createElement('span');
     who.className = 'who';
-    who.textContent = 'spex ·';
+    who.textContent = 'mentalist ·';
     lab.append(sw, who, ' ' + kind);
     labelsEl.appendChild(lab);
     const line = document.createElement('div');
@@ -708,18 +740,25 @@
     });
   }
 
+  // a serve lands at the right edge, where the note is pinned, so there is no
+  // room for a leader yet. hold the callout until the bar has scrolled far
+  // enough left to draw one, and only drop it once the anchor leaves the plot.
   function placeCallouts(tx) {
     for (let i = callouts.length - 1; i >= 0; i--) {
       const c = callouts[i];
       const sx = tx + X(c.t);
-      const noteLeft = width - 8 - c.note.offsetWidth;
-      if (sx < 20 || sx > noteLeft) {
+      if (sx < 20) {
         for (const e of c.els) e.remove();
         callouts.splice(i, 1);
         continue;
       }
+      const noteLeft = width - 8 - c.note.offsetWidth;
+      const room = noteLeft - sx;
+      const vis = room > 0 ? 'visible' : 'hidden';
+      c.note.style.visibility = vis;
+      c.lead.style.visibility = vis;
       c.lead.style.left = px(sx);
-      c.lead.style.width = px(Math.max(0, noteLeft - sx));
+      c.lead.style.width = px(Math.max(0, room));
     }
   }
 
@@ -1045,7 +1084,7 @@
 
   function handle(e) {
     const now = performance.now();
-    if (e.type === 'reset' && e.epoch === undefined) { reset(); return; }
+    if (e.type === 'reset') { reset(); return; }
     setEpoch(e.epoch, now);
 
     if (e.type === 'codex') {
@@ -1164,7 +1203,7 @@
   function setConn(live) {
     $('stamp-dot').classList.toggle('on', live);
     $('stamp-conn').textContent = live ? 'live' : 'reconnecting';
-    $('conn-note').textContent = (live ? 'live' : 'reconnecting') + ' · codex + spex sidecar';
+    $('conn-note').textContent = (live ? 'live' : 'reconnecting') + ' · codex + mentalist sidecar';
   }
 
   const es = new EventSource('/events');
