@@ -16,6 +16,8 @@ verification wait deleted.
 ## demo
 <img width="3584" height="2240" alt="Spex Demo Video" src="https://github.com/user-attachments/assets/9407a262-f4cd-4ad6-8ae9-81863acf2ebf" />
 
+The time save due to spex was recorded to be 8.5 seconds, but it was actually 17 seconds because spex helped avoid a package conflict error.
+
 
 ## measured results
 
