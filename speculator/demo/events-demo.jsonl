@@ -6,20 +6,20 @@
 {"t":1784293056911,"type":"codex","what":"exec","command":"/bin/zsh -lc \"sed -n '1,240p' calc.py\""}
 {"t":1784293056912,"type":"codex","what":"exec","command":"/bin/zsh -lc \"sed -n '1,260p' test_calc.py\""}
 {"t":1784293057301,"type":"codex","what":"exec","command":"/bin/zsh -lc 'rg -n \"average|def total\" .'"}
-{"t":1784293061934,"type":"codex","what":"edit","path":"/Users/dev/spex-toy/calc.py","sig":"EDIT(py)"}
+{"t":1784293061934,"type":"codex","what":"edit","path":"/Users/sonia/mentalist-toy/calc.py","sig":"EDIT(py)"}
 {"t":1784293061934,"type":"predict","epoch":1,"candidates":[{"kind":"test","p":0.351}]}
 {"t":1784293061935,"type":"speculate","kind":"test","argv":["python3","-m","unittest","discover"],"epoch":1}
 {"t":1784293066062,"type":"serve","kind":"test","outcome":"promoted","savedMs":977,"epoch":1}
 {"t":1784293069208,"type":"codex","what":"exec","command":"/bin/zsh -lc 'git diff -- calc.py'"}
-{"t":1784293070100,"type":"codex","what":"edit","path":"/Users/dev/spex-toy/test_calc.py","sig":"EDIT(py)"}
+{"t":1784293070100,"type":"codex","what":"edit","path":"/Users/sonia/mentalist-toy/test_calc.py","sig":"EDIT(py)"}
 {"t":1784293070101,"type":"predict","epoch":2,"candidates":[{"kind":"test","p":0.42}]}
 {"t":1784293070102,"type":"speculate","kind":"test","argv":["python3","-m","unittest","discover"],"epoch":2}
 {"t":1784293075500,"type":"serve","kind":"test","outcome":"hit","savedMs":4100,"epoch":2}
-{"t":1784293077000,"type":"codex","what":"edit","path":"/Users/dev/spex-toy/calc.py","sig":"EDIT(py)"}
+{"t":1784293077000,"type":"codex","what":"edit","path":"/Users/sonia/mentalist-toy/calc.py","sig":"EDIT(py)"}
 {"t":1784293077001,"type":"predict","epoch":3,"candidates":[{"kind":"test","p":0.44},{"kind":"lint","p":0.18}]}
 {"t":1784293077002,"type":"abstain","kind":"lint","door":"confident","epoch":3}
 {"t":1784293077003,"type":"speculate","kind":"test","argv":["python3","-m","unittest","discover"],"epoch":3}
-{"t":1784293079000,"type":"codex","what":"edit","path":"/Users/dev/spex-toy/calc.py","sig":"EDIT(py)"}
+{"t":1784293079000,"type":"codex","what":"edit","path":"/Users/sonia/mentalist-toy/calc.py","sig":"EDIT(py)"}
 {"t":1784293079001,"type":"outcome","kind":"test","outcome":"discarded","savedMs":0,"wastedMs":1998,"epoch":3}
 {"t":1784293079002,"type":"predict","epoch":4,"candidates":[{"kind":"test","p":0.44}]}
 {"t":1784293079003,"type":"speculate","kind":"test","argv":["python3","-m","unittest","discover"],"epoch":4}
