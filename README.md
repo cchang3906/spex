@@ -1,5 +1,7 @@
 ## spex
 
+**Site: https://lawrence-deliver-bull-trends.trycloudflare.com** · [report](speculator/evals/report.md) · [raw traces](speculator/bench-runs)
+
 A speculative execution layer for a coding agent's tool calls.
 
 Codex codes in a serial tool loop: think, call a tool, read the output, think
