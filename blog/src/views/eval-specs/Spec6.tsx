@@ -97,10 +97,11 @@ const axes: SpecAxis[] = [
     question: "Did speed cost tokens?",
     definition:
       'It shouldn\'t: wrong guesses are never shown to the model, and a served result is the same text Codex would have received anyway, just earlier. But "shouldn\'t" is not a number, so we bill it. Codex reports its own token usage during every run, and we record the total per mode.',
-    metricLabel: "tokens, median per mode",
+    metricLabel: "tokens, median per mode, resolved runs only",
     pick: (row) => row.tokens,
     format: formatTokens,
     betterWhen: "lower",
+    resolvedOnly: true,
   },
 ];
 
@@ -374,8 +375,8 @@ export function EvalSpec6() {
           >
             SWE-bench Verified
           </a>
-          , four instances chosen by measured verification cost, a 0.3 s
-          control plus 1.5 s, 6.7 s, and 19 s suites.
+          : 25 instances chosen by measured verification cost, from a 0.3 s
+          control to a 19 s suite.
         </p>
         <p className={styles.traceLink}>
           Every number extracts from raw event traces committed with the code:{" "}
@@ -388,10 +389,10 @@ export function EvalSpec6() {
           </a>
         </p>
         <p className={styles.constantsLine}>
-          Held constant: gpt-5.6-sol pinned, Codex CLI version recorded per run, same laptop,
-          sequential runs, identical prompts in both modes, fresh repo export
-          per run, pattern table re-mined without benchmark instances, budget 2
-          slots, tau 0.35. Every knob pinned in code, none assumed.
+          Held constant: gpt-5.6-sol pinned, Codex CLI version recorded per run,
+          same laptop, arms sequential within every instance pair, identical
+          prompts in both modes, fresh repo export per run, pattern table
+          re-mined without benchmark instances, budget 2 slots, tau 0.35.
         </p>
       </header>
       <HeroStats />

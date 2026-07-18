@@ -81,3 +81,8 @@ the verification convention is stated identically in both modes prompts. in on m
 ## report skeleton (ramp swe bench structure)
 
 overview · instances (receive / do not receive table) · harness · scoring · results by axis · threats to validity · future work (rewind protocol via thread/fork, concurrency, more instances)
+
+
+## protocol update, final dataset
+
+the shipped dataset extends this plan: 25 vetted instances, 58 runs across two sessions (one sequential, one with 4 instance pairs concurrent, arms sequential within every pair). instance vetting was mechanical and offline (data/vetting-timings.txt); the report (evals/report.md) is the source of truth where this plan and the final protocol differ.
