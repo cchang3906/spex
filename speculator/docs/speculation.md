@@ -1,6 +1,6 @@
 # speculation design
 
-how mentalist decides to run a tool before codex asks, and why that is always safe. this is the prod design doc: every rule here maps to code.
+how spex decides to run a tool before codex asks, and why that is always safe. this is the prod design doc: every rule here maps to code.
 
 the one line version: predict the verification, run it on a spare burner, keep the plate on a shelf codex cannot see, serve it only when codex orders exactly that dish, and throw it out the moment the code changes.
 

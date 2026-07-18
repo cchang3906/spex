@@ -1,11 +1,11 @@
-# running mentalist
+# running spex
 
 ## commands
 
 ```
-node src/main.mjs <repo> "<task>"            codex through mentalist
-MENTALIST_DASH=1 node src/main.mjs <repo>    same, plus live dashboard at localhost:7777
-MENTALIST_BASELINE=1 node src/main.mjs ...   speculation off, for a/b comparison
+node src/main.mjs <repo> "<task>"            codex through spex
+SPEX_DASH=1 node src/main.mjs <repo>    same, plus live dashboard at localhost:7777
+SPEX_BASELINE=1 node src/main.mjs ...   speculation off, for a/b comparison
 node src/cli.mjs <repo>                      interactive cli renderer
 node --test                                  unit tests
 node scripts/bench.mjs <rounds> --swebench   the a/b benchmark
@@ -33,11 +33,11 @@ Remove the file and the daemon still works; the model just routes fewer verifica
 
 ## environment variables
 
-- `MENTALIST_BASELINE=1` speculation off, tool not registered, codex is exactly codex
-- `MENTALIST_DASH=1` serve the live dashboard
-- `MENTALIST_MODEL` pin the model (the benchmark pins gpt-5.6-sol)
-- `MENTALIST_TABLE` path to an alternate pattern table (the benchmark uses the bench clean table)
-- `MENTALIST_OFF=1` same effect as baseline for the scheduler
+- `SPEX_BASELINE=1` speculation off, tool not registered, codex is exactly codex
+- `SPEX_DASH=1` serve the live dashboard
+- `SPEX_MODEL` pin the model (the benchmark pins gpt-5.6-sol)
+- `SPEX_TABLE` path to an alternate pattern table (the benchmark uses the bench clean table)
+- `SPEX_OFF=1` same effect as baseline for the scheduler
 
 ## event glossary
 

@@ -1,11 +1,11 @@
 # implementation
 
-mentalist is a single javascript daemon, one process, zero dependencies, no build step. it launches `codex app-server` as a child process and speaks json rpc to it over stdio. codex is never modified, forked, or patched: everything flows through the public protocol, and the model runs wherever codex points it. the whole system is a control plane wrapped around an agent we do not own.
+spex is a single javascript daemon, one process, zero dependencies, no build step. it launches `codex app-server` as a child process and speaks json rpc to it over stdio. codex is never modified, forked, or patched: everything flows through the public protocol, and the model runs wherever codex points it. the whole system is a control plane wrapped around an agent we do not own.
 
 ## shape
 
 - agent side: one daemon under 1k lines. transport, router, predictor, verifiers, scheduler, executor wrapper, cache, serve handler, learn listener, event feed
-- offline side: about 630 lines of python (`mining/`), already run and validated. ingest, normalize, mine, eval. produces the pattern table the daemon loads at boot (a bench clean variant, mined with all benchmark instances excluded, is selected via `MENTALIST_TABLE`)
+- offline side: about 630 lines of python (`mining/`), already run and validated. ingest, normalize, mine, eval. produces the pattern table the daemon loads at boot (a bench clean variant, mined with all benchmark instances excluded, is selected via `SPEX_TABLE`)
 - interface side: a cli that renders codex like codex (`src/cli.mjs`) and a localhost dashboard over a server sent event feed (`src/dashboard.mjs`), both strict renderers of the same event stream
 - codex keeps its native tools untouched. we register exactly one addition at thread start, the `prefetch_verify` dynamic tool, and steer verification through it with one file (AGENTS.md). remove the daemon and codex is exactly codex
 

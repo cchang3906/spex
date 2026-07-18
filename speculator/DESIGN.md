@@ -1,6 +1,6 @@
 # design
 
-Mentalist is a single JavaScript daemon, one process, zero dependencies, no build step. It launches `codex app-server` as a child process and speaks JSON RPC to it over stdio. Codex is never modified, forked, or patched: everything flows through the public protocol, and removing the daemon leaves Codex exactly Codex. The whole system is a control plane wrapped around an agent we do not own.
+Spex is a single JavaScript daemon, one process, zero dependencies, no build step. It launches `codex app-server` as a child process and speaks JSON RPC to it over stdio. Codex is never modified, forked, or patched: everything flows through the public protocol, and removing the daemon leaves Codex exactly Codex. The whole system is a control plane wrapped around an agent we do not own.
 
 ## shape
 
@@ -10,7 +10,7 @@ Mentalist is a single JavaScript daemon, one process, zero dependencies, no buil
 
 ## the predictor
 
-Next step candidates come from hash map lookups over serialized context keys: the last k tool signatures of the live session form a string key, and a pattern table mined from 2146 real agent trajectories answers what usually comes next and how often. Constant time per lookup, about a hundred nanoseconds, no model, no inference. Online counts blend with the mined prior during the session, so a repo's local habits sharpen the table while it runs. A bench clean variant of the table, mined with all benchmark instances excluded, is selected via `MENTALIST_TABLE` for measurement.
+Next step candidates come from hash map lookups over serialized context keys: the last k tool signatures of the live session form a string key, and a pattern table mined from 2146 real agent trajectories answers what usually comes next and how often. Constant time per lookup, about a hundred nanoseconds, no model, no inference. Online counts blend with the mined prior during the session, so a repo's local habits sharpen the table while it runs. A bench clean variant of the table, mined with all benchmark instances excluded, is selected via `SPEX_TABLE` for measurement.
 
 Arguments are never predicted from context. Verification commands are repo facts, so a three tier lookup resolves them: repo config detection, a command observed in this session (persisted across restarts in `.prefetch/verifiers.json`), or a stack default. No resolution means no launch, silently.
 
@@ -29,7 +29,7 @@ Results are keyed by kind and epoch. Every file change bumps the epoch; entries 
 
 ## safety
 
-Wrong guesses cost laptop CPU, never correctness and never tokens. Speculative results are quarantined until Codex explicitly asks; nothing is ever injected into the conversation. Only allow listed verification commands run early, in the same sandbox Codex itself uses. Discarded and preempted runs are counted honestly in the event stream as wasted CPU seconds, reported next to the savings. One disclosed token exception: the first time Mentalist meets a repo where no verifier resolves, it answers "no verifier known yet" once, which costs a single tool exchange and teaches the learned tier permanently.
+Wrong guesses cost laptop CPU, never correctness and never tokens. Speculative results are quarantined until Codex explicitly asks; nothing is ever injected into the conversation. Only allow listed verification commands run early, in the same sandbox Codex itself uses. Discarded and preempted runs are counted honestly in the event stream as wasted CPU seconds, reported next to the savings. One disclosed token exception: the first time Spex meets a repo where no verifier resolves, it answers "no verifier known yet" once, which costs a single tool exchange and teaches the learned tier permanently.
 
 ## repo map
 
