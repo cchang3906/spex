@@ -1,0 +1,826 @@
+{
+ "k": 3,
+ "minSupport": 20,
+ "tau": 0.35,
+ "minedFrom": {
+  "trajectories": 2106,
+  "events": 88942,
+  "source": "swe-bench/experiments verified: 2x sweagent (gpt-4, claude-4-sonnet), 2x openhands (claude-4-sonnet, gpt-5), 1x mini-swe-agent (claude-opus-4-5)"
+ },
+ "patterns": [
+  {
+   "context": [
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.3509,
+   "support": 5973
+  },
+  {
+   "context": [
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4043,
+   "support": 4615
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.7665,
+   "support": 1979
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4884,
+   "support": 1931
+  },
+  {
+   "context": [
+    "EDIT(py)",
+    "TEST(passed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.7684,
+   "support": 1098
+  },
+  {
+   "context": [
+    "RUN(passed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4107,
+   "support": 842
+  },
+  {
+   "context": [
+    "TEST(failed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.6609,
+   "support": 803
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "TEST(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4675,
+   "support": 791
+  },
+  {
+   "context": [
+    "EDIT(py)",
+    "TEST(failed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.6793,
+   "support": 701
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "TEST(passed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.8113,
+   "support": 632
+  },
+  {
+   "context": [
+    "EDIT(py)",
+    "TEST(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.5615,
+   "support": 612
+  },
+  {
+   "context": [
+    "READ(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4024,
+   "support": 373
+  },
+  {
+   "context": [
+    "RUN(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4309,
+   "support": 340
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "TEST(failed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4294,
+   "support": 228
+  },
+  {
+   "context": [
+    "GREP(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4075,
+   "support": 218
+  },
+  {
+   "context": [
+    "TEST(failed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.3944,
+   "support": 196
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "READ(passed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.5867,
+   "support": 176
+  },
+  {
+   "context": [
+    "RUN(passed)",
+    "TEST(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.56,
+   "support": 168
+  },
+  {
+   "context": [
+    "GREP(passed)",
+    "GREP(passed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.406,
+   "support": 162
+  },
+  {
+   "context": [
+    "TEST(failed)",
+    "TEST(failed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.3612,
+   "support": 160
+  },
+  {
+   "context": [
+    "READ(passed)",
+    "READ(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4267,
+   "support": 160
+  },
+  {
+   "context": [
+    "RUN(passed)",
+    "RUN(passed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4506,
+   "support": 146
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "RUN(failed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.6017,
+   "support": 145
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "RUN(passed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.7347,
+   "support": 144
+  },
+  {
+   "context": [
+    "TEST(failed)",
+    "EDIT(py)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.3691,
+   "support": 141
+  },
+  {
+   "context": [
+    "TEST(failed)",
+    "EDIT(py)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.5536,
+   "support": 129
+  },
+  {
+   "context": [
+    "READ(passed)",
+    "TEST(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.3987,
+   "support": 126
+  },
+  {
+   "context": [
+    "EDIT(py)",
+    "RUN(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4393,
+   "support": 123
+  },
+  {
+   "context": [
+    "RUN(failed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.5911,
+   "support": 120
+  },
+  {
+   "context": [
+    "RUN(passed)",
+    "TEST(failed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.3878,
+   "support": 114
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "RUN(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.5538,
+   "support": 108
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "EDIT(py)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.5532,
+   "support": 104
+  },
+  {
+   "context": [
+    "GREP(passed)",
+    "TEST(failed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.3902,
+   "support": 103
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "TEST(passed)",
+    "TEST(failed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.5102,
+   "support": 100
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "RUN(failed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.7273,
+   "support": 88
+  },
+  {
+   "context": [
+    "TEST(failed)",
+    "READ(passed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.5506,
+   "support": 87
+  },
+  {
+   "context": [
+    "GREP(passed)",
+    "TEST(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4388,
+   "support": 86
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "TEST(passed)",
+    "RUN(failed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.7453,
+   "support": 79
+  },
+  {
+   "context": [
+    "RUN(passed)",
+    "TEST(passed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.7835,
+   "support": 76
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "TEST(failed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4217,
+   "support": 70
+  },
+  {
+   "context": [
+    "GREP(passed)",
+    "GREP(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.3846,
+   "support": 70
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "READ(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4795,
+   "support": 70
+  },
+  {
+   "context": [
+    "READ(passed)",
+    "RUN(passed)",
+    "TEST(failed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.5308,
+   "support": 69
+  },
+  {
+   "context": [
+    "TEST(failed)",
+    "TEST(passed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.6947,
+   "support": 66
+  },
+  {
+   "context": [
+    "EDIT(py)",
+    "TEST(passed)",
+    "TEST(failed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.3587,
+   "support": 66
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "TEST(failed)",
+    "GREP(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4914,
+   "support": 57
+  },
+  {
+   "context": [
+    "RUN(passed)",
+    "RUN(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.3972,
+   "support": 56
+  },
+  {
+   "context": [
+    "OTHER(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.3526,
+   "support": 55
+  },
+  {
+   "context": [
+    "TEST(failed)",
+    "TEST(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.3667,
+   "support": 55
+  },
+  {
+   "context": [
+    "GIT_RO(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.3667,
+   "support": 55
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "GREP(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.3952,
+   "support": 49
+  },
+  {
+   "context": [
+    "INSTALL(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.5517,
+   "support": 48
+  },
+  {
+   "context": [
+    "READ(passed)",
+    "READ(passed)",
+    "TEST(failed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.373,
+   "support": 47
+  },
+  {
+   "context": [
+    "TEST(failed)",
+    "RUN(failed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.3511,
+   "support": 46
+  },
+  {
+   "context": [
+    "RUN(failed)",
+    "TEST(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4206,
+   "support": 45
+  },
+  {
+   "context": [
+    "READ(passed)",
+    "TEST(passed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.6324,
+   "support": 43
+  },
+  {
+   "context": [
+    "READ(passed)",
+    "RUN(passed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.3739,
+   "support": 43
+  },
+  {
+   "context": [
+    "TEST(failed)",
+    "RUN(passed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.7368,
+   "support": 42
+  },
+  {
+   "context": [
+    "GREP(passed)",
+    "TEST(passed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.6897,
+   "support": 40
+  },
+  {
+   "context": [
+    "EDIT(py)",
+    "TEST(failed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.3679,
+   "support": 39
+  },
+  {
+   "context": [
+    "TEST(failed)",
+    "GREP(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4756,
+   "support": 39
+  },
+  {
+   "context": [
+    "READ(passed)",
+    "GREP(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4699,
+   "support": 39
+  },
+  {
+   "context": [
+    "LINT(passed)"
+   ],
+   "predicts": "LINT",
+   "p": 0.4643,
+   "support": 39
+  },
+  {
+   "context": [
+    "RUN(passed)",
+    "READ(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4,
+   "support": 38
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "GREP(passed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.7059,
+   "support": 36
+  },
+  {
+   "context": [
+    "TEST(failed)",
+    "TEST(failed)",
+    "TEST(failed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4595,
+   "support": 34
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "TEST(failed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.7556,
+   "support": 34
+  },
+  {
+   "context": [
+    "READ(passed)",
+    "GREP(passed)",
+    "TEST(failed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4583,
+   "support": 33
+  },
+  {
+   "context": [
+    "EDIT(py)",
+    "GIT_RO(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4103,
+   "support": 32
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "TEST(failed)",
+    "TEST(failed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.5263,
+   "support": 30
+  },
+  {
+   "context": [
+    "GREP(passed)",
+    "GREP(passed)",
+    "TEST(failed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.3544,
+   "support": 28
+  },
+  {
+   "context": [
+    "TEST(failed)",
+    "GREP(passed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.7027,
+   "support": 26
+  },
+  {
+   "context": [
+    "TEST(failed)",
+    "TEST(failed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.641,
+   "support": 25
+  },
+  {
+   "context": [
+    "RUN(passed)",
+    "TEST(passed)",
+    "RUN(failed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.7059,
+   "support": 24
+  },
+  {
+   "context": [
+    "GREP(passed)",
+    "RUN(passed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4615,
+   "support": 24
+  },
+  {
+   "context": [
+    "GREP(passed)",
+    "TEST(failed)",
+    "TEST(failed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4259,
+   "support": 23
+  },
+  {
+   "context": [
+    "TEST(passed)",
+    "OTHER(passed)",
+    "EDIT(py)"
+   ],
+   "predicts": "TEST",
+   "p": 0.3607,
+   "support": 22
+  },
+  {
+   "context": [
+    "RUN(passed)",
+    "TEST(failed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.6176,
+   "support": 21
+  },
+  {
+   "context": [
+    "READ(passed)",
+    "TEST(passed)",
+    "TEST(failed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.5526,
+   "support": 21
+  },
+  {
+   "context": [
+    "GREP(passed)",
+    "TEST(passed)",
+    "RUN(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4565,
+   "support": 21
+  },
+  {
+   "context": [
+    "RUN(passed)",
+    "TEST(failed)",
+    "RUN(failed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.4884,
+   "support": 21
+  },
+  {
+   "context": [
+    "GIT_RO(passed)",
+    "TEST(passed)",
+    "TEST(passed)"
+   ],
+   "predicts": "TEST",
+   "p": 0.5,
+   "support": 21
+  },
+  {
+   "context": [
+    "LINT(passed)",
+    "LINT(passed)"
+   ],
+   "predicts": "LINT",
+   "p": 0.6897,
+   "support": 20
+  }
+ ],
+ "excludedInstances": [
+  "pallets__flask-5014",
+  "pytest-dev__pytest-10051",
+  "pytest-dev__pytest-10081",
+  "sympy__sympy-21379",
+  "sympy__sympy-21596",
+  "sympy__sympy-21612",
+  "sympy__sympy-21847",
+  "sympy__sympy-21930"
+ ],
+ "excludedTrajectories": 40
+}
