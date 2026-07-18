@@ -23,6 +23,10 @@ The wide session's 21 instances (suites 0.35 to 1.9 s) fill in the left of the c
 
 47 of 60 prefetch_verify calls were answered from speculation (78 percent): 47 hits or promotions, 13 misses, 0 counterfactual bypasses (the model never ran verification in the terminal while a result sat ready).
 
+## live prediction accuracy
+
+Computed from the committed traces: of the 46 predictions that preceded a verification ask, the top ranked candidate matched the kind Codex actually asked for in 46 of 46 (top-1 = 100 percent). The kind space on python repos is small (verification means tests), so this measures firing at the right moments; the 78 percent serve rate measures being ready when the ask lands. 46 speculations total, all consumed or fenced, none wasted.
+
 ## measurement consistency under a bad network
 
 Both sessions ran on congested venue wifi. The variance split, from the traces: the same suite command on the same code state repeats to within a few percent (sequential session flagship: 18.2 s ± 0.4 across runs), while wall clocks swung 2 to 5x with network conditions. Savings are computed from local clock reads around local test processes (savedMs = min(suite duration, ask minus launch)); the network slows the model, not the measurement. If anything, slow model turns widen the window speculation hides in, and that applies to both arms identically.
