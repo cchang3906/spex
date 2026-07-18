@@ -13,6 +13,10 @@ results so nothing out of date can ever serve.
 The claim: gpt-5.6-sol, minus the waiting. Same model, same prompts, the
 verification wait deleted.
 
+## demo
+<img width="3584" height="2240" alt="Spex Demo Video" src="https://github.com/user-attachments/assets/9407a262-f4cd-4ad6-8ae9-81863acf2ebf" />
+
+
 ## measured results
 
 Live A/B on 25 SWE-bench Verified instances, 58 runs, vanilla Codex vs Codex
