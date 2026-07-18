@@ -25,6 +25,16 @@ const PREFETCH_VERIFY = {
   },
 };
 
+export function threadParams(repoDir, baseline = process.env.SPEX_BASELINE === '1') {
+  return {
+    cwd: repoDir,
+    sandbox: 'workspace-write',
+    serviceName: 'spex',
+    dynamicTools: baseline ? [] : [PREFETCH_VERIFY],
+    ...(process.env.SPEX_MODEL ? { model: process.env.SPEX_MODEL } : {}),
+  };
+}
+
 export async function boot(repoDir, sinks = []) {
   const emit = createEvents(join(repoDir, '.prefetch'), sinks);
   const baseline = process.env.SPEX_BASELINE === '1';
@@ -65,23 +75,27 @@ export async function boot(repoDir, sinks = []) {
   transport.notify('initialized', {});
 
   // protocol trap: thread/start takes sandbox as a plain string; the sandboxPolicy object belongs to turn/start and command/exec
-  const { thread } = await transport.send('thread/start', {
-    cwd: repoDir,
-    sandbox: 'workspace-write',
-    serviceName: 'spex',
-    dynamicTools: baseline ? [] : [PREFETCH_VERIFY],
-    ...(process.env.SPEX_MODEL ? { model: process.env.SPEX_MODEL } : {}),
-  });
+  const res = await transport.send('thread/start', threadParams(repoDir, baseline));
 
   scheduler.onSessionStart();
 
-  return { transport, thread };
+  return {
+    transport,
+    thread: res.thread,
+    model: res.model,
+    reasoningEffort: res.reasoningEffort,
+    permissionProfile: res.activePermissionProfile?.id ?? res.activePermissionProfile?.extends ?? null,
+  };
 }
 
-export function startTurn(transport, threadId, text) {
+export function startTurn(transport, threadId, text, opts = {}) {
   return transport.send('turn/start', {
     threadId,
     input: [{ type: 'text', text, text_elements: [] }],
+    ...(opts.model ? { model: opts.model } : {}),
+    ...(opts.effort ? { effort: opts.effort } : {}),
+    ...(opts.serviceTier ? { serviceTier: opts.serviceTier } : {}),
+    ...(opts.permissionProfile ? { permissionProfile: opts.permissionProfile } : {}),
   });
 }
 
