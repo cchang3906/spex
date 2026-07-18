@@ -1,4 +1,4 @@
-S# spex
+## spex
 
 A speculative execution layer for a coding agent's tool calls.
 
