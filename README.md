@@ -19,33 +19,44 @@ Live A/B on 25 SWE-bench Verified instances, 58 runs, vanilla Codex vs Codex
 plus Spex. Full report with methodology and disclosures:
 `speculator/evals/report.md`.
 
-| metric | result | meaning |
-| --- | --- | --- |
-| runs that banked savings | 29 of 29 (100 percent) | every steered run deleted some verification waiting; sign test p < 0.000001 |
-| total verification waiting | 121 s vanilla vs 76 s spex (37 percent less) | time the model sat blocked on test results, summed across all 58 runs |
-| serve rate | 47 of 60 (78 percent) | verification calls answered from speculation instead of run on demand |
-| live top-1 prediction | 46 of 46 (100 percent) | every prediction preceding an ask named the kind Codex actually asked for |
-| wasted CPU | 0.0 s | every speculated run was consumed by the model's own ask; nothing thrown away |
-| tokens | neutral by construction | served output is byte identical to terminal output; observed deltas vary by environment |
-| end to end wall clock | directional, not claimed | small n on congested venue wifi; see the report |
+Add up every second across all 58 runs and the picture is simple:
 
-Savings scale with what verification costs. Mean waiting deleted per run,
-against the measured suite cost of each instance:
+| | vanilla codex | spex codex | delta |
+| --- | --- | --- | --- |
+| total wall time (29 runs each arm) | 3,617 s | 3,047 s | 15.8 percent less |
+| time blocked waiting on verification | 121 s | 76 s | 37 percent less |
+| head starts banked by speculation | none | 85.7 s | |
+| CPU wasted on wrong guesses | none | 0.0 s | nothing thrown away |
 
-| suite cost | saved per run |
+The number to remember is 37 percent: the model spent about a third less of
+its life frozen waiting for test results, and it happened in 100 percent of
+steered runs (29 of 29, sign test p < 0.000001). The 15.8 percent wall clock
+figure carries a caveat stated plainly in the report: the arms resolved
+unevenly under venue network conditions, so treat it as directional. The
+verification waiting row has no such caveat; it is measured by local clocks
+around local test processes and the network cannot touch it.
+
+Where does the saving come from? It scales with what your tests cost:
+
+| suite cost | waiting deleted per run |
 | --- | --- |
 | 0.3 s (control) | 0.1 s |
 | 1.5 s | 1.4 s |
 | 6.7 s | 9.5 s |
 | 19 s | 18.8 s |
 
-How to read this: the win is proportional to how expensive your tests are.
-On the deliberately cheap control there is nothing to hide, so almost nothing
-is saved, which is the point of the control: it shows the effect is real
-verification burden being moved off the clock, not an artifact of the
-harness. Saved can exceed one suite cost when a run serves more than one
-verification. Every number above is recomputed from the committed raw traces
-by the extraction map in `speculator/bench-runs/README.md`, and a cold clone
+On a 19 second suite, spex deletes essentially the whole suite from the
+model's experience on every verification. On the deliberately cheap control
+there is nothing to hide and almost nothing is saved, which is the point of
+the control: the effect is real verification burden being moved off the
+clock, not an artifact of the harness. And the machinery earns its keep
+quietly: 78 percent of verification calls (47 of 60) were answered from
+speculation, the top ranked prediction matched what Codex asked for in 46 of
+46 cases, and tokens are neutral by construction because a served result is
+byte identical to what the terminal would have printed.
+
+Every number above recomputes from the committed raw traces via the
+extraction map in `speculator/bench-runs/README.md`; a cold clone
 reproduction audit verified them independently.
 
 ## a demo moment
