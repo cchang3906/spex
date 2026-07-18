@@ -113,7 +113,7 @@ authenticated with access to the pinned model. Raw evidence from the reported
 runs is committed: one row per run in `speculator/bench-results.jsonl`, one
 event trace per run in `speculator/bench-runs/`.
 
-##dashboard (prototype)
+## dashboard (prototype)
 
 <img width="722" height="607" alt="Screenshot 2026-07-18 at 2 56 20 PM" src="https://github.com/user-attachments/assets/71a091db-8174-4091-839d-a7d233d6e75b" />
 
