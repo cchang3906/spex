@@ -1,0 +1,49 @@
+{"t":1784395952662,"type":"mode","baseline":false}
+{"t":1784395952827,"type":"predict","epoch":0,"candidates":[{"kind":"test","p":1}]}
+{"t":1784395952827,"type":"admit","kind":"test","argv":["./.venv/bin/python","-m","pytest","-q","sympy/printing/tests/test_conventions.py"],"cwd":"/var/folders/1k/khz1c9xs5qg4tx7kv2j6rwbr0000gn/T/spex-bench-uTIUcE","epoch":0}
+{"t":1784395952828,"type":"speculate","kind":"test","argv":["./.venv/bin/python","-m","pytest","-q","sympy/printing/tests/test_conventions.py"],"epoch":0}
+{"t":1784395952864,"type":"codex","what":"status","detail":{"type":"active","activeFlags":[]}}
+{"t":1784395962613,"type":"codex","what":"status","detail":{"type":"idle"}}
+{"t":1784395962621,"type":"codex","what":"status","detail":{"type":"active","activeFlags":[]}}
+{"t":1784395962627,"type":"tokens","total":13160}
+{"t":1784395966499,"type":"codex","what":"status","detail":{"type":"idle"}}
+{"t":1784395966505,"type":"codex","what":"status","detail":{"type":"active","activeFlags":[]}}
+{"t":1784395966505,"type":"tokens","total":26417}
+{"t":1784395968538,"type":"codex","what":"exec","command":"/bin/zsh -lc 'rg -n \"subscript|translate|greek|omega|pretty_symbol|unicode\" sympy/printing sympy | head -n 240'"}
+{"t":1784395968539,"type":"codex","what":"done","command":"/bin/zsh -lc 'rg -n \"subscript|translate|greek|omega|pretty_symbol|unicode\" sympy/printing sympy | head -n 240'","exitCode":0,"durationMs":0}
+{"t":1784395968540,"type":"tokens","total":13222}
+{"t":1784395968706,"type":"outcome","kind":"test","outcome":"reused","savedMs":364,"wastedMs":0,"epoch":0}
+{"t":1784395968706,"type":"serve","kind":"test","outcome":"hit","savedMs":364,"waitMs":0,"epoch":0}
+{"t":1784395968708,"type":"tokens","total":39722}
+{"t":1784395971714,"type":"codex","what":"exec","command":"/bin/zsh -lc \"sed -n '145,225p' sympy/printing/pretty/pretty_symbology.py\nsed -n '500,570p' sympy/printing/pretty/pretty_symbology.py\nsed -n '1,180p' sympy/printing/tests/test_conventions.py\nrg -n \\\"split_super_sub|def split_super_sub\\\" sympy\""}
+{"t":1784395971714,"type":"codex","what":"done","command":"/bin/zsh -lc \"sed -n '145,225p' sympy/printing/pretty/pretty_symbology.py\nsed -n '500,570p' sympy/printing/pretty/pretty_symbology.py\nsed -n '1,180p' sympy/printing/tests/test_conventions.py\nrg -n \\\"split_super_sub|def split_super_sub\\\" sympy\"","exitCode":0,"durationMs":0}
+{"t":1784395971717,"type":"tokens","total":32557}
+{"t":1784395972443,"type":"codex","what":"exec","command":"/bin/zsh -lc 'rg -n \"unicode|Greek|subscript|omega|ω|pretty|pprint\" sympy/printing/tests/test_conventions.py sympy/printing/pretty/tests 2>/dev/null'"}
+{"t":1784395972444,"type":"codex","what":"done","command":"/bin/zsh -lc 'rg -n \"unicode|Greek|subscript|omega|ω|pretty|pprint\" sympy/printing/tests/test_conventions.py sympy/printing/pretty/tests 2>/dev/null'","exitCode":0,"durationMs":0}
+{"t":1784395972446,"type":"tokens","total":26389}
+{"t":1784395975210,"type":"codex","what":"exec","command":"/bin/zsh -lc \"sed -n '1,180p' sympy/printing/tests/test_conventions.py && git status --short && git diff -- sympy/printing/tests/test_conventions.py\""}
+{"t":1784395975211,"type":"codex","what":"done","command":"/bin/zsh -lc \"sed -n '1,180p' sympy/printing/tests/test_conventions.py && git status --short && git diff -- sympy/printing/tests/test_conventions.py\"","exitCode":0,"durationMs":0}
+{"t":1784395975213,"type":"tokens","total":52792}
+{"t":1784395975231,"type":"codex","what":"exec","command":"/bin/zsh -lc \"nl -ba sympy/printing/conventions.py | sed -n '1,115p'\nnl -ba sympy/printing/pretty/pretty_symbology.py | sed -n '500,570p'\nrg -n \\\"omega0|Greek|subscript|w0|ω0|ω₀\\\" sympy/printing/tests sympy/printing/pretty/tests | head -n 200\""}
+{"t":1784395975231,"type":"codex","what":"done","command":"/bin/zsh -lc \"nl -ba sympy/printing/conventions.py | sed -n '1,115p'\nnl -ba sympy/printing/pretty/pretty_symbology.py | sed -n '500,570p'\nrg -n \\\"omega0|Greek|subscript|w0|ω0|ω₀\\\" sympy/printing/tests sympy/printing/pretty/tests | head -n 200\"","exitCode":0,"durationMs":0}
+{"t":1784395975234,"type":"tokens","total":56807}
+{"t":1784395977366,"type":"codex","what":"exec","command":"/bin/zsh -lc \"git status --short && sed -n '1,220p' sympy/printing/conventions.py && sed -n '1,180p' sympy/printing/tests/test_conventions.py && rg -n \\\"split_super_sub|pretty_symbol|greek\\\" sympy/printing | head -120\""}
+{"t":1784395977366,"type":"codex","what":"done","command":"/bin/zsh -lc \"git status --short && sed -n '1,220p' sympy/printing/conventions.py && sed -n '1,180p' sympy/printing/tests/test_conventions.py && rg -n \\\"split_super_sub|pretty_symbol|greek\\\" sympy/printing | head -120\"","exitCode":0,"durationMs":0}
+{"t":1784395977369,"type":"tokens","total":54571}
+{"t":1784395982082,"type":"codex","what":"exec","command":"/bin/zsh -lc \"sed -n '1,180p' sympy/printing/conventions.py && sed -n '255,292p' sympy/printing/pretty/tests/test_pretty.py && git log -1 --oneline -- sympy/printing/tests/test_conventions.py 2>/dev/null\""}
+{"t":1784395982082,"type":"codex","what":"done","command":"/bin/zsh -lc \"sed -n '1,180p' sympy/printing/conventions.py && sed -n '255,292p' sympy/printing/pretty/tests/test_pretty.py && git log -1 --oneline -- sympy/printing/tests/test_conventions.py 2>/dev/null\"","exitCode":0,"durationMs":0}
+{"t":1784395982086,"type":"tokens","total":81097}
+{"t":1784395985350,"type":"codex","what":"exec","command":"/bin/zsh -lc \"nl -ba sympy/printing/tests/test_conventions.py | sed -n '8,50p'; nl -ba sympy/printing/pretty/tests/test_pretty.py | sed -n '265,282p'\""}
+{"t":1784395985350,"type":"codex","what":"done","command":"/bin/zsh -lc \"nl -ba sympy/printing/tests/test_conventions.py | sed -n '8,50p'; nl -ba sympy/printing/pretty/tests/test_pretty.py | sed -n '265,282p'\"","exitCode":0,"durationMs":0}
+{"t":1784395985352,"type":"tokens","total":110799}
+{"t":1784395988309,"type":"codex","what":"exec","command":"/bin/zsh -lc \"git status --short\ngit diff -- sympy/printing/tests/test_conventions.py sympy/printing/conventions.py\n./.venv/bin/python - <<'PY'\nfrom sympy.printing.conventions import split_super_sub\nfor s in ['w0', 'omega0', 'ω0', 'w𝟙', 'ω𝟙', 'ω𝟙2𝟙', 'alpha11']:\n    print(repr(s), split_super_sub(s))\nPY\""}
+{"t":1784395988408,"type":"tokens","total":83333}
+{"t":1784395988507,"type":"codex","what":"done","command":"/bin/zsh -lc \"git status --short\ngit diff -- sympy/printing/tests/test_conventions.py sympy/printing/conventions.py\n./.venv/bin/python - <<'PY'\nfrom sympy.printing.conventions import split_super_sub\nfor s in ['w0', 'omega0', 'ω0', 'w𝟙', 'ω𝟙', 'ω𝟙2𝟙', 'alpha11']:\n    print(repr(s), split_super_sub(s))\nPY\"","exitCode":0,"durationMs":198}
+{"t":1784395990570,"type":"tokens","total":142025}
+{"t":1784395999317,"type":"tokens","total":173575}
+{"t":1784396000827,"type":"codex","what":"exec","command":"/bin/zsh -lc \"git log -8 --oneline --decorate -- sympy/printing/conventions.py sympy/printing/tests/test_conventions.py && git blame -L 1,55 sympy/printing/tests/test_conventions.py && sed -n '480,555p' sympy/printing/pretty/pretty_symbology.py && sed -n '240,305p' sympy/printing/pretty/tests/test_pretty.py\""}
+{"t":1784396000827,"type":"codex","what":"done","command":"/bin/zsh -lc \"git log -8 --oneline --decorate -- sympy/printing/conventions.py sympy/printing/tests/test_conventions.py && git blame -L 1,55 sympy/printing/tests/test_conventions.py && sed -n '480,555p' sympy/printing/pretty/pretty_symbology.py && sed -n '240,305p' sympy/printing/pretty/tests/test_pretty.py\"","exitCode":0,"durationMs":0}
+{"t":1784396000875,"type":"tokens","total":76427}
+{"t":1784396001034,"type":"tokens","total":205214}
+{"t":1784396001035,"type":"codex","what":"status","detail":{"type":"idle"}}
+{"t":1784396001035,"type":"codex","what":"status","detail":"turn/completed"}

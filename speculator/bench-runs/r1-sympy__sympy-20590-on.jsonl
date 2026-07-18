@@ -1,0 +1,116 @@
+{"t":1784395898177,"type":"mode","baseline":false}
+{"t":1784395898349,"type":"predict","epoch":0,"candidates":[{"kind":"test","p":1}]}
+{"t":1784395898349,"type":"admit","kind":"test","argv":["./.venv/bin/python","-m","pytest","-q","sympy/core/tests/test_basic.py"],"cwd":"/var/folders/1k/khz1c9xs5qg4tx7kv2j6rwbr0000gn/T/spex-bench-JOwQBL","epoch":0}
+{"t":1784395898349,"type":"speculate","kind":"test","argv":["./.venv/bin/python","-m","pytest","-q","sympy/core/tests/test_basic.py"],"epoch":0}
+{"t":1784395898378,"type":"codex","what":"status","detail":{"type":"active","activeFlags":[]}}
+{"t":1784395903643,"type":"outcome","kind":"test","outcome":"reused","savedMs":368,"wastedMs":0,"epoch":0}
+{"t":1784395903643,"type":"serve","kind":"test","outcome":"hit","savedMs":368,"waitMs":0,"epoch":0}
+{"t":1784395903645,"type":"tokens","total":13191}
+{"t":1784395906198,"type":"codex","what":"status","detail":{"type":"idle"}}
+{"t":1784395906202,"type":"codex","what":"status","detail":{"type":"active","activeFlags":[]}}
+{"t":1784395906203,"type":"tokens","total":27160}
+{"t":1784395908485,"type":"codex","what":"status","detail":{"type":"idle"}}
+{"t":1784395908493,"type":"codex","what":"status","detail":{"type":"active","activeFlags":[]}}
+{"t":1784395908494,"type":"tokens","total":41215}
+{"t":1784395910753,"type":"codex","what":"status","detail":{"type":"idle"}}
+{"t":1784395910757,"type":"codex","what":"status","detail":{"type":"active","activeFlags":[]}}
+{"t":1784395910758,"type":"tokens","total":55356}
+{"t":1784395911739,"type":"codex","what":"exec","command":"/bin/zsh -lc \"rg -n \\\"class (Basic|Atom|Expr|AtomicExpr|Symbol)\\\\b|__slots__\\\" sympy/core/basic.py sympy/core/expr.py sympy/core/atom.py sympy/core/symbol.py sympy/core/*.py\""}
+{"t":1784395911740,"type":"codex","what":"done","command":"/bin/zsh -lc \"rg -n \\\"class (Basic|Atom|Expr|AtomicExpr|Symbol)\\\\b|__slots__\\\" sympy/core/basic.py sympy/core/expr.py sympy/core/atom.py sympy/core/symbol.py sympy/core/*.py\"","exitCode":2,"durationMs":0}
+{"t":1784395911741,"type":"tokens","total":26512}
+{"t":1784395914679,"type":"codex","what":"exec","command":"/bin/zsh -lc \"rg -n \\\"class Boolean\\\\b|class BooleanAtom\\\\b|__slots__\\\" sympy/logic sympy | head -200\""}
+{"t":1784395914679,"type":"codex","what":"done","command":"/bin/zsh -lc \"rg -n \\\"class Boolean\\\\b|class BooleanAtom\\\\b|__slots__\\\" sympy/logic sympy | head -200\"","exitCode":0,"durationMs":0}
+{"t":1784395914682,"type":"tokens","total":41253}
+{"t":1784395916003,"type":"codex","what":"exec","command":"/bin/zsh -lc 'git status --short && rg -n \"__slots__|__dict__|class Basic|class Atom|class Symbol\" sympy/core sympy/core/tests/test_basic.py sympy/core/tests/test_symbol.py | head -n 300'"}
+{"t":1784395916003,"type":"codex","what":"done","command":"/bin/zsh -lc 'git status --short && rg -n \"__slots__|__dict__|class Basic|class Atom|class Symbol\" sympy/core sympy/core/tests/test_basic.py sympy/core/tests/test_symbol.py | head -n 300'","exitCode":0,"durationMs":0}
+{"t":1784395916005,"type":"tokens","total":40505}
+{"t":1784395917385,"type":"codex","what":"exec","command":"/bin/zsh -lc \"sed -n '1,90p' sympy/core/tests/test_basic.py\""}
+{"t":1784395917385,"type":"codex","what":"exec","command":"/bin/zsh -lc \"sed -n '1,180p' sympy/core/basic.py\""}
+{"t":1784395917386,"type":"codex","what":"done","command":"/bin/zsh -lc \"sed -n '1,90p' sympy/core/tests/test_basic.py\"","exitCode":0,"durationMs":0}
+{"t":1784395917386,"type":"codex","what":"done","command":"/bin/zsh -lc \"sed -n '1,180p' sympy/core/basic.py\"","exitCode":0,"durationMs":0}
+{"t":1784395917393,"type":"codex","what":"exec","command":"/bin/zsh -lc 'rg -n \"class (Basic|Printable|EvalfMixin|Atom|Symbol)|__slots__\" sympy/core sympy/printing | head -n 240'"}
+{"t":1784395917393,"type":"codex","what":"done","command":"/bin/zsh -lc 'rg -n \"class (Basic|Printable|EvalfMixin|Atom|Symbol)|__slots__\" sympy/core sympy/printing | head -n 240'","exitCode":0,"durationMs":0}
+{"t":1784395917396,"type":"codex","what":"exec","command":"/bin/zsh -lc 'git status --short'"}
+{"t":1784395917396,"type":"codex","what":"done","command":"/bin/zsh -lc 'git status --short'","exitCode":0,"durationMs":0}
+{"t":1784395917398,"type":"tokens","total":69915}
+{"t":1784395918892,"type":"codex","what":"exec","command":"/bin/zsh -lc 'pwd && rg -n \"''^class (Symbol|AtomicExpr|Atom|Expr|Basic|Printable|EvalfMixin|Boolean|AssumptionsContext|ManagedProperties)|__slots__\" sympy/core sympy/printing | head -n 240'"}
+{"t":1784395918892,"type":"codex","what":"done","command":"/bin/zsh -lc 'pwd && rg -n \"''^class (Symbol|AtomicExpr|Atom|Expr|Basic|Printable|EvalfMixin|Boolean|AssumptionsContext|ManagedProperties)|__slots__\" sympy/core sympy/printing | head -n 240'","exitCode":0,"durationMs":0}
+{"t":1784395918894,"type":"tokens","total":54561}
+{"t":1784395920080,"type":"codex","what":"exec","command":"/bin/zsh -lc \"sed -n '1,115p' sympy/core/basic.py\nrg -n \\\"class Printable\\\\b|class EvalfMixin\\\\b|class ManagedProperties\\\\b\\\" sympy\nsed -n '1,130p' sympy/core/_print_helpers.py\nsed -n '1360,1405p' sympy/core/evalf.py\nsed -n '1,120p' sympy/core/assumptions.py\""}
+{"t":1784395920080,"type":"codex","what":"done","command":"/bin/zsh -lc \"sed -n '1,115p' sympy/core/basic.py\nrg -n \\\"class Printable\\\\b|class EvalfMixin\\\\b|class ManagedProperties\\\\b\\\" sympy\nsed -n '1,130p' sympy/core/_print_helpers.py\nsed -n '1360,1405p' sympy/core/evalf.py\nsed -n '1,120p' sympy/core/assumptions.py\"","exitCode":0,"durationMs":0}
+{"t":1784395920082,"type":"tokens","total":59434}
+{"t":1784395920396,"type":"codex","what":"exec","command":"/bin/zsh -lc \"sed -n '1,115p' sympy/core/basic.py; sed -n '1,115p' sympy/core/core.py; sed -n '1,245p' sympy/core/symbol.py; rg -n \\\"\"'^class Boolean|__slots__\" sympy/logic/boolalg.py | head -n 100; sed -n '\"'38,95p' sympy/logic/boolalg.py; sed -n '1,70p' sympy/core/tests/test_basic.py\""}
+{"t":1784395920397,"type":"codex","what":"done","command":"/bin/zsh -lc \"sed -n '1,115p' sympy/core/basic.py; sed -n '1,115p' sympy/core/core.py; sed -n '1,245p' sympy/core/symbol.py; rg -n \\\"\"'^class Boolean|__slots__\" sympy/logic/boolalg.py | head -n 100; sed -n '\"'38,95p' sympy/logic/boolalg.py; sed -n '1,70p' sympy/core/tests/test_basic.py\"","exitCode":0,"durationMs":0}
+{"t":1784395920399,"type":"tokens","total":55526}
+{"t":1784395922133,"type":"codex","what":"exec","command":"/bin/zsh -lc 'rg -n \"''^class Boolean|__slots__\" sympy/logic sympy/core/symbol.py sympy/core/_print_helpers.py sympy/core/core.py && sed -n '\"'1,120p' sympy/core/_print_helpers.py && sed -n '1,110p' sympy/core/core.py && sed -n '130,245p' sympy/core/symbol.py && rg -n \\\"class Boolean\\\" sympy\""}
+{"t":1784395922133,"type":"codex","what":"done","command":"/bin/zsh -lc 'rg -n \"''^class Boolean|__slots__\" sympy/logic sympy/core/symbol.py sympy/core/_print_helpers.py sympy/core/core.py && sed -n '\"'1,120p' sympy/core/_print_helpers.py && sed -n '1,110p' sympy/core/core.py && sed -n '130,245p' sympy/core/symbol.py && rg -n \\\"class Boolean\\\" sympy\"","exitCode":0,"durationMs":0}
+{"t":1784395922135,"type":"tokens","total":69273}
+{"t":1784395922510,"type":"codex","what":"exec","command":"/bin/zsh -lc \"sed -n '1,180p' sympy/core/_print_helpers.py\""}
+{"t":1784395922510,"type":"codex","what":"done","command":"/bin/zsh -lc \"sed -n '1,180p' sympy/core/_print_helpers.py\"","exitCode":0,"durationMs":0}
+{"t":1784395922512,"type":"codex","what":"exec","command":"/bin/zsh -lc 'git diff -- sympy/core/_print_helpers.py sympy/core/basic.py sympy/core/tests/test_basic.py'"}
+{"t":1784395922512,"type":"codex","what":"done","command":"/bin/zsh -lc 'git diff -- sympy/core/_print_helpers.py sympy/core/basic.py sympy/core/tests/test_basic.py'","exitCode":0,"durationMs":0}
+{"t":1784395922514,"type":"codex","what":"exec","command":"/bin/zsh -lc 'git log --oneline --all -- sympy/core/_print_helpers.py | head -n 30'"}
+{"t":1784395922514,"type":"codex","what":"done","command":"/bin/zsh -lc 'git log --oneline --all -- sympy/core/_print_helpers.py | head -n 30'","exitCode":0,"durationMs":0}
+{"t":1784395922514,"type":"codex","what":"exec","command":"/bin/zsh -lc \"git log -S'__slots__ = ()' --oneline --all -- sympy/core/_print_helpers.py sympy/core/basic.py | head -n 40\""}
+{"t":1784395922514,"type":"codex","what":"done","command":"/bin/zsh -lc \"git log -S'__slots__ = ()' --oneline --all -- sympy/core/_print_helpers.py sympy/core/basic.py | head -n 40\"","exitCode":0,"durationMs":0}
+{"t":1784395922516,"type":"tokens","total":87923}
+{"t":1784395924745,"type":"codex","what":"exec","command":"/bin/zsh -lc \"sed -n '1,180p' sympy/core/_print_helpers.py; git log --oneline --decorate -20; git log --all --oneline -- sympy/core/_print_helpers.py sympy/core/basic.py sympy/core/tests/test_basic.py | head -n 100; git blame -L 1,100 sympy/core/_print_helpers.py; git blame -L 25,48 sympy/core/tests/test_basic.py\""}
+{"t":1784395924745,"type":"codex","what":"done","command":"/bin/zsh -lc \"sed -n '1,180p' sympy/core/_print_helpers.py; git log --oneline --decorate -20; git log --all --oneline -- sympy/core/_print_helpers.py sympy/core/basic.py sympy/core/tests/test_basic.py | head -n 100; git blame -L 1,100 sympy/core/_print_helpers.py; git blame -L 25,48 sympy/core/tests/test_basic.py\"","exitCode":0,"durationMs":0}
+{"t":1784395924747,"type":"tokens","total":75051}
+{"t":1784395926545,"type":"codex","what":"exec","command":"/bin/zsh -lc \"./.venv/bin/python - <<'PY'\nfrom sympy import Basic, Symbol\nfrom sympy.core._print_helpers import Printable\nfrom sympy.core.expr import Expr, AtomicExpr\nfrom sympy.core.basic import Atom\nfrom sympy.logic.boolalg import Boolean\nfor cls in (Printable, Basic, Atom, Expr, AtomicExpr, Boolean, Symbol):\n    print(cls.__name__, '__slots__ locally:', cls.__dict__.get('__slots__', '<missing>'), 'dictoffset:', cls.__dictoffset__, 'weakref:', cls.__weakrefoffset__)\nfor obj in (Basic(), Symbol('s')):\n    print(type(obj).__name__, 'dict:', getattr(obj, '__dict__', '<none>'))\nPY\""}
+{"t":1784395926623,"type":"tokens","total":80384}
+{"t":1784395926722,"type":"codex","what":"done","command":"/bin/zsh -lc \"./.venv/bin/python - <<'PY'\nfrom sympy import Basic, Symbol\nfrom sympy.core._print_helpers import Printable\nfrom sympy.core.expr import Expr, AtomicExpr\nfrom sympy.core.basic import Atom\nfrom sympy.logic.boolalg import Boolean\nfor cls in (Printable, Basic, Atom, Expr, AtomicExpr, Boolean, Symbol):\n    print(cls.__name__, '__slots__ locally:', cls.__dict__.get('__slots__', '<missing>'), 'dictoffset:', cls.__dictoffset__, 'weakref:', cls.__weakrefoffset__)\nfor obj in (Basic(), Symbol('s')):\n    print(type(obj).__name__, 'dict:', getattr(obj, '__dict__', '<none>'))\nPY\"","exitCode":0,"durationMs":177}
+{"t":1784395928925,"type":"codex","what":"exec","command":"/bin/zsh -lc \"git tag --list | tail -n 30; git remote -v; rg -n \\\"class Printable\\\" . --glob '*.py'; rg -n \\\"Printable\\\" sympy --glob 'test_*.py' | head -n 100; git show --stat --oneline HEAD | head -n 80; git status --short\""}
+{"t":1784395929188,"type":"tokens","total":98132}
+{"t":1784395929288,"type":"codex","what":"done","command":"/bin/zsh -lc \"git tag --list | tail -n 30; git remote -v; rg -n \\\"class Printable\\\" . --glob '*.py'; rg -n \\\"Printable\\\" sympy --glob 'test_*.py' | head -n 100; git show --stat --oneline HEAD | head -n 80; git status --short\"","exitCode":0,"durationMs":362}
+{"t":1784395930621,"type":"codex","what":"exec","command":"/bin/zsh -lc 'git branch -a --contains HEAD'"}
+{"t":1784395930621,"type":"codex","what":"done","command":"/bin/zsh -lc 'git branch -a --contains HEAD'","exitCode":0,"durationMs":0}
+{"t":1784395930625,"type":"codex","what":"exec","command":"/bin/zsh -lc \"rg -n \\\"\\\\bPrintable\\\\b\\\" sympy | head -n 200\""}
+{"t":1784395930625,"type":"codex","what":"done","command":"/bin/zsh -lc \"rg -n \\\"\\\\bPrintable\\\\b\\\" sympy | head -n 200\"","exitCode":0,"durationMs":0}
+{"t":1784395930628,"type":"codex","what":"exec","command":"/bin/zsh -lc \"rg -n \\\"class .*\\\\(.*Printable\\\" sympy | head -n 200\""}
+{"t":1784395930628,"type":"codex","what":"done","command":"/bin/zsh -lc \"rg -n \\\"class .*\\\\(.*Printable\\\" sympy | head -n 200\"","exitCode":0,"durationMs":0}
+{"t":1784395930632,"type":"codex","what":"exec","command":"/bin/zsh -lc 'git tag --contains HEAD | head -n 20'"}
+{"t":1784395930632,"type":"codex","what":"done","command":"/bin/zsh -lc 'git tag --contains HEAD | head -n 20'","exitCode":0,"durationMs":0}
+{"t":1784395930711,"type":"codex","what":"exec","command":"/bin/zsh -lc 'git log -1 --format=fuller --stat'"}
+{"t":1784395930769,"type":"tokens","total":107014}
+{"t":1784395930868,"type":"codex","what":"done","command":"/bin/zsh -lc 'git log -1 --format=fuller --stat'","exitCode":0,"durationMs":156}
+{"t":1784395931351,"type":"codex","what":"exec","command":"/bin/zsh -lc 'git log --oneline --decorate -12 -- sympy/core/_print_helpers.py sympy/core/basic.py\ngit blame -L 1,20 sympy/core/_print_helpers.py\ngit blame -L 20,35 sympy/core/basic.py'"}
+{"t":1784395931352,"type":"codex","what":"done","command":"/bin/zsh -lc 'git log --oneline --decorate -12 -- sympy/core/_print_helpers.py sympy/core/basic.py\ngit blame -L 1,20 sympy/core/_print_helpers.py\ngit blame -L 20,35 sympy/core/basic.py'","exitCode":0,"durationMs":0}
+{"t":1784395931354,"type":"tokens","total":101702}
+{"t":1784395933777,"type":"codex","what":"exec","command":"/bin/zsh -lc \"git status --short && git log --oneline --all -- sympy/core/_print_helpers.py | head -n 20 && git blame -L 1,25 sympy/core/_print_helpers.py && rg -n \\\"\\\\bPrintable\\\\b\\\" sympy | head -n 120 && rg -n \\\"\"'^class .*'\"\\\\(.*Mixin|\"'^class .*Mixin\" sympy/core | head -n 200'"}
+{"t":1784395933778,"type":"codex","what":"done","command":"/bin/zsh -lc \"git status --short && git log --oneline --all -- sympy/core/_print_helpers.py | head -n 20 && git blame -L 1,25 sympy/core/_print_helpers.py && rg -n \\\"\\\\bPrintable\\\\b\\\" sympy | head -n 120 && rg -n \\\"\"'^class .*'\"\\\\(.*Mixin|\"'^class .*Mixin\" sympy/core | head -n 200'","exitCode":0,"durationMs":0}
+{"t":1784395933780,"type":"tokens","total":86916}
+{"t":1784395935704,"type":"codex","what":"exec","command":"/bin/zsh -lc \"rg -n \\\"\\\\bPrintable\\\\b\\\" sympy | head -100\nrg -n \\\"__dict__|__slots__\\\" sympy/core/tests/test_basic.py | head -100\nsed -n '1,120p' sympy/core/core.py\""}
+{"t":1784395935704,"type":"codex","what":"done","command":"/bin/zsh -lc \"rg -n \\\"\\\\bPrintable\\\\b\\\" sympy | head -100\nrg -n \\\"__dict__|__slots__\\\" sympy/core/tests/test_basic.py | head -100\nsed -n '1,120p' sympy/core/core.py\"","exitCode":0,"durationMs":0}
+{"t":1784395935706,"type":"tokens","total":124440}
+{"t":1784395935952,"type":"tokens","total":122457}
+{"t":1784395938581,"type":"codex","what":"exec","command":"/bin/zsh -lc \"sed -n '1,60p' sympy/core/tests/test_basic.py\nsed -n '720,770p' sympy/matrices/matrices.py\nsed -n '1,45p' sympy/tensor/array/ndim_array.py\nsed -n '1,35p' sympy/physics/vector/vector.py\nsed -n '1,25p' sympy/physics/vector/dyadic.py\""}
+{"t":1784395938581,"type":"codex","what":"done","command":"/bin/zsh -lc \"sed -n '1,60p' sympy/core/tests/test_basic.py\nsed -n '720,770p' sympy/matrices/matrices.py\nsed -n '1,45p' sympy/tensor/array/ndim_array.py\nsed -n '1,35p' sympy/physics/vector/vector.py\nsed -n '1,25p' sympy/physics/vector/dyadic.py\"","exitCode":0,"durationMs":0}
+{"t":1784395938583,"type":"tokens","total":148712}
+{"t":1784395939406,"type":"codex","what":"exec","command":"/bin/zsh -lc \"sed -n '715,765p' sympy/matrices/matrices.py; sed -n '1,40p' sympy/physics/vector/dyadic.py; sed -n '1,45p' sympy/physics/vector/vector.py; sed -n '1,55p' sympy/tensor/array/ndim_array.py; sed -n '1,110p' sympy/core/basic.py; sed -n '500,570p' sympy/core/assumptions.py; sed -n '50,90p' sympy/logic/boolalg.py\""}
+{"t":1784395939406,"type":"codex","what":"done","command":"/bin/zsh -lc \"sed -n '715,765p' sympy/matrices/matrices.py; sed -n '1,40p' sympy/physics/vector/dyadic.py; sed -n '1,45p' sympy/physics/vector/vector.py; sed -n '1,55p' sympy/tensor/array/ndim_array.py; sed -n '1,110p' sympy/core/basic.py; sed -n '500,570p' sympy/core/assumptions.py; sed -n '50,90p' sympy/logic/boolalg.py\"","exitCode":0,"durationMs":0}
+{"t":1784395939408,"type":"tokens","total":106226}
+{"t":1784395942194,"type":"tokens","total":154990}
+{"t":1784395945579,"type":"tokens","total":189580}
+{"t":1784395949084,"type":"tokens","total":129671}
+{"t":1784395952052,"type":"tokens","total":227571}
+{"t":1784395952076,"type":"tokens","total":175230}
+{"t":1784395953184,"type":"codex","what":"exec","command":"/bin/zsh -lc \"./.venv/bin/python -c \\\"from sympy import Basic, Symbol; from sympy.core._print_helpers import Printable; print(Basic.__mro__); print(Printable.__dict__.get('__slots__')); print(Basic.__dictoffset__, Symbol.__dictoffset__); print(Basic().__dict__, Symbol('s').__dict__)\\\"\""}
+{"t":1784395953273,"type":"tokens","total":152543}
+{"t":1784395953373,"type":"codex","what":"done","command":"/bin/zsh -lc \"./.venv/bin/python -c \\\"from sympy import Basic, Symbol; from sympy.core._print_helpers import Printable; print(Basic.__mro__); print(Printable.__dict__.get('__slots__')); print(Basic.__dictoffset__, Symbol.__dictoffset__); print(Basic().__dict__, Symbol('s').__dict__)\\\"\"","exitCode":0,"durationMs":189}
+{"t":1784395955599,"type":"codex","what":"exec","command":"/bin/zsh -lc \"rg -n \\\"__dict__|__slots__|no.*dict|slots\\\" sympy/core/tests sympy/*/tests | head -n 200 && ./.venv/bin/python - <<'PY'\nfrom sympy import Basic, Symbol\nfrom sympy.core._print_helpers import Printable\nfor cls in (Printable, Basic, Symbol):\n    print(cls.__name__, cls.__mro__)\n    print('own slots:', cls.__dict__.get('__slots__'))\n    print('dict providers:', [c.__name__ for c in cls.__mro__ if '__dict__' in c.__dict__])\ntry:\n    print(Symbol('s').__dict__)\nexcept AttributeError as exc:\n    print(type(exc).__name__, exc)\nPY\""}
+{"t":1784395955693,"type":"tokens","total":129287}
+{"t":1784395955791,"type":"codex","what":"done","command":"/bin/zsh -lc \"rg -n \\\"__dict__|__slots__|no.*dict|slots\\\" sympy/core/tests sympy/*/tests | head -n 200 && ./.venv/bin/python - <<'PY'\nfrom sympy import Basic, Symbol\nfrom sympy.core._print_helpers import Printable\nfor cls in (Printable, Basic, Symbol):\n    print(cls.__name__, cls.__mro__)\n    print('own slots:', cls.__dict__.get('__slots__'))\n    print('dict providers:', [c.__name__ for c in cls.__mro__ if '__dict__' in c.__dict__])\ntry:\n    print(Symbol('s').__dict__)\nexcept AttributeError as exc:\n    print(type(exc).__name__, exc)\nPY\"","exitCode":0,"durationMs":191}
+{"t":1784395955922,"type":"codex","what":"edit","path":"/var/folders/1k/khz1c9xs5qg4tx7kv2j6rwbr0000gn/T/spex-bench-JOwQBL/sympy/core/_print_helpers.py","sig":"EDIT(py)"}
+{"t":1784395955922,"type":"reset","epoch":1}
+{"t":1784395955923,"type":"predict","epoch":1,"candidates":[{"kind":"test","p":0.408}]}
+{"t":1784395955923,"type":"admit","kind":"test","argv":["./.venv/bin/python","-m","pytest","-q","sympy/core/tests/test_basic.py"],"cwd":"/var/folders/1k/khz1c9xs5qg4tx7kv2j6rwbr0000gn/T/spex-bench-JOwQBL","epoch":1}
+{"t":1784395955923,"type":"speculate","kind":"test","argv":["./.venv/bin/python","-m","pytest","-q","sympy/core/tests/test_basic.py"],"epoch":1}
+{"t":1784395955927,"type":"tokens","total":175932}
+{"t":1784395956505,"type":"tokens","total":273608}
+{"t":1784395957349,"type":"outcome","kind":"test","outcome":"reused","savedMs":283,"wastedMs":0,"epoch":1}
+{"t":1784395957349,"type":"serve","kind":"test","outcome":"hit","savedMs":283,"waitMs":0,"epoch":1}
+{"t":1784395957351,"type":"tokens","total":199387}
+{"t":1784395958090,"type":"tokens","total":201892}
+{"t":1784395958091,"type":"codex","what":"status","detail":{"type":"idle"}}
+{"t":1784395958091,"type":"codex","what":"status","detail":"turn/completed"}

@@ -1,0 +1,70 @@
+{"t":1784393076569,"type":"mode","baseline":false}
+{"t":1784393076960,"type":"predict","epoch":0,"candidates":[{"kind":"test","p":1}]}
+{"t":1784393076960,"type":"admit","kind":"test","argv":["./.venv/bin/python","-m","pytest","-q","testing/logging/test_fixture.py"],"cwd":"/var/folders/1k/khz1c9xs5qg4tx7kv2j6rwbr0000gn/T/spex-bench-Hn6wVS","epoch":0}
+{"t":1784393076960,"type":"speculate","kind":"test","argv":["./.venv/bin/python","-m","pytest","-q","testing/logging/test_fixture.py"],"epoch":0}
+{"t":1784393076984,"type":"codex","what":"status","detail":{"type":"active","activeFlags":[]}}
+{"t":1784393089208,"type":"outcome","kind":"test","outcome":"reused","savedMs":74,"wastedMs":0,"epoch":0}
+{"t":1784393089209,"type":"serve","kind":"test","outcome":"hit","savedMs":74,"waitMs":1,"epoch":0}
+{"t":1784393089210,"type":"tokens","total":13416}
+{"t":1784393093337,"type":"codex","what":"status","detail":{"type":"idle"}}
+{"t":1784393093340,"type":"codex","what":"status","detail":{"type":"active","activeFlags":[]}}
+{"t":1784393094088,"type":"tokens","total":27327}
+{"t":1784393096185,"type":"codex","what":"status","detail":{"type":"idle"}}
+{"t":1784393096189,"type":"codex","what":"status","detail":{"type":"active","activeFlags":[]}}
+{"t":1784393096189,"type":"tokens","total":41340}
+{"t":1784393104890,"type":"codex","what":"exec","command":"/bin/zsh -lc 'git status --short'"}
+{"t":1784393104891,"type":"codex","what":"done","command":"/bin/zsh -lc 'git status --short'","exitCode":0,"durationMs":0}
+{"t":1784393104899,"type":"codex","what":"exec","command":"/bin/zsh -lc \"sed -n '320,370p' src/_pytest/logging.py; sed -n '390,460p' src/_pytest/logging.py; sed -n '680,720p' src/_pytest/logging.py; rg -n \\\"caplog.clear|clear\\\\(\\\\).*caplog|get_records\\\" testing/logging/test_fixture.py\""}
+{"t":1784393104899,"type":"codex","what":"done","command":"/bin/zsh -lc \"sed -n '320,370p' src/_pytest/logging.py; sed -n '390,460p' src/_pytest/logging.py; sed -n '680,720p' src/_pytest/logging.py; rg -n \\\"caplog.clear|clear\\\\(\\\\).*caplog|get_records\\\" testing/logging/test_fixture.py\"","exitCode":0,"durationMs":0}
+{"t":1784393104901,"type":"codex","what":"exec","command":"/bin/zsh -lc 'rg -n \"def clear|get_records|class LogCaptureFixture|caplog_records_key|_version\" src/_pytest/logging.py testing/logging/test_fixture.py pyproject.toml setup.cfg setup.py'"}
+{"t":1784393104902,"type":"codex","what":"done","command":"/bin/zsh -lc 'rg -n \"def clear|get_records|class LogCaptureFixture|caplog_records_key|_version\" src/_pytest/logging.py testing/logging/test_fixture.py pyproject.toml setup.cfg setup.py'","exitCode":0,"durationMs":0}
+{"t":1784393104903,"type":"tokens","total":55888}
+{"t":1784393106034,"type":"codex","what":"exec","command":"/bin/zsh -lc 'git status --short && rg -n \"_version|setuptools_scm|version_file|write_to|version_scheme\" pyproject.toml setup.cfg setup.py src testing tox.ini .github 2>/dev/null'"}
+{"t":1784393106034,"type":"codex","what":"done","command":"/bin/zsh -lc 'git status --short && rg -n \"_version|setuptools_scm|version_file|write_to|version_scheme\" pyproject.toml setup.cfg setup.py src testing tox.ini .github 2>/dev/null'","exitCode":0,"durationMs":0}
+{"t":1784393106036,"type":"tokens","total":40953}
+{"t":1784393106895,"type":"codex","what":"exec","command":"/bin/zsh -lc \"rg -n \\\"class LogCaptureHandler|def clear\\\\(|def get_records|records =|caplog\\\\.clear|get_records\\\\(\\\" src/_pytest/logging.py testing/logging/test_fixture.py\""}
+{"t":1784393106895,"type":"codex","what":"done","command":"/bin/zsh -lc \"rg -n \\\"class LogCaptureHandler|def clear\\\\(|def get_records|records =|caplog\\\\.clear|get_records\\\\(\\\" src/_pytest/logging.py testing/logging/test_fixture.py\"","exitCode":0,"durationMs":0}
+{"t":1784393106901,"type":"tokens","total":26989}
+{"t":1784393109897,"type":"codex","what":"exec","command":"/bin/zsh -lc \"sed -n '315,460p' src/_pytest/logging.py; sed -n '120,205p' testing/logging/test_fixture.py; sed -n '660,720p' src/_pytest/logging.py\""}
+{"t":1784393109905,"type":"codex","what":"done","command":"/bin/zsh -lc \"sed -n '315,460p' src/_pytest/logging.py; sed -n '120,205p' testing/logging/test_fixture.py; sed -n '660,720p' src/_pytest/logging.py\"","exitCode":0,"durationMs":0}
+{"t":1784393109907,"type":"tokens","total":41141}
+{"t":1784393113997,"type":"codex","what":"exec","command":"/bin/zsh -lc \"sed -n '1,130p' pyproject.toml && sed -n '1,115p' setup.cfg && sed -n '1,35p' src/_pytest/__init__.py && sed -n '1,55p' src/_pytest/terminal.py && git ls-files src/_pytest/_version.py && git check-ignore -v src/_pytest/_version.py || true && ls -la src/_pytest/_version.py .venv/lib/python*/site-packages/_pytest/_version.py 2>/dev/null || true\""}
+{"t":1784393113997,"type":"codex","what":"done","command":"/bin/zsh -lc \"sed -n '1,130p' pyproject.toml && sed -n '1,115p' setup.cfg && sed -n '1,35p' src/_pytest/__init__.py && sed -n '1,55p' src/_pytest/terminal.py && git ls-files src/_pytest/_version.py && git check-ignore -v src/_pytest/_version.py || true && ls -la src/_pytest/_version.py .venv/lib/python*/site-packages/_pytest/_version.py 2>/dev/null || true\"","exitCode":0,"durationMs":0}
+{"t":1784393113999,"type":"tokens","total":56277}
+{"t":1784393117247,"type":"codex","what":"exec","command":"/bin/zsh -lc 'rg -n \"setuptools_scm|_version.py|version_file|write_to\" README.rst CONTRIBUTING.rst doc scripts tox.ini setup.cfg pyproject.toml 2>/dev/null | head -120'"}
+{"t":1784393117248,"type":"codex","what":"done","command":"/bin/zsh -lc 'rg -n \"setuptools_scm|_version.py|version_file|write_to\" README.rst CONTRIBUTING.rst doc scripts tox.ini setup.cfg pyproject.toml 2>/dev/null | head -120'","exitCode":0,"durationMs":0}
+{"t":1784393117251,"type":"codex","what":"exec","command":"/bin/zsh -lc \"sed -n '1,40p' pyproject.toml; sed -n '130,205p' testing/logging/test_fixture.py; ls -la src/_pytest/_version.py 2>/dev/null || true; rg --files | rg '(_version\\\\.py|version.*py|setuptools_scm|generate)' | head -80\""}
+{"t":1784393117252,"type":"codex","what":"done","command":"/bin/zsh -lc \"sed -n '1,40p' pyproject.toml; sed -n '130,205p' testing/logging/test_fixture.py; ls -la src/_pytest/_version.py 2>/dev/null || true; rg --files | rg '(_version\\\\.py|version.*py|setuptools_scm|generate)' | head -80\"","exitCode":0,"durationMs":0}
+{"t":1784393117259,"type":"codex","what":"exec","command":"/bin/zsh -lc 'git log -1 --oneline; git status --short; git ls-files src/_pytest/_version.py; git diff -- testing/logging/test_fixture.py src/_pytest/logging.py'"}
+{"t":1784393117260,"type":"codex","what":"done","command":"/bin/zsh -lc 'git log -1 --oneline; git status --short; git ls-files src/_pytest/_version.py; git diff -- testing/logging/test_fixture.py src/_pytest/logging.py'","exitCode":0,"durationMs":0}
+{"t":1784393117411,"type":"tokens","total":73355}
+{"t":1784393118010,"type":"codex","what":"exec","command":"/bin/zsh -lc \"sed -n '1,180p' setup.py && rg -n \\\"_version\\\\.py|setuptools_scm|pip install|editable|venv\\\" .gitignore .gitmodules README.rst CONTRIBUTING.rst tox.ini .github scripts doc 2>/dev/null | head -250 && find .venv -path '*/site-packages/_pytest/_version.py' -o -path '*/site-packages/pytest-*.dist-info' | head -30 && git log -8 --oneline --decorate\""}
+{"t":1784393118010,"type":"codex","what":"done","command":"/bin/zsh -lc \"sed -n '1,180p' setup.py && rg -n \\\"_version\\\\.py|setuptools_scm|pip install|editable|venv\\\" .gitignore .gitmodules README.rst CONTRIBUTING.rst tox.ini .github scripts doc 2>/dev/null | head -250 && find .venv -path '*/site-packages/_pytest/_version.py' -o -path '*/site-packages/pytest-*.dist-info' | head -30 && git log -8 --oneline --decorate\"","exitCode":0,"durationMs":0}
+{"t":1784393118101,"type":"codex","what":"exec","command":"/bin/zsh -lc \"git status --short; git diff -- src/_pytest/logging.py testing/logging/test_fixture.py; nl -ba src/_pytest/logging.py | sed -n '330,452p'; nl -ba src/_pytest/logging.py | sed -n '688,710p'; nl -ba testing/logging/test_fixture.py | sed -n '135,195p'\""}
+{"t":1784393118101,"type":"codex","what":"done","command":"/bin/zsh -lc \"git status --short; git diff -- src/_pytest/logging.py testing/logging/test_fixture.py; nl -ba src/_pytest/logging.py | sed -n '330,452p'; nl -ba src/_pytest/logging.py | sed -n '688,710p'; nl -ba testing/logging/test_fixture.py | sed -n '135,195p'\"","exitCode":0,"durationMs":0}
+{"t":1784393118102,"type":"tokens","total":74066}
+{"t":1784393118104,"type":"tokens","total":58149}
+{"t":1784393122301,"type":"codex","what":"exec","command":"/bin/zsh -lc \"rg -n \\\"\\\\.reset\\\\(\\\\)|LogCaptureHandler\\\\(|def clear\\\\(\\\" src/_pytest/logging.py testing/logging; git log -n 8 --oneline -- src/_pytest/logging.py testing/logging/test_fixture.py\""}
+{"t":1784393122302,"type":"codex","what":"done","command":"/bin/zsh -lc \"rg -n \\\"\\\\.reset\\\\(\\\\)|LogCaptureHandler\\\\(|def clear\\\\(\\\" src/_pytest/logging.py testing/logging; git log -n 8 --oneline -- src/_pytest/logging.py testing/logging/test_fixture.py\"","exitCode":0,"durationMs":0}
+{"t":1784393122304,"type":"tokens","total":77785}
+{"t":1784393122713,"type":"codex","what":"exec","command":"/bin/zsh -lc \"find .venv/lib/python3.11/site-packages -maxdepth 1 -type f \\\\( -name '*pytest*' -o -name '*.pth' \\\\) -print -exec sed -n '1,80p' {} \\\\; && find .venv/lib/python3.11/site-packages/pytest-0.0.0.dist-info -maxdepth 1 -type f -print -exec sed -n '1,80p' {} \\\\; && ls -ld .git && find .git -maxdepth 2 -type f -print | head -30 && sed -n '280,310p' CONTRIBUTING.rst && git check-ignore -v --no-index src/_pytest/_version.py\""}
+{"t":1784393122713,"type":"codex","what":"done","command":"/bin/zsh -lc \"find .venv/lib/python3.11/site-packages -maxdepth 1 -type f \\\\( -name '*pytest*' -o -name '*.pth' \\\\) -print -exec sed -n '1,80p' {} \\\\; && find .venv/lib/python3.11/site-packages/pytest-0.0.0.dist-info -maxdepth 1 -type f -print -exec sed -n '1,80p' {} \\\\; && ls -ld .git && find .git -maxdepth 2 -type f -print | head -30 && sed -n '280,310p' CONTRIBUTING.rst && git check-ignore -v --no-index src/_pytest/_version.py\"","exitCode":1,"durationMs":0}
+{"t":1784393124065,"type":"tokens","total":96786}
+{"t":1784393125217,"type":"codex","what":"exec","command":"/bin/zsh -lc './.venv/bin/python -m setuptools_scm'"}
+{"t":1784393125217,"type":"codex","what":"done","command":"/bin/zsh -lc './.venv/bin/python -m setuptools_scm'","exitCode":1,"durationMs":0}
+{"t":1784393125973,"type":"tokens","total":92527}
+{"t":1784393128724,"type":"codex","what":"exec","command":"/bin/zsh -lc \"find .venv/lib/python3.11/site-packages -maxdepth 1 \\\\( -iname '*scm*' -o -iname 'setuptools*' -o -iname 'pip*' \\\\) -print | sort && sed -n '90,120p' tox.ini && git show --stat --oneline --summary HEAD && git ls-tree -r --name-only HEAD | rg '(\"'^|/)_version'\"\\\\.py\"'$|pyproject.toml|setup.cfg|setup.py'\"' && git config --get core.sparseCheckout || true && git tag --points-at HEAD && git tag --sort=-version:refname | head -10\""}
+{"t":1784393128724,"type":"codex","what":"done","command":"/bin/zsh -lc \"find .venv/lib/python3.11/site-packages -maxdepth 1 \\\\( -iname '*scm*' -o -iname 'setuptools*' -o -iname 'pip*' \\\\) -print | sort && sed -n '90,120p' tox.ini && git show --stat --oneline --summary HEAD && git ls-tree -r --name-only HEAD | rg '(\"'^|/)_version'\"\\\\.py\"'$|pyproject.toml|setup.cfg|setup.py'\"' && git config --get core.sparseCheckout || true && git tag --points-at HEAD && git tag --sort=-version:refname | head -10\"","exitCode":0,"durationMs":0}
+{"t":1784393128767,"type":"tokens","total":122193}
+{"t":1784393130559,"type":"codex","what":"exec","command":"/bin/zsh -lc \"find .venv -path '*/_pytest/_version.py' -o -path '*/setuptools_scm*' | head -50; rg -n \\\"SETUPTOOLS_SCM_PRETEND_VERSION_FOR_PYTEST\\\" . .github tox.ini 2>/dev/null | head -50; git check-ignore -v src/_pytest/_version.py || true\""}
+{"t":1784393130560,"type":"codex","what":"done","command":"/bin/zsh -lc \"find .venv -path '*/_pytest/_version.py' -o -path '*/setuptools_scm*' | head -50; rg -n \\\"SETUPTOOLS_SCM_PRETEND_VERSION_FOR_PYTEST\\\" . .github tox.ini 2>/dev/null | head -50; git check-ignore -v src/_pytest/_version.py || true\"","exitCode":0,"durationMs":0}
+{"t":1784393130692,"type":"tokens","total":111999}
+{"t":1784393134505,"type":"codex","what":"exec","command":"/bin/zsh -lc \"git status --short --untracked-files=all; ls -la .venv/lib; find .venv/lib -maxdepth 4 -type f -name '_version.py' | head -20; rg -n \\\"_version\\\" .gitignore MANIFEST.in\""}
+{"t":1784393134505,"type":"codex","what":"done","command":"/bin/zsh -lc \"git status --short --untracked-files=all; ls -la .venv/lib; find .venv/lib -maxdepth 4 -type f -name '_version.py' | head -20; rg -n \\\"_version\\\" .gitignore MANIFEST.in\"","exitCode":2,"durationMs":0}
+{"t":1784393134947,"type":"tokens","total":131879}
+{"t":1784393140720,"type":"codex","what":"exec","command":"/bin/zsh -lc \"sed -n '1,80p' src/_pytest/__init__.py; rg -n \\\"from _pytest\\\\._version|_pytest\\\\._version|version_tuple|__version__\\\" src testing | head -100; git show HEAD:testing/logging/test_fixture.py | sed -n '160,195p'; git show HEAD:src/_pytest/logging.py | sed -n '335,355p'\""}
+{"t":1784393140720,"type":"codex","what":"done","command":"/bin/zsh -lc \"sed -n '1,80p' src/_pytest/__init__.py; rg -n \\\"from _pytest\\\\._version|_pytest\\\\._version|version_tuple|__version__\\\" src testing | head -100; git show HEAD:testing/logging/test_fixture.py | sed -n '160,195p'; git show HEAD:src/_pytest/logging.py | sed -n '335,355p'\"","exitCode":0,"durationMs":0}
+{"t":1784393141045,"type":"tokens","total":152196}
+{"t":1784393141452,"type":"tokens","total":98650}
+{"t":1784393141454,"type":"codex","what":"status","detail":{"type":"idle"}}
+{"t":1784393141454,"type":"codex","what":"status","detail":"turn/completed"}
