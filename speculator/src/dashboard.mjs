@@ -50,7 +50,20 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const dash = createDashboard();
   console.log('dashboard: http://127.0.0.1:7777');
   if (file) {
-    const lines = readFileSync(file, 'utf8').trim().split('\n');
+    let raw;
+    try {
+      raw = readFileSync(file, 'utf8');
+    } catch {
+      console.error(`replay file not found: ${file}`);
+      process.exit(1);
+    }
+    const lines = raw.trim().split('\n').filter((l) => {
+      try { JSON.parse(l); return true; } catch { return false; }
+    });
+    if (lines.length === 0) {
+      console.error(`no valid jsonl lines in: ${file}`);
+      process.exit(1);
+    }
     const t0 = JSON.parse(lines[0]).t;
     let last = t0;
     (async function loop() {
