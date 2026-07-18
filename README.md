@@ -24,6 +24,15 @@ verification wait deleted.
 
 The predicted tool-call savings were 8.5 seconds. But dynamic tooling also prevented a package-version conflict and the multi-turn troubleshooting it would have triggered, bringing the total time saved to about 17 seconds. See below for more detailed reasoning.
 
+## the site
+
+The blog presenting the system and the live benchmark evidence:
+https://lawrence-deliver-bull-trends.trycloudflare.com
+
+It is also in this repo: `cd blog && npm install && npm run dev`, or serve the
+prebuilt `blog/dist/` with any static server. All eval numbers on the site
+are computed from the same committed dataset as this README.
+
 ## measured results
 
 SWE-bench results, head to head against vanilla Codex (25 SWE-bench Verified
