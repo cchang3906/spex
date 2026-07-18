@@ -2,13 +2,19 @@
 
 A speculative execution layer for a coding agent's tool calls.
 
-Spex wraps OpenAI Codex, unmodified. It watches the session over the public
-`codex app-server` protocol, and when the model edits a file it predicts the
-verification that usually comes next (tests, lint, typecheck) and pre-runs it
-in Codex's own sandbox while the model is still generating. The moment Codex
-asks, the cached result is served in milliseconds. Wrong guesses cost laptop
-CPU only, are never shown to the model, and every file edit fences stale
-results so nothing out of date can ever serve.
+Codex codes in a serial tool loop: think, call a tool, read the output, think
+again. Every verification (tests, lint, typecheck) freezes that loop while
+the model waits for results. Spex wraps Codex, unmodified, watches the
+session over the public `codex app-server` protocol, and predicts Codex's
+future tool calls from its current trajectory: mined tool chain probabilities
+say what usually comes next, and a verifier lookup says exactly which command
+this repo uses. Confident predictions execute immediately in a background
+shadow queue (two slots, Codex's own sandbox) and cache their output. When a
+speculation is still running as Codex asks, the process is dynamically
+promoted to the main queue and keeps its head start. Through Spex, Codex has
+access to tool outputs before it even knows it needs them. Wrong guesses cost
+laptop CPU only, are never shown to the model, and every file edit fences
+stale results so nothing out of date can ever serve.
 
 The claim: gpt-5.6-sol, minus the waiting. Same model, same prompts, the
 verification wait deleted.
@@ -20,8 +26,9 @@ The predicted tool-call savings were 8.5 seconds. But dynamic tooling also preve
 
 ## measured results
 
-Live A/B on 25 SWE-bench Verified instances, 58 runs, vanilla Codex vs Codex
-plus Spex. Full report with methodology and disclosures:
+SWE-bench results, head to head against vanilla Codex (25 SWE-bench Verified
+instances, 58 runs): 15.8 percent less total wall time, 37 percent less
+verification waiting. Full report with methodology and disclosures:
 `speculator/evals/report.md`.
 
 Add up every second across all 58 runs and the picture is simple:

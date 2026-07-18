@@ -18,9 +18,11 @@ export function ArchitectureView() {
       <header className={styles.header}>
         <h1 className={styles.title}>Spex</h1>
         <p className={styles.lede}>
-          gpt-5.6-sol, but faster. Spex predicts the tools Codex is about to
-          call and has the results served before the model even knows it needs
-          them.
+          gpt-5.6-sol, minus the waiting. Codex codes in a serial tool loop:
+          think, call a tool, read the output, think again. Spex predicts the
+          tool calls, runs them in a background shadow queue, and serves the
+          cached results instantly, so Codex has tool outputs before it even
+          knows it needs them.
         </p>
       </header>
       <div className={styles.layout}>
