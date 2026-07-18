@@ -1,0 +1,124 @@
+{
+  "version": 1,
+  "class_priority": ["TEST", "LINT", "TYPECHECK", "BUILD", "INSTALL", "RUN", "GIT_RO", "GREP", "READ", "OTHER"],
+  "shell_wrappers": ["/bin/zsh", "/bin/bash", "/bin/sh", "/usr/bin/zsh", "/usr/bin/bash", "zsh", "bash", "sh"],
+  "strip_prefixes": ["sudo", "time", "env", "command", "nice"],
+  "interpreters": ["python", "python3", "python2", "node"],
+  "runner_wrappers": ["npx", "uvx", "bunx"],
+  "heads": {
+    "pytest": "TEST",
+    "unittest": "TEST",
+    "jest": "TEST",
+    "vitest": "TEST",
+    "mocha": "TEST",
+    "tox": "TEST",
+    "nox": "TEST",
+    "rspec": "TEST",
+    "phpunit": "TEST",
+
+    "ruff": "LINT",
+    "eslint": "LINT",
+    "flake8": "LINT",
+    "pylint": "LINT",
+    "golangci-lint": "LINT",
+    "biome": "LINT",
+    "black": "LINT",
+    "prettier": "LINT",
+    "isort": "LINT",
+
+    "tsc": "TYPECHECK",
+    "mypy": "TYPECHECK",
+    "pyright": "TYPECHECK",
+    "flow": "TYPECHECK",
+
+    "compileall": "BUILD",
+    "webpack": "BUILD",
+    "gcc": "BUILD",
+    "g++": "BUILD",
+    "clang": "BUILD",
+    "javac": "BUILD",
+
+    "pip": "INSTALL",
+    "pip3": "INSTALL",
+    "poetry": "INSTALL",
+    "brew": "INSTALL",
+
+    "grep": "GREP",
+    "rg": "GREP",
+    "ag": "GREP",
+    "ack": "GREP",
+    "fd": "GREP",
+    "find": "GREP",
+
+    "cat": "READ",
+    "head": "READ",
+    "tail": "READ",
+    "less": "READ",
+    "sed": "READ",
+    "awk": "READ",
+    "nl": "READ",
+    "wc": "READ",
+    "ls": "READ",
+    "pwd": "READ",
+    "stat": "READ",
+    "file": "READ",
+    "tree": "READ",
+    "du": "READ",
+    "which": "READ",
+
+    "echo": "OTHER",
+    "mkdir": "OTHER",
+    "touch": "OTHER",
+    "rm": "OTHER",
+    "cp": "OTHER",
+    "mv": "OTHER",
+    "curl": "OTHER",
+    "wget": "OTHER",
+    "chmod": "OTHER"
+  },
+  "subcommands": {
+    "git": {
+      "status": "GIT_RO", "log": "GIT_RO", "diff": "GIT_RO", "show": "GIT_RO",
+      "branch": "GIT_RO", "blame": "GIT_RO", "describe": "GIT_RO", "rev-parse": "GIT_RO",
+      "ls-files": "GIT_RO", "grep": "GREP",
+      "*": "OTHER"
+    },
+    "npm": {
+      "test": "TEST", "t": "TEST",
+      "ci": "INSTALL", "install": "INSTALL", "i": "INSTALL",
+      "start": "RUN",
+      "run": {"test": "TEST", "lint": "LINT", "typecheck": "TYPECHECK", "build": "BUILD", "dev": "RUN", "start": "RUN", "*": "RUN"},
+      "*": "OTHER"
+    },
+    "yarn": {
+      "test": "TEST", "lint": "LINT", "build": "BUILD", "add": "INSTALL", "install": "INSTALL", "start": "RUN",
+      "run": {"test": "TEST", "lint": "LINT", "typecheck": "TYPECHECK", "build": "BUILD", "dev": "RUN", "start": "RUN", "*": "RUN"},
+      "*": "OTHER"
+    },
+    "pnpm": {
+      "test": "TEST", "t": "TEST", "lint": "LINT", "build": "BUILD", "add": "INSTALL", "install": "INSTALL", "i": "INSTALL", "start": "RUN",
+      "run": {"test": "TEST", "lint": "LINT", "typecheck": "TYPECHECK", "build": "BUILD", "dev": "RUN", "start": "RUN", "*": "RUN"},
+      "*": "OTHER"
+    },
+    "cargo": {
+      "test": "TEST", "clippy": "LINT", "check": "TYPECHECK", "build": "BUILD", "add": "INSTALL", "run": "RUN", "fmt": "LINT",
+      "*": "OTHER"
+    },
+    "go": {
+      "test": "TEST", "vet": "LINT", "build": "BUILD", "run": "RUN", "get": "INSTALL", "install": "INSTALL",
+      "*": "OTHER"
+    },
+    "make": {
+      "test": "TEST", "check": "TEST", "lint": "LINT", "build": "BUILD", "all": "BUILD", "install": "INSTALL",
+      "*": "BUILD"
+    },
+    "uv": {
+      "pip": "INSTALL", "add": "INSTALL", "sync": "INSTALL", "run": "RUN",
+      "*": "OTHER"
+    },
+    "apt-get": {"install": "INSTALL", "update": "INSTALL", "*": "OTHER"},
+    "apt": {"install": "INSTALL", "update": "INSTALL", "*": "OTHER"},
+    "mvn": {"test": "TEST", "package": "BUILD", "compile": "BUILD", "install": "BUILD", "verify": "TEST", "*": "OTHER"},
+    "gradle": {"test": "TEST", "build": "BUILD", "check": "TEST", "*": "OTHER"}
+  }
+}

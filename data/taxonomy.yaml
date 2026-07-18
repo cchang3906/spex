@@ -1,0 +1,61 @@
+# Prefetch signature taxonomy v1 (plan §6.1)
+# Shared contract between the offline miner (mining/) and the runtime normalizer
+# (src/predictor/signatures.ts, written at the event and unit-tested against
+# data/fixtures_argv.json). Classification exists ONLY to build prediction
+# signatures and learning keys. It is NEVER an execution-safety decision —
+# what may run speculatively is the §7.2 allow-list resolved through verifier
+# discovery (§5.3), not anything inferred here.
+version: 1
+
+# Context key = last k signatures within the turn, oldest→newest, joined with "|".
+# Example: "EDIT(py)|TEST(failed)|EDIT(py)"
+k: 3
+context_separator: "|"
+
+signatures:
+  fileChange: "EDIT(<ext_class>)"          # ext_class from the changed paths (majority wins, first on tie)
+  commandExecution: "<CLASS>(<status>)"    # CLASS via normalization pipeline below
+  dynamicToolCall: "VERIFY(<kind>)"        # prefetch_verify only; treated as the kind's
+                                           # class for learning (a served TEST is an observed TEST)
+
+ext_classes: [py, ts_js, rs, go, config, other]
+ext_map:
+  py: [".py", ".pyi"]
+  ts_js: [".ts", ".tsx", ".js", ".jsx", ".mjs", ".cjs", ".mts", ".cts"]
+  rs: [".rs"]
+  go: [".go"]
+  config: [".json", ".yaml", ".yml", ".toml", ".ini", ".cfg", ".lock", ".txt"]
+  # anything else -> other
+
+# Status derivation for commandExecution / dynamicToolCall signatures:
+#   exitCode == 0            -> passed
+#   exitCode != 0 (non-null) -> failed
+#   item status "declined"   -> declined  (steer-fallback mode only)
+#   anything else            -> failed
+statuses: [passed, failed, declined]
+
+classes: [TEST, LINT, TYPECHECK, BUILD, GREP, READ, GIT_RO, INSTALL, RUN, OTHER]
+
+# Compound commands resolve to the HIGHEST-priority class among their segments.
+# (Observed reality, spike phase B/G: agents chain exploration commands with
+# `&&` inside one zsh -lc string.)
+class_priority: [TEST, LINT, TYPECHECK, BUILD, INSTALL, RUN, GIT_RO, GREP, READ, OTHER]
+
+# Normalization pipeline (order matters). Reference implementation:
+# mining/normalize.py. Spike finding: app-server delivers `commandExecution.command`
+# as ONE STRING wrapped in "/bin/zsh -lc '<payload>'" — NOT an argv array.
+normalization:
+  - unwrap_shell: take the payload of "<shell> -lc|-c <payload>" wrappers (see verb_classes.json .shell_wrappers)
+  - tokenize: shell-aware (quotes preserved; operators are their own tokens)
+  - split_segments: on unquoted && || ; | &  -> classify each segment independently
+  - strip_prefixes: leading VAR=value assignments, sudo, time, env, command
+  - unwrap_interpreters: |
+      python|python3 -m MOD ...      -> head becomes MOD
+      python|python3 -c ... | FILE   -> RUN
+      node FILE                      -> RUN
+      npx|uvx|bunx|yarn dlx|pnpm dlx TOOL -> head becomes TOOL
+  - classify: |
+      head in verb_classes.subcommands -> look up first non-flag argument
+      (fall back to the entry's "*" default); else verb_classes.heads[head];
+      else OTHER
+  - reduce: compound result = max by class_priority
