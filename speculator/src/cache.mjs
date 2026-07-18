@@ -28,6 +28,7 @@ export function createCache(onEvent) {
         entry.finishedAt = Date.now();
         entry.durationMs = result?.durationMs ?? entry.finishedAt - entry.startedAt;
         entry.result = result;
+        if (!entry.outcome) onEvent({ type: 'ready', kind: entry.kind, durationMs: entry.durationMs, epoch: entry.epoch, t: entry.finishedAt });
       },
       () => {
         entry.status = 'done';
