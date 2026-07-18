@@ -48,6 +48,19 @@ verification. Every number above is recomputed from the committed raw traces
 by the extraction map in `speculator/bench-runs/README.md`, and a cold clone
 reproduction audit verified them independently.
 
+## a demo moment
+
+<!-- gif goes here -->
+
+During a live demo the environment had drifted: a package version collision
+that would normally send the agent into several turns of dependency
+debugging. Spex had already executed the suite in the real environment, so
+the served output showed the actual failure state directly, and the model
+skipped the whole multi turn loop of chasing the drift. Speculation does not
+just hide the wait; because the result comes from a real run in the real
+sandbox, it also short circuits the reasoning the model would spend
+reconciling what it expects with what the environment actually is.
+
 ## reproduce
 
 From the repo root:
