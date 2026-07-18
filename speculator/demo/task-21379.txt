@@ -1,0 +1,1 @@
+First reproduce the failure by running: ./.venv/bin/python -m pytest -q sympy/core/tests . Then fix the issue described in the failing tests by editing the source files, and verify your fix by running the same command before finishing. The project virtualenv is at .venv; use ./.venv/bin/python for all python commands.

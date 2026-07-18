@@ -13,7 +13,7 @@ const rounds = Number(args[0] ?? 3);
 const task = args[1] ?? 'Fix the failing test in this repo and verify your fix.';
 const timeoutMs = swebench ? 900000 : 180000;
 const instances = swebench
-  ? Object.entries(JSON.parse(readFileSync(join(root, '..', 'data', 'swebench-instances.json'), 'utf8'))).filter(([, r]) => r.verify)
+  ? Object.entries(JSON.parse(readFileSync(join(root, '..', 'data', 'swebench-instances.json'), 'utf8'))).filter(([, r]) => r.verify).filter(([id]) => !process.env.SPEX_ONLY || id === process.env.SPEX_ONLY)
   : [[null, null]];
 const suffix = (row) => ' First reproduce the failure by running: ' + row.verify + ' . Then fix the issue by editing the source files, and verify your fix by running the same command before finishing. The project virtualenv is at .venv; use ./.venv/bin/python for all python commands.';
 
