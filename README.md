@@ -51,32 +51,32 @@ Where does the saving come from? It scales with what your tests cost:
 | 6.7 s | 9.5 s |
 | 19 s | 18.8 s |
 
-On a 19 second suite, spex deletes essentially the whole suite from the
-model's experience on every verification. On the deliberately cheap control
-there is nothing to hide and almost nothing is saved, which is the point of
-the control: the effect is real verification burden being moved off the
-clock, not an artifact of the harness. And the machinery earns its keep
-quietly: 78 percent of verification calls (47 of 60) were answered from
-speculation, the top ranked prediction matched what Codex asked for in 46 of
-46 cases, and tokens are neutral by construction because a served result is
-byte identical to what the terminal would have printed.
-
-Every number above recomputes from the committed raw traces via the
-extraction map in `speculator/bench-runs/README.md`; a cold clone
-reproduction audit verified them independently.
+- On a 19 second suite, spex deletes essentially the whole suite from the
+  model's experience on every verification.
+- On the deliberately cheap control there is nothing to hide and almost
+  nothing is saved. That is the point of the control: the effect is real
+  verification burden moved off the clock, not an artifact of the harness.
+- 78 percent of verification calls (47 of 60) were answered from speculation.
+- Top ranked prediction matched what Codex asked for in 46 of 46 cases.
+- Tokens are neutral by construction: a served result is byte identical to
+  what the terminal would have printed.
+- Every number recomputes from the committed raw traces via the extraction
+  map in `speculator/bench-runs/README.md`; a cold clone reproduction audit
+  verified them independently.
 
 ## a demo moment
 
 <!-- gif goes here -->
 
-During a live demo the environment had drifted: a package version collision
-that would normally send the agent into several turns of dependency
-debugging. Spex had already executed the suite in the real environment, so
-the served output showed the actual failure state directly, and the model
-skipped the whole multi turn loop of chasing the drift. Speculation does not
-just hide the wait; because the result comes from a real run in the real
-sandbox, it also short circuits the reasoning the model would spend
-reconciling what it expects with what the environment actually is.
+- The demo environment had drifted: a package version collision that would
+  normally cost the agent several turns of dependency debugging.
+- Spex had already executed the suite in the real environment, so the served
+  output showed the actual failure state directly.
+- The model skipped the whole multi turn loop of chasing the drift.
+- The point: speculation does not just hide the wait. The result comes from
+  a real run in the real sandbox, so it also short circuits the reasoning
+  the model would spend reconciling what it expects with what the
+  environment actually is.
 
 ## reproduce
 
