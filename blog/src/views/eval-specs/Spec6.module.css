@@ -1,0 +1,381 @@
+.page {
+  max-width: var(--maxw-prose);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4) var(--space-9);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: inherit;
+  border-radius: 0;
+}
+
+.header {
+  margin-bottom: var(--space-7);
+}
+
+.kicker {
+  margin: 0 0 var(--space-3);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--color-text-muted);
+}
+
+.title {
+  margin: 0 0 var(--space-4);
+  font-size: 2rem;
+  font-weight: 650;
+  line-height: 1.15;
+}
+
+.lede {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.card {
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0;
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
+  text-transform: lowercase;
+  background: var(--color-bg);
+}
+
+.cardHead {
+  margin: 0 0 var(--space-3);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.question {
+  margin: 0 0 var(--space-2);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.def {
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  color: var(--color-text-muted);
+}
+
+.chart {
+  margin-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-4);
+}
+
+.group {
+  margin-bottom: var(--space-4);
+}
+
+.group:last-of-type {
+  margin-bottom: 0;
+}
+
+.groupLabel {
+  margin: 0 0 var(--space-1);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 8.5rem 1fr 4.5rem;
+  gap: var(--space-3);
+  align-items: baseline;
+  font-size: 0.8125rem;
+  line-height: 1.9;
+}
+
+.rowLabel {
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar {
+  white-space: nowrap;
+  overflow: hidden;
+  letter-spacing: 0.04em;
+  user-select: none;
+}
+
+.barFill {
+  color: var(--color-text);
+}
+
+.barRest {
+  color: var(--color-text-faint);
+}
+
+.val {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.delta {
+  margin-top: var(--space-1);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.note {
+  margin: var(--space-3) 0 0;
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: var(--color-text-faint);
+}
+
+@media (max-width: 540px) {
+  .row {
+    grid-template-columns: 6.5rem 1fr 4rem;
+    gap: var(--space-2);
+  }
+}
+
+.fillBase {
+  color: #a9c8e4;
+}
+
+.fillOn {
+  color: #ecd98a;
+}
+
+.boardWrap {
+  margin-bottom: var(--space-6);
+}
+
+.board {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--color-border-strong);
+  font-size: 0.8125rem;
+}
+
+.board th {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border-strong);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-align: left;
+  color: var(--color-text-muted);
+}
+
+.board td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  font-variant-numeric: tabular-nums;
+}
+
+.board tr:last-child td {
+  border-bottom: none;
+}
+
+.tdAxis a {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.tdAxis a:hover {
+  text-decoration: underline;
+}
+
+.thBase,
+.tdBase {
+  background: #eaf2f9;
+}
+
+.thOn,
+.tdOn {
+  background: #faf4dd;
+}
+
+.tdDelta {
+  font-weight: 650;
+}
+
+.tdVerdict {
+  text-align: center;
+  width: 2.5rem;
+}
+
+.boardNote {
+  margin: var(--space-2) 0 0;
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: var(--color-text-faint);
+}
+
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-5);
+  margin-top: var(--space-5);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.swatch {
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+}
+
+.swatchBase {
+  background: #a9c8e4;
+}
+
+.swatchOn {
+  background: #ecd98a;
+}
+
+.traceLink {
+  margin: var(--space-3) 0 0;
+  font-size: 0.8rem;
+  color: var(--color-text-faint);
+}
+
+.traceLink a {
+  color: var(--color-text-muted);
+  text-decoration: underline;
+}
+
+.constantsLine {
+  margin: var(--space-3) 0 0;
+  max-width: 44rem;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--color-text-faint);
+}
+
+.cdfSvg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.cdfGrid {
+  stroke: var(--plot-grid);
+  stroke-width: 1;
+}
+
+.cdfAxis {
+  stroke: var(--color-border-strong);
+  stroke-width: 1;
+}
+
+.cdfBase {
+  fill: none;
+  stroke: #7ba7d4;
+  stroke-width: 2;
+}
+
+.cdfOn {
+  fill: none;
+  stroke: #d9b940;
+  stroke-width: 2;
+}
+
+.cdfLabel {
+  font-size: 10px;
+  fill: var(--color-text-faint);
+}
+
+.cdfLegend {
+  display: flex;
+  gap: var(--space-5);
+  margin-top: var(--space-2);
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.measured {
+  margin-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-3);
+}
+
+.measuredHead {
+  margin: 0 0 var(--space-2);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  color: var(--color-text-faint);
+}
+
+.measuredRow {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  font-size: 0.8125rem;
+  line-height: 1.9;
+}
+
+.measuredLabel {
+  color: var(--color-text-muted);
+}
+
+.measuredValue {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.rowLabelOn {
+  color: var(--color-text);
+  font-weight: 650;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.thOn {
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.benchLink {
+  margin: var(--space-3) 0 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.benchLink a {
+  color: var(--color-text);
+  text-decoration: underline;
+}
+
+.heroStats {
+  display: flex;
+  gap: var(--space-6);
+  margin-bottom: var(--space-5);
+}
+
+.heroStat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.heroValue {
+  font-size: 1.9rem;
+  font-weight: 650;
+  line-height: 1.1;
+}
+
+.heroLabel {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
