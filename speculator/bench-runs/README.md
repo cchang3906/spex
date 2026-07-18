@@ -38,4 +38,4 @@ Each line is one JSON object with a millisecond timestamp `t` and a `type`:
 | wasted cpu | wastedMs on discarded and preempted outcomes |
 | tokens | max cumulative total per run |
 
-The extraction code is `aggregate()` in `scripts/bench.mjs`. The gate for a run to count at all is resolution: the failing tests named by the instance are re run after the turn, recorded in `bench-results.jsonl` as `resolved`.
+The extraction code is `aggregate()` in `scripts/bench.mjs`. Every run is recorded and reported. Resolution (the failing tests re run after the turn, recorded as `resolved`) gates the end to end wall and token medians only; trace level metrics count every run.
