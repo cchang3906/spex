@@ -1,0 +1,7 @@
+codex-cli version: codex-cli 0.144.4
+node version: v24.13.0
+generated: 2026-07-15
+commands:
+  codex app-server generate-ts --out ./schemas
+  codex app-server generate-json-schema --out ./schemas
+note: previous pin was codex-cli 0.142.4; 74 files changed, 13 added, 1 removed. Key delta: approvalPolicy "on-failure" removed.
