@@ -2,1186 +2,625 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Spex &middot; instrument</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Spex · live queues</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
-  :root {
-    --bg: #0d0d0d;
-    --ink: #e8e8e8;
-    --g1: #a0a0a0;
-    --g2: #6f6f6f;
-    --g3: #2a2a2a;
-    --grid: #1a1a1a;
-    --green: #bfe3c8;
-    --terra: #e08a6e;
-    --sans: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    --mono: 'Geist', 'SF Mono', Menlo, Consolas, monospace;
-  }
-  html, body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 12px; }
-  body {
-    background-image:
-      linear-gradient(var(--g3) 1px, transparent 1px),
-      linear-gradient(90deg, var(--g3) 1px, transparent 1px),
-      linear-gradient(var(--grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size: 64px 64px, 64px 64px, 8px 8px, 8px 8px;
-    min-height: 100vh;
-    -webkit-font-smoothing: antialiased;
-  }
-  .mono { font-family: var(--mono); }
-
-  .sheet {
-    max-width: 1344px;
-    margin: 32px auto 64px;
-    padding: 24px;
-    border: 1px solid var(--g3);
-    background: transparent;
-    position: relative;
-  }
-  .reg { position: absolute; font-family: var(--mono); font-size: 10px; color: var(--g2); line-height: 1; }
-  .reg.tl { top: -5px; left: -4px; }
-  .reg.tr { top: -5px; right: -4px; }
-  .reg.bl { bottom: -5px; left: -4px; }
-  .reg.br { bottom: -5px; right: -4px; }
-
-  /* top strip: title block + meta + stats + per-turn */
-  .strip {
-    display: flex; align-items: stretch;
-    border: 1px solid var(--ink); background: var(--bg);
-  }
-  .strip > div { border-right: 1px solid var(--g3); }
-  .strip > div:last-child { border-right: none; }
-
-  .s-brand { width: 216px; padding: 12px 16px 8px; }
-  .s-brand h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; line-height: 24px; }
-  .s-brand p { font-family: var(--mono); font-size: 9px; color: var(--g1); line-height: 14px; margin-top: 2px; }
-
-  .s-meta { width: 368px; display: grid; grid-template-columns: repeat(4, 1fr); }
-  .s-meta .mc { padding: 6px 10px 4px; border-right: 1px solid var(--g3); border-bottom: 1px solid var(--g3); }
-  .s-meta .mc:nth-child(4n) { border-right: none; }
-  .s-meta .mc:nth-child(n+5) { border-bottom: none; }
-  .mc .k { font-family: var(--mono); font-size: 7px; letter-spacing: 0.12em;  color: var(--g2); display: block; line-height: 10px; }
-  .mc .v { font-family: var(--mono); font-size: 10px; color: var(--ink); line-height: 14px; white-space: nowrap; }
-
-  .s-stats { flex: 1; display: flex; }
-  .s-stats .stat { flex: 1; padding: 8px 12px 6px; border-right: 1px solid var(--g3); min-width: 0; overflow: hidden; }
-  .s-stats .stat:last-child { border-right: none; }
-  .stat .k { font-family: var(--mono); font-size: 7px; letter-spacing: 0.12em;  color: var(--g2); display: block; line-height: 10px; white-space: nowrap; }
-  .stat .v { font-family: var(--mono); font-size: 17px; font-weight: 600; line-height: 24px; letter-spacing: -0.02em; white-space: nowrap; }
-  .stat .v small { font-size: 10px; font-weight: 400; color: var(--g1); }
-  .stat .u { display: block; width: 24px; height: 3px; margin-top: 3px; }
-  .stat.hi .u { background: var(--green); }
-  .stat.warn .v { color: var(--terra); }
-  .stat.warn .u { background: var(--terra); }
-
-  .s-turns { width: 264px; display: flex; flex-direction: column; overflow: hidden; }
-  .turn-cell { flex: 1; position: relative; padding: 5px 12px 6px; border-bottom: 1px solid var(--g3); }
-  .turn-cell:last-child { border-bottom: none; }
-  .turn-cell .t { font-family: var(--mono); font-size: 9px; color: var(--ink); font-weight: 500; letter-spacing: 0.08em; }
-  .turn-cell .d { font-family: var(--mono); font-size: 9px; color: var(--g1); }
-  .turn-cell .fill { position: absolute; left: 0; bottom: 0; height: 3px; background: var(--green); }
-  .turn-cell.empty .t { color: var(--g2); font-weight: 400; }
-
-  /* legend */
-  .legend {
-    display: flex; gap: 18px; align-items: center; flex-wrap: wrap;
-    padding: 8px 0; margin-bottom: 8px;
-    font-family: var(--mono); font-size: 9px; color: var(--g1);
-    border-bottom: 1px solid var(--g3);
-  }
-  .legend .cap { color: var(--ink); font-weight: 500; letter-spacing: 0.12em;  font-size: 9px; margin-right: 6px; }
-  .legend .item { display: flex; align-items: center; gap: 5px; }
-  .legend .fr { margin-left: auto; color: var(--g2); }
-  .chip { width: 12px; height: 9px; display: inline-block; }
-  .chip.reason { background: var(--g3); }
-  .chip.term { background: var(--g2); }
-  .chip.edit { width: 2px; height: 11px; background: var(--terra); }
-  .chip.spec { background: repeating-linear-gradient(45deg, var(--green) 0, var(--green) 2.5px, var(--bg) 2.5px, var(--bg) 5px); border: 1px solid var(--green); }
-  .chip.served { background: var(--ink); }
-  .chip.discard { background: var(--g3); position: relative; }
-  .chip.discard::after { content: ""; position: absolute; left: 0; top: 4px; width: 100%; height: 1px; background: var(--g2); }
-  .chip.abstain { background: var(--bg); border: 1px dashed var(--g2); }
-  .chip.fired { width: 2px; height: 11px; background: var(--ink); }
-  .chip.kill { width: auto; height: auto; color: var(--terra); font-weight: 600; font-size: 11px; line-height: 9px; }
-
-  /* waterfall */
-  .figcap { display: flex; justify-content: space-between; align-items: baseline; margin: 8px 0; }
-  .figcap .fl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;  color: var(--ink); font-weight: 500; }
-  .figcap .fr { font-family: var(--mono); font-size: 9px; color: var(--g2); }
-
-  .wsheet { border: 1px solid var(--g3); background: var(--bg); }
-  .wgrid { display: grid; grid-template-columns: 152px 1fr 40px; }
-
-  .labels .lab {
-    display: flex; align-items: center; justify-content: flex-end;
-    gap: 6px; padding-right: 12px; border-bottom: 1px solid var(--g3);
-    font-family: var(--mono); font-size: 9px; color: var(--g1); height: 48px;
-  }
-  .labels .lab.mband { height: 36px; color: var(--g2); border-bottom: 1px solid var(--g2); }
-  .labels .lab .who { color: var(--g2); }
-  .labels .lab .sw { width: 7px; height: 7px; flex: none; }
-
-  .rows { position: relative; overflow: hidden; border-bottom: 1px solid var(--g3); }
-  .gl { position: absolute; top: 36px; bottom: 0; width: 1px; background: var(--g3); }
-  .rowline { position: absolute; left: 0; right: 0; height: 1px; background: var(--g3); }
-  .rowline.mline { background: var(--g2); }
-  .now-line { position: absolute; top: 36px; bottom: 0; width: 0; border-left: 1px dashed var(--g2); z-index: 6; }
-  .tl-follow { position: absolute; top: 6px; right: 10px; z-index: 8; font-family: var(--mono); font-size: 10px; letter-spacing: .08em;  background: var(--bg); color: var(--g1); border: 1px solid var(--g3); padding: 3px 10px; cursor: pointer; }
-  .tl-follow.paused { background: var(--ink); color: var(--bg); border-color: var(--ink); }
-
-  .slayer { position: absolute; inset: 0; z-index: 2; will-change: transform; }
-  .flayer { position: absolute; inset: 0; z-index: 7; pointer-events: none; }
-
-  .rmargin { position: relative; border-bottom: 1px solid var(--g3); }
-  .rmargin .brk { position: absolute; left: 10px; width: 5px; border: 1px solid var(--ink); border-left: none; }
-  .rmargin .rot {
-    position: absolute; left: 22px;
-    transform: rotate(-90deg); transform-origin: left top;
-    font-family: var(--mono); font-size: 9px; color: var(--ink); font-weight: 500; white-space: nowrap;
-  }
-
-  .t-ts { position: absolute; top: 6px; font-family: var(--mono); font-size: 9.5px; color: var(--ink); font-weight: 500; white-space: nowrap; transform: translateX(calc(-100% - 4px)); }
-  .t-fl { position: absolute; top: 20px; font-family: var(--mono); font-size: 7.5px; letter-spacing: 0.1em; color: var(--g2); white-space: nowrap; transform: translateX(calc(-100% - 4px)); }
-
-  .fired-rule { position: absolute; top: 30px; bottom: 0; width: 1px; background: var(--ink); z-index: 3; }
-  .turn-rule { position: absolute; top: 36px; bottom: 0; width: 0; border-left: 1px dashed var(--g2); }
-  .turn-lab { position: absolute; top: 40px; font-family: var(--mono); font-size: 8.5px; color: var(--g2); letter-spacing: 0.1em; white-space: nowrap; }
-
-  .bar {
-    position: absolute; height: 18px;
-    display: flex; align-items: center;
-    padding: 0 4px; white-space: nowrap; overflow: hidden;
-    font-family: var(--mono); font-size: 8.5px; z-index: 2;
-  }
-  .bar.reason { background: var(--g3); color: var(--g1); }
-  .bar.term { background: var(--g2); height: 16px; }
-  .cmd { position: absolute; font-family: var(--mono); font-size: 8.5px; color: var(--g1); white-space: nowrap; }
-  .edit-tick { position: absolute; width: 2px; height: 24px; background: var(--terra); z-index: 3; }
-  .edit-lab { position: absolute; font-family: var(--mono); font-size: 8px; color: var(--g1); white-space: nowrap; }
-  .edit-lab .b { color: var(--ink); font-weight: 500; }
-  .bar.spec {
-    background: repeating-linear-gradient(45deg, var(--green) 0, var(--green) 2.5px, var(--bg) 2.5px, var(--bg) 5px);
-    border: 1px solid var(--green); color: var(--ink);
-  }
-  .bar.spec span { background: var(--bg); padding: 0 3px; }
-  .bar.served { background: var(--ink); color: var(--bg); letter-spacing: -0.01em; border: none; }
-  .bar.discard { background: var(--g3); color: var(--g2); border: none; }
-  .bar.discard::after { content: ""; position: absolute; left: 0; right: 0; top: 8px; height: 1px; background: var(--g2); }
-  .bar.abstain { background: var(--bg); border: 1px dashed var(--g2); color: var(--g2); }
-  .killx { position: absolute; font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--terra); z-index: 4; background: var(--bg); padding: 0 1px; line-height: 10px; }
-
-  .note { position: absolute; font-family: var(--mono); font-size: 8px; color: var(--g1); white-space: nowrap; z-index: 4; background: var(--bg); padding: 0 3px; }
-  .note .b { color: var(--ink); font-weight: 500; }
-
-  .callout {
-    position: absolute; right: 8px;
-    background: var(--bg); border: 1px dotted var(--g1);
-    padding: 2px 6px; z-index: 8;
-    font-family: var(--mono); font-size: 8.5px; color: var(--ink); white-space: nowrap;
-  }
-  .callout .num { font-weight: 600; }
-  .lead { position: absolute; height: 0; border-top: 1px dotted var(--g1); z-index: 8; }
-
-  /* axis ruler */
-  .axis { height: 22px; position: relative; border-top: 1px solid var(--g3); }
-  .axis .tick { position: absolute; top: 0; width: 1px; height: 5px; background: var(--g2); }
-  .axis .tl2 { position: absolute; top: 8px; transform: translateX(-50%); font-family: var(--mono); font-size: 8px; color: var(--g2); white-space: nowrap; }
-  .axis .tl2.tnow { transform: translateX(-100%); }
-  .axis-side { display: flex; align-items: center; justify-content: flex-end; padding-right: 12px; font-family: var(--mono); font-size: 8px; color: var(--g2); }
-
-  /* epoch track */
-  .etrack-side { display: flex; align-items: flex-start; justify-content: flex-end; padding: 8px 12px 0 0; font-family: var(--mono); font-size: 9px; color: var(--g1); }
-  .etrack-wrap { height: 48px; position: relative; overflow: hidden; }
-  .etrack { position: absolute; inset: 6px 0 0 0; will-change: transform; }
-  .eseg {
-    position: absolute; top: 0; height: 20px;
-    border: 1px solid var(--g2);
-    display: flex; align-items: center; padding: 0 6px;
-    font-family: var(--mono); font-size: 9px; color: var(--ink); font-weight: 500;
-    overflow: hidden;
-  }
-  .eseg.cur { background: var(--green); }
-  .elab { position: absolute; top: 26px; font-family: var(--mono); font-size: 8px; color: var(--g2); white-space: nowrap; }
-  .elab.terra { color: var(--terra); font-weight: 500; }
-  .ekill { position: absolute; top: 4px; transform: translateX(-50%); font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--terra); background: var(--bg); padding: 0 2px; line-height: 12px; z-index: 3; }
-
-  /* empty state */
-  .tl-empty {
-    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
-    color: var(--g2); font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em;
-    pointer-events: none; z-index: 9;
-  }
-
-  /* bottom: matrix / ledger / gate */
-  .bottom { display: grid; grid-template-columns: 1fr 1.4fr 1.15fr; gap: 24px; margin-top: 24px; }
-  .bottom > div { border: 1px solid var(--g3); padding: 14px 16px; background: var(--bg); }
-  @media (max-width: 1120px) { .bottom { grid-template-columns: 1fr; gap: 24px; } }
-
-  table { width: 100%; border-collapse: collapse; }
-  th {
-    font-family: var(--mono); font-size: 8px; letter-spacing: 0.12em; 
-    color: var(--g1); font-weight: 500; text-align: left; padding: 0 6px 6px 0;
-    border-bottom: 1px solid var(--ink);
-  }
-  td { font-family: var(--mono); font-size: 10.5px; padding: 6px 6px 5px 0; border-bottom: 1px solid var(--g3); line-height: 14px; }
-  th.n, td.n { text-align: right; padding-right: 0; padding-left: 6px; }
-  td.kind { color: var(--ink); font-weight: 500; }
-  td.dim { color: var(--g2); }
-  td .terra-t { color: var(--terra); font-weight: 500; }
-  td .green-t { color: var(--ink); font-weight: 500; }
-  tr.total td { border-bottom: none; border-top: 1px solid var(--ink); font-weight: 500; }
-  .cell-note { color: var(--g2); font-size: 9px; font-weight: 400; }
-  .swatch { display: inline-block; width: 7px; height: 7px; vertical-align: baseline; margin-right: 6px; background: var(--green); }
-  .tbl-empty { font-family: var(--mono); font-size: 9px; color: var(--g2); padding: 8px 0; }
-
-  .ledger { font-family: var(--mono); font-size: 9.5px; line-height: 14px; max-height: 240px; overflow-y: auto; }
-  .lrow { display: grid; grid-template-columns: 14px 60px 64px 1fr; padding: 3px 0 2px; border-bottom: 1px solid var(--grid); align-items: baseline; }
-  .lrow:last-child { border-bottom: none; }
-  .lmark { width: 6px; height: 6px; margin-top: 3px; align-self: start; }
-  .lmark.ink { background: var(--ink); }
-  .lmark.green { background: var(--green); }
-  .lmark.terra { background: var(--terra); }
-  .lmark.hollow { background: var(--bg); border: 1px solid var(--g2); }
-  .lt { color: var(--g2); }
-  .lk { color: var(--ink); font-weight: 500; letter-spacing: 0.04em; }
-  .ld { color: var(--g1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-  /* footer */
-  footer {
-    margin-top: 24px; padding-top: 10px; border-top: 1px solid var(--g3);
-    font-family: var(--mono); font-size: 9px; color: var(--g2);
-    display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
-  }
-  .stamp { border: 1px solid var(--ink); padding: 2px; background: var(--bg); }
-  .stamp-inner {
-    border: 1px solid var(--g3); padding: 5px 12px;
-    display: flex; align-items: center; gap: 8px;
-    font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; color: var(--ink);
-  }
-  .stamp-inner .dot { width: 7px; height: 7px; background: var(--g2); }
-  .stamp-inner .dot.on { background: var(--green); }
-  .stamp-inner .sep { color: var(--g2); }
+@font-face{font-family:Geist;src:url('/fonts/geist-latin.woff2') format('woff2');font-weight:100 900;font-display:swap}
+:root{--paper:#0b0c0c;--ink:#e6e8e5;--muted:#858a86;--rule:#343735;--grid:#181a19;--ramp:#f2ff72;--agent:#69a8ff;--mint:#76efb1;--mint-ink:#9ff5c7;--terra:#ff7f64;--terra-ink:#ff9b86}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#050606;color:var(--ink);font-family:Geist,ui-sans-serif,system-ui,sans-serif}
+body{padding:30px}
+button{font:inherit}
+.sheet{position:relative;max-width:1440px;min-height:760px;margin:0 auto;background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:16px 16px;border:1px solid #2c2f2d;padding:28px 28px 22px;overflow:hidden}
+.reg{position:absolute;color:#424643;font-size:12px;line-height:1}.reg.tl{top:7px;left:8px}.reg.tr{top:7px;right:8px}.reg.bl{bottom:7px;left:8px}.reg.br{right:8px;bottom:7px}
+header{display:flex;align-items:stretch;background:rgba(11,12,12,.94);border:1px solid #747974}.brand{flex:1;min-width:260px;padding:15px 18px}.brand h1{font-size:28px;line-height:1;margin:0 0 7px;letter-spacing:-.055em}.brand h1::after{content:'';display:inline-block;width:7px;height:7px;margin-left:8px;border-radius:50%;background:var(--ramp);box-shadow:0 0 14px rgba(242,255,114,.35)}.brand p{margin:0;color:var(--muted);font-size:11px}.live-state{display:flex;align-items:center;gap:8px;padding:0 18px;border-left:1px solid var(--rule);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.1em}.session-control{display:grid;grid-template-columns:auto minmax(220px,300px);align-items:center;gap:12px;padding:10px 12px;border-left:1px solid var(--rule)}.session-control label,.analysis-control label{color:var(--muted);font-size:8px;text-transform:uppercase;letter-spacing:.13em}.instrument-select{appearance:none;min-height:32px;border:1px solid #555a56;border-radius:0;background:#111312 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='m1 1 4 4 4-4' fill='none' stroke='%23f2ff72'/%3E%3C/svg%3E") no-repeat right 10px center;color:var(--ink);padding:0 30px 0 10px;font:10px Geist,ui-sans-serif,sans-serif;letter-spacing:.02em;cursor:pointer}.instrument-select:focus-visible{outline:2px solid var(--ramp);outline-offset:2px}
+.k{display:block;text-transform:uppercase;letter-spacing:.12em;font-size:9px;color:var(--muted);margin-bottom:11px}.v{font-size:27px;font-weight:560;letter-spacing:-.05em;font-variant-numeric:tabular-nums}.v small{font-size:11px;color:var(--muted);letter-spacing:0;margin-left:2px}.metric.hit .v{color:var(--mint-ink)}.metric.waste .v{color:var(--terra-ink)}
+.toolbar{display:flex;align-items:center;gap:8px;margin:14px 0 8px;min-height:30px}.eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:10px;font-weight:650}.dot{width:7px;height:7px;border-radius:50%;background:var(--terra)}.dot.on{background:var(--ramp)}.spacer{flex:1}.density{display:flex;border:1px solid var(--rule);background:var(--paper)}.density button,.follow{appearance:none;border:0;background:transparent;color:var(--muted);height:28px;padding:0 10px;font-size:10px;letter-spacing:.03em;cursor:pointer}.density button+button{border-left:1px solid var(--rule)}.density button.active{background:var(--ramp);color:#0b0c0c}.follow{border:1px solid #8e928e;color:var(--ink);min-width:72px}.follow.paused{background:var(--ramp);border-color:var(--ramp);color:#090909}
+.figure{background:rgba(11,12,12,.96);border:1px solid #343735}
+.figcap{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-bottom:1px solid var(--rule);font-size:9px;text-transform:uppercase;letter-spacing:.09em}.figcap .hint{color:var(--muted);text-transform:none;letter-spacing:0}.graph-key{display:flex;align-items:center;gap:14px;padding:7px 10px;border:1px solid #4a4f4b;background:#111312}.key-title{padding-right:10px;border-right:1px solid #4a4f4b;color:var(--ink);font-size:8px;font-weight:750;letter-spacing:.16em}.key-item{display:inline-flex;align-items:center;gap:6px;color:#b3b7b3;white-space:nowrap}.swatch{display:inline-block;width:18px;height:7px;border:1px solid transparent}.swatch.agent{background:rgba(105,168,255,.82);border-color:rgba(105,168,255,.96)}.swatch.edit{background:repeating-linear-gradient(90deg,rgba(200,146,255,.95) 0 1px,rgba(200,146,255,.22) 1px 4px);border-color:rgba(200,146,255,.92)}.swatch.call{background:repeating-linear-gradient(135deg,rgba(213,231,255,.95) 0 1px,rgba(105,168,255,.28) 1px 4px);border-color:rgba(105,168,255,.96)}.swatch.test{background:repeating-linear-gradient(45deg,rgba(255,209,102,.94) 0 1px,rgba(255,209,102,.12) 1px 4px);border-color:rgba(255,209,102,.94)}.swatch.running{background:rgba(118,239,177,.28);border-color:rgba(118,239,177,.72)}.swatch.served{background:repeating-linear-gradient(135deg,rgba(118,239,177,.95) 0 1px,rgba(118,239,177,.10) 1px 4px);border-color:rgba(118,239,177,.9)}.swatch.evicted{position:relative;background:linear-gradient(90deg,rgba(118,239,177,.24) 0 58%,rgba(255,127,100,.92) 58% 100%);border-color:rgba(255,127,100,.86)}.swatch.evicted::after{content:'';position:absolute;right:-1px;bottom:-5px;width:1px;height:12px;background:var(--terra)}
+.stage{position:relative;height:470px;overflow:hidden;touch-action:none;cursor:grab}.stage.dragging{cursor:grabbing}.stage svg{display:block;width:100%;height:100%}
+.queue-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:650;fill:var(--ink)}.queue-sub{font-size:9px;fill:var(--muted)}
+.axis-label{font-size:9px;fill:var(--muted);font-variant-numeric:tabular-nums}.now-label{font-size:9px;fill:var(--ink);font-weight:650;text-transform:uppercase;letter-spacing:.1em}.save-label{font-size:9px;fill:var(--mint);font-weight:650;letter-spacing:.025em;font-variant-numeric:tabular-nums}
+.empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:12px;pointer-events:none}.empty strong{display:block;color:var(--ink);font-size:14px;margin-bottom:5px;font-weight:570}
+.footer{display:flex;align-items:center;gap:12px;margin-top:9px;color:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.08em}.footer .rule{height:1px;background:var(--rule);flex:1}.footer strong{color:var(--ink);font-weight:600}.postmortem{margin-top:14px;border:1px solid #7e8652;background:linear-gradient(120deg,rgba(242,255,114,.09),rgba(11,12,12,.96) 45%);padding:16px}.post-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}.post-title-group{display:flex;align-items:baseline;gap:10px}.post-head h2{margin:0;color:var(--ramp);font-size:11px;text-transform:uppercase;letter-spacing:.14em}.post-context{color:var(--muted);font-size:9px;font-variant-numeric:tabular-nums}.post-actions{display:flex;align-items:center;gap:12px}.analysis-control{display:flex;align-items:center;gap:8px}.analysis-control .instrument-select{min-width:136px}.save-trace{border:1px solid var(--ramp);background:transparent;color:var(--ramp);padding:7px 10px;font-size:9px;text-transform:uppercase;letter-spacing:.1em;cursor:pointer}.save-trace:disabled{border-color:#3c403d;color:#5f645f;cursor:not-allowed}.post-content{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(330px,.8fr);gap:18px;align-items:stretch}.post-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-content:stretch}.post-kpi{padding:10px 12px;border-left:1px solid var(--rule);border-top:1px solid var(--rule)}.post-kpi:nth-child(4n+1){border-left:0}.post-kpi:nth-child(-n+4){border-top:0}.post-kpi:first-child{padding-left:0}.post-kpi span{display:block;color:var(--muted);font-size:7px;text-transform:uppercase;letter-spacing:.09em;margin-bottom:6px;white-space:nowrap}.post-kpi strong{display:block;color:var(--ink);font-size:22px;line-height:1;font-weight:600;letter-spacing:-.05em;font-variant-numeric:tabular-nums}.post-kpi.primary strong{color:var(--ramp);font-size:28px}.metric-figure{min-height:142px;border-left:1px solid var(--rule);padding-left:18px}.metric-chart{display:block;width:100%;height:142px;overflow:visible}.metric-label{fill:var(--muted);font-size:9px;text-transform:uppercase;letter-spacing:.09em}.metric-value{fill:var(--ink);font-size:10px;font-weight:650;font-variant-numeric:tabular-nums}.metric-track{stroke:#272a28;stroke-width:8}.metric-bar{stroke-linecap:butt;stroke-width:8}.post-note{margin:10px 0 0;color:var(--muted);font-size:8px}.drawers{margin-top:14px;border-top:1px solid var(--rule)}details{border-bottom:1px solid var(--rule);background:rgba(11,12,12,.92)}summary{display:flex;align-items:center;gap:10px;padding:13px 4px;cursor:pointer;list-style:none;color:var(--ink);font-size:10px;text-transform:uppercase;letter-spacing:.11em}summary::-webkit-details-marker{display:none}summary::before{content:'+';color:var(--ramp);font-size:14px}details[open] summary::before{content:'−'}summary .summary-meta{margin-left:auto;color:var(--muted);font-size:9px;letter-spacing:.03em;text-transform:none}.drawer-body{padding:0 4px 16px}.cache-grid{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--rule)}.cache-cell{padding:12px;border-left:1px solid var(--rule)}.cache-cell:first-child{border-left:0}.cache-cell span{display:block;color:var(--muted);font-size:8px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px}.cache-cell strong{font-size:18px;font-variant-numeric:tabular-nums}.ledger{max-height:300px;overflow:auto;border:1px solid var(--rule)}.ledger-row{display:grid;grid-template-columns:72px 92px 1fr;gap:10px;padding:8px 10px;border-top:1px solid #202321;font:10px/1.35 ui-monospace,SFMono-Regular,Menlo,monospace}.ledger-row:first-child{border-top:0}.ledger-row .time{color:var(--muted)}.ledger-row .type{font-weight:700;text-transform:uppercase}.ledger-row.agent .type{color:var(--agent)}.ledger-row.edit .type{color:#c892ff}.ledger-row.spec .type,.ledger-row.served .type{color:var(--mint)}.ledger-row.evicted .type{color:var(--terra)}.ledger-row.system .type{color:var(--ramp)}.ledger-row .detail{color:#b7bbb7;overflow-wrap:anywhere}.trace-list{display:grid;gap:7px}.trace-row{display:grid;grid-template-columns:1fr repeat(3,100px) auto;align-items:center;gap:10px;padding:10px;border:1px solid var(--rule);font-size:10px}.trace-row .trace-name{color:var(--ink)}.trace-row .trace-stat{color:var(--muted);font-variant-numeric:tabular-nums}.trace-row button{border:1px solid #59605b;background:transparent;color:var(--ink);padding:6px 8px;font-size:9px;cursor:pointer}.empty-row{padding:14px;color:var(--muted);font-size:10px}
+button:focus-visible,summary:focus-visible{outline:2px solid var(--ramp);outline-offset:2px}
+@media(max-width:850px){body{padding:0}.sheet{min-height:100vh;border:0;padding:18px 14px}header{flex-wrap:wrap}.brand{width:100%;flex-basis:100%}.live-state{border-left:0;border-top:1px solid var(--rule);padding:12px}.session-control{flex:1;border-top:1px solid var(--rule)}.toolbar{flex-wrap:wrap}.spacer{display:none}.stage{height:520px}.figcap{align-items:flex-start}.graph-key{gap:10px;flex-wrap:wrap}.figcap .hint{display:none}.post-head{align-items:flex-start;gap:12px}.post-actions{align-items:flex-end;flex-direction:column}.post-content{grid-template-columns:1fr}.metric-figure{border-left:0;border-top:1px solid var(--rule);padding:14px 0 0}.post-grid{grid-template-columns:1fr 1fr}.post-kpi:nth-child(n){border-left:1px solid var(--rule);border-top:1px solid var(--rule)}.post-kpi:nth-child(2n+1){border-left:0}.post-kpi:nth-child(-n+2){border-top:0}.cache-grid{grid-template-columns:1fr 1fr}.cache-cell{border-top:1px solid var(--rule)}.trace-row{grid-template-columns:1fr auto}.trace-stat{display:none}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}.pulse{animation:none!important}}
+@keyframes breathe{50%{opacity:.64}}
+.pulse{animation:breathe 1.3s ease-in-out infinite}
 </style>
 </head>
 <body>
-<div class="sheet">
+<main class="sheet">
   <span class="reg tl">+</span><span class="reg tr">+</span><span class="reg bl">+</span><span class="reg br">+</span>
+  <header>
+    <section class="brand"><h1>Spex</h1><p>Speculative tool execution · runs ahead of the agent’s ask · localhost</p></section>
+    <section class="live-state"><span class="dot" id="conn-dot"></span><span id="conn">connecting</span></section>
+    <section class="session-control">
+      <label for="session-select">Codex session</label>
+      <select class="instrument-select" id="session-select"><option value="live">Live session</option></select>
+    </section>
+  </header>
 
-  <!-- top strip: title + meta + inline stats + per-turn summaries -->
-  <div class="strip">
-    <div class="s-brand">
-      <h1>Spex</h1>
-      <p>speculative test execution &middot; runs the agent&rsquo;s tests before the ask &middot; localhost</p>
-    </div>
-    <div class="s-meta">
-      <div class="mc"><span class="k">dwg no.</span><span class="v">MNT-LIVE-01</span></div>
-      <div class="mc"><span class="k">date</span><span class="v" id="m-date">&middot;</span></div>
-      <div class="mc"><span class="k">rev</span><span class="v" id="m-epoch">epoch &middot;</span></div>
-      <div class="mc"><span class="k">sheet</span><span class="v">live</span></div>
-      <div class="mc"><span class="k">session</span><span class="v">localhost</span></div>
-      <div class="mc"><span class="k">agent</span><span class="v">codex</span></div>
-      <div class="mc"><span class="k">t&#8320;</span><span class="v" id="m-t0">&middot;</span></div>
-      <div class="mc"><span class="k">span</span><span class="v">60 s window</span></div>
-    </div>
-    <div class="s-stats">
-      <div class="stat hi"><span class="k">wait hidden &Sigma;</span><span class="v"><span id="s-saved">0.0</span><small>s</small></span><span class="u"></span></div>
-      <div class="stat"><span class="k">served</span><span class="v"><span id="s-hits">0</span><small>/<span id="s-asks">0</span></small></span><span class="u"></span></div>
-      <div class="stat"><span class="k">speculations</span><span class="v"><span id="s-specs">0</span><small> &middot; <span id="s-flight">0</span> live</small></span><span class="u"></span></div>
-      <div class="stat warn"><span class="k">wasted</span><span class="v"><span id="s-wasted">0.0</span><small>s</small></span><span class="u"></span></div>
-      <div class="stat"><span class="k">tokens</span><span class="v" id="s-tokens">&middot;</span><span class="u"></span></div>
-    </div>
-    <div class="s-turns" id="turns">
-      <div class="turn-cell empty"><span class="t">turns</span> <span class="d">&middot; awaiting completion</span></div>
-    </div>
-  </div>
-
-  <div class="legend">
-    <span class="cap">key</span>
-    <span class="item"><span class="chip reason"></span>reasoning</span>
-    <span class="item"><span class="chip term"></span>terminal</span>
-    <span class="item"><span class="chip edit"></span>edit &middot; epoch bump</span>
-    <span class="item"><span class="chip spec"></span>speculating</span>
-    <span class="item"><span class="chip served"></span>served</span>
-    <span class="item"><span class="chip discard"></span>discarded</span>
-    <span class="item"><span class="chip abstain"></span>abstain</span>
-    <span class="item"><span class="chip fired"></span>fired</span>
-    <span class="item"><span class="chip kill">&times;</span>epoch kill</span>
-    <span class="fr" id="conn-note">connecting &middot; codex + spex sidecar</span>
-  </div>
-
-  <div class="figcap">
-    <span class="fl">session waterfall &middot; live</span>
-    <span class="fr">margin rules = fire events &middot; leaders = serves &middot; now at right edge &middot; window 60 s</span>
-  </div>
-
-  <div class="wsheet">
-  <div class="wgrid">
-    <div class="labels" id="labels">
-      <div class="lab mband">fired &uarr; t event</div>
-      <div class="lab"><span class="sw" style="background:var(--g3)"></span><span class="who">codex &middot;</span> reasoning</div>
-      <div class="lab"><span class="sw" style="background:var(--g2)"></span><span class="who">codex &middot;</span> terminal</div>
-      <div class="lab"><span class="sw" style="background:var(--terra)"></span><span class="who">codex &middot;</span> edits</div>
-    </div>
-    <div class="rows" id="rows">
-      <div id="grid"></div>
-      <div id="rowlines"></div>
-      <div class="slayer" id="slayer"></div>
-      <div class="now-line" id="now-line"></div>
-      <div class="flayer" id="flayer"></div>
-      <div class="tl-empty" id="tl-empty">waiting for events&hellip;</div>
-      <button class="tl-follow" id="tl-follow">pause</button>
-    </div>
-    <div class="rmargin">
-      <span class="brk" id="brk"></span>
-      <span class="rot" id="rot">wait hidden &Sigma; 0.0s</span>
-    </div>
-  </div>
-
-  <!-- axis ruler -->
-  <div class="wgrid">
-    <div class="axis-side" style="border-top:1px solid var(--g3)">t (s)</div>
-    <div class="axis" id="axis"></div>
-    <div style="border-top:1px solid var(--g3)"></div>
-  </div>
-
-  <!-- epoch track -->
-  <div class="wgrid">
-    <div class="etrack-side">epochs</div>
-    <div class="etrack-wrap"><div class="etrack" id="etrack"></div></div>
-    <div></div>
-  </div>
-
-  </div>
-
-  <!-- bottom: matrix / ledger / gate tally -->
-  <div class="bottom">
-    <div>
-      <div class="figcap">
-        <span class="fl">per-kind matrix</span>
-        <span class="fr" id="fig2-fr">live</span>
+  <section class="postmortem" id="postmortem">
+    <div class="post-head">
+      <div class="post-title-group"><h2 id="post-title">Live performance</h2><span class="post-context" id="post-context">current session</span></div>
+      <div class="post-actions">
+        <div class="analysis-control"><label for="metric-select">Graph</label><select class="instrument-select" id="metric-select"><option value="latency">Latency</option><option value="cache">Cache</option><option value="speculations">Speculations</option></select></div>
+        <button class="save-trace" id="save-trace" disabled>Save trace</button>
       </div>
-      <table>
-        <thead>
-          <tr><th>kind</th><th class="n">spec</th><th class="n">served</th><th class="n">hidden</th><th class="n">wasted</th></tr>
-        </thead>
-        <tbody id="kinds-body"></tbody>
-      </table>
-      <div class="tbl-empty" id="kinds-empty">no speculations yet</div>
     </div>
-
-    <div>
-      <div class="figcap">
-        <span class="fl">event ledger</span>
-        <span class="fr"><span id="ev-count">0</span> events &middot; last 30</span>
+    <div class="post-content">
+      <div class="post-grid">
+        <div class="post-kpi"><span>session cache hits</span><strong id="pm-session-cache">0</strong></div>
+        <div class="post-kpi"><span>total cache hits</span><strong id="pm-total-cache">0</strong></div>
+        <div class="post-kpi"><span>session specs launched</span><strong id="pm-session-launched">0</strong></div>
+        <div class="post-kpi"><span>total specs launched</span><strong id="pm-total-launched">0</strong></div>
+        <div class="post-kpi primary"><span>session latency saved</span><strong id="pm-session-saved">0ms</strong></div>
+        <div class="post-kpi"><span>total latency saved</span><strong id="pm-total-saved">0ms</strong></div>
+        <div class="post-kpi"><span>session specs served</span><strong id="pm-session-served">0</strong></div>
+        <div class="post-kpi"><span>total specs served</span><strong id="pm-total-served">0</strong></div>
       </div>
-      <div class="ledger" id="ledger"></div>
-      <div class="tbl-empty" id="ledger-empty">no events yet</div>
+      <div class="metric-figure"><svg class="metric-chart" id="metric-chart" role="img" aria-label="Selected session performance chart"></svg></div>
     </div>
+    <p class="post-note" id="post-note">Session values follow the selected Codex session. Totals combine saved sessions and the active session.</p>
+  </section>
 
-    <div>
-      <div class="figcap">
-        <span class="fl">gate tally &middot; fire / abstain</span>
-        <span class="fr">abstains grouped by door</span>
-      </div>
-      <table>
-        <thead>
-          <tr><th>gate</th><th>door</th><th class="n">n</th></tr>
-        </thead>
-        <tbody id="gate-body"></tbody>
-      </table>
-      <div class="tbl-empty" id="gate-empty">no gate decisions yet</div>
+  <div class="toolbar">
+    <span class="eyebrow">queue timeline · live</span>
+    <span class="spacer"></span>
+    <span class="k" style="margin:0 2px 0 0">density</span>
+    <div class="density" aria-label="Timeline density">
+      <button data-density="0.5" aria-label="Half density">½×</button>
+      <button data-density="1" aria-label="Normal density">1×</button>
+      <button data-density="2" class="active" aria-label="Double density">2×</button>
+      <button data-density="4" aria-label="Four times density">4×</button>
     </div>
+    <button class="follow" id="follow">following</button>
   </div>
 
-  <footer>
-    <span>live trace &middot; codex + spex sidecar &middot; t&#8320; <span id="f-t0">&middot;</span></span>
-    <span id="f-sum">0 speculations &middot; 0 served &middot; 0 discarded &middot; 0 abstain</span>
-    <span class="stamp"><span class="stamp-inner">
-      <span class="dot" id="stamp-dot"></span>
-      <span>localhost</span><span class="sep">&middot;</span>
-      <span id="stamp-epoch">epoch &middot;</span><span class="sep">&middot;</span>
-      <span id="stamp-conn">connecting</span>
-    </span></span>
-  </footer>
-</div>
+  <section class="figure" aria-label="Live real and shadow queue timeline">
+    <div class="figcap">
+      <div class="graph-key" aria-label="Timeline legend">
+        <span class="key-title">key</span>
+        <span class="key-item"><i class="swatch agent"></i>thinking</span>
+        <span class="key-item"><i class="swatch edit"></i>editing</span>
+        <span class="key-item"><i class="swatch call"></i>tool</span>
+        <span class="key-item"><i class="swatch test"></i>testing</span>
+        <span class="key-item"><i class="swatch running"></i>spec</span>
+        <span class="key-item"><i class="swatch served"></i>served</span>
+        <span class="key-item"><i class="swatch evicted"></i>evicted</span>
+      </div>
+      <span class="hint">drag · wheel</span>
+    </div>
+    <div class="stage" id="stage">
+      <svg id="chart" role="img" aria-labelledby="chart-title chart-desc">
+        <title id="chart-title">Real and shadow queue timeline</title>
+        <desc id="chart-desc">Speculative tool calls branch from the real queue. Hits merge in mint. Evictions close back in coral.</desc>
+      </svg>
+      <div class="empty" id="empty"><div><strong>Waiting for queue activity</strong></div></div>
+    </div>
+  </section>
+  <div class="footer"><strong id="session">epoch ·</strong><span class="rule"></span><span>live</span></div>
+
+  <section class="drawers">
+    <details>
+      <summary>Event ledger <span class="summary-meta" id="ledger-count">0 events</span></summary>
+      <div class="drawer-body"><div class="ledger" id="ledger"><div class="empty-row">Waiting for daemon events.</div></div></div>
+    </details>
+    <details>
+      <summary>Cache performance <span class="summary-meta" id="cache-summary">0 catches · 0 misses</span></summary>
+      <div class="drawer-body"><div class="cache-grid">
+        <div class="cache-cell"><span>cache hits</span><strong id="cache-hits">0</strong></div>
+        <div class="cache-cell"><span>promoted</span><strong id="cache-promoted">0</strong></div>
+        <div class="cache-cell"><span>misses</span><strong id="cache-misses">0</strong></div>
+        <div class="cache-cell"><span>hit rate</span><strong id="cache-rate">—</strong></div>
+        <div class="cache-cell"><span>wasted</span><strong id="cache-wasted">0ms</strong></div>
+      </div></div>
+    </details>
+    <details>
+      <summary>Saved traces <span class="summary-meta" id="trace-count">0 sessions</span></summary>
+      <div class="drawer-body"><div class="trace-list" id="trace-list"><div class="empty-row">Completed sessions are saved locally.</div></div></div>
+    </details>
+  </section>
+</main>
 
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
-  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const svg = $('chart');
+  const stage = $('stage');
+  const NS = 'http://www.w3.org/2000/svg';
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const PAD_L = 132, PAD_R = 30, REAL_Y = 155, SHADOW_Y = 292, AXIS_Y = 410;
+  const BAR_SIZE = 7, BAR_HALF = BAR_SIZE / 2;
+  const EDIT_WINDOW_MS = 120;
+  const TRACE_STORE = 'spex.dashboard.traces.v1';
 
-  const WINDOW_MS = 60000;
-  const MARGIN_H = 36;
-  const ROW_H = 48;
+  const state = {
+    branches: [], main: [], calls: [], edits: [], density: 2, windowMs: 6000, following: true,
+    offsetMs: 0, dragX: 0, dragOffset: 0, savedMs: 0, wastedMs: 0,
+    asks: 0, hits: 0, cacheHits: 0, promoted: 0, misses: 0, specs: 0,
+    top3Hits: 0, top3Total: 0, pendingTop3: [], epoch: null, firstAt: null,
+    events: [], closed: false
+  };
+  let traceHistory = loadHistory();
+  let completedTrace = traceHistory[0] || null;
+  let selectedSessionId = 'live';
+  let selectedHistoryModel = null;
+  let metricView = 'latency';
+  let lastMetricSignature = '';
+  let ledgerTotal = 0;
+  const metricFrames = new Map();
 
-  const rowsEl = $('rows');
-  const slayer = $('slayer');
-  const flayer = $('flayer');
-  const etrack = $('etrack');
-  const gridEl = $('grid');
-  const linesEl = $('rowlines');
-  const labelsEl = $('labels');
-  const axisEl = $('axis');
-
-  let width = 0, nowX = 0, k = 0.02;
-  const originT = performance.now();
-  let lastNow = originT;
-  const X = (t) => (t - originT) * k;
-
-  const items = [];
-  const specs = new Map();
-  const kindLanes = new Map();
-  const callouts = [];
-  const openExecs = [];
-  const pendingKills = [];
-  const perKind = new Map();
-  const doors = new Map();
-  let reason = null;
-  let curSeg = null;
-  let cmdParity = 0, editParity = 0;
-  let sawItem = false;
-  let turnStartT = null, turnHidden = 0, turnNum = 1, lastTurnDone = -1e9;
-  let evCount = 0;
-
-  const S = { savedMs: 0, wastedMs: 0, asks: 0, hits: 0, specCount: 0, discards: 0, tokBase: null, tokLast: null, epoch: null };
-
-  function el(tag, cls, parent, text) {
-    const d = document.createElement(tag);
-    if (cls) d.className = cls;
-    if (text != null) d.textContent = text;
-    (parent || slayer).appendChild(d);
-    return d;
+  function node(tag, attrs = {}, text) {
+    const n = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+    if (text != null) n.textContent = text;
+    return n;
   }
-  function fmtS(ms) { return (ms / 1000).toFixed(1); }
-  function trunc(str, n) { return str.length > n ? str.slice(0, n - 1) + '…' : str; }
-  function stripCmd(c) {
-    return String(c || '').replace(/^\/bin\/\S+\s+-l?c\s+/, '').replace(/^['"]|['"]$/g, '');
+  function sec(ms) { return (Number(ms || 0) / 1000).toFixed(1); }
+  function ms(msValue) { return `${Math.round(Number(msValue || 0))}ms`; }
+  function commandKey(value) { return String(value || '').replace(/^\/bin\/\S+\s+-l?c\s+/, '').replace(/^['"]|['"]$/g, ''); }
+  function callKind(value) { return /(^|\s)(pytest|py\.test|unittest|jest|vitest|mocha|cargo\s+test|go\s+test|npm\s+test|pnpm\s+test|yarn\s+test)(\s|$)/i.test(commandKey(value)) ? 'test' : 'tool'; }
+  function liveNow() { return performance.now() - state.offsetMs; }
+  function xFor(t, width, now, windowMs = state.windowMs) { return PAD_L + (t - (now - windowMs)) / windowMs * (width - PAD_L - PAD_R); }
+  function activeCount() { return state.branches.filter((b) => !b.end).length; }
+  function branchKey(e) { return `${e.kind || 'tool'}:${e.epoch ?? '·'}`; }
+  function loadHistory() {
+    try { const value = JSON.parse(localStorage.getItem(TRACE_STORE) || '[]'); return Array.isArray(value) ? value : []; }
+    catch { return []; }
   }
-  function clock() { return new Date().toTimeString().slice(0, 8); }
-  function laneCount() { return 3 + kindLanes.size; }
-  function rowsHeight() { return MARGIN_H + ROW_H * laneCount(); }
-  function px(n) { return n + 'px'; }
-
-  function syncHeights() {
-    rowsEl.style.height = px(rowsHeight());
-    const bandTop = MARGIN_H + 3 * ROW_H;
-    const bandH = Math.max(1, kindLanes.size) * ROW_H;
-    $('brk').style.top = px(bandTop + 6);
-    $('brk').style.height = px(bandH - 12);
-    $('rot').style.top = px(bandTop + bandH - 8);
+  function persistHistory() {
+    try { localStorage.setItem(TRACE_STORE, JSON.stringify(traceHistory)); return true; }
+    catch { return false; }
   }
-
-  function addKindLane(kind) {
-    if (kindLanes.has(kind)) return kindLanes.get(kind);
-    const idx = kindLanes.size;
-    const y = MARGIN_H + (3 + idx) * ROW_H;
-    const lab = document.createElement('div');
-    lab.className = 'lab';
-    const sw = document.createElement('span');
-    sw.className = 'sw';
-    sw.style.background = 'var(--green)';
-    const who = document.createElement('span');
-    who.className = 'who';
-    who.textContent = 'spex ·';
-    lab.append(sw, who, ' ' + kind);
-    labelsEl.appendChild(lab);
-    const line = document.createElement('div');
-    line.className = 'rowline';
-    line.style.top = px(y + ROW_H - 1);
-    linesEl.appendChild(line);
-    const lane = { idx, y, labEl: lab, lineEl: line };
-    kindLanes.set(kind, lane);
-    syncHeights();
-    return lane;
-  }
-
-  function baseLines() {
-    linesEl.textContent = '';
-    const m = document.createElement('div');
-    m.className = 'rowline mline';
-    m.style.top = px(MARGIN_H);
-    linesEl.appendChild(m);
-    for (let i = 1; i <= 3; i++) {
-      const l = document.createElement('div');
-      l.className = 'rowline';
-      l.style.top = px(MARGIN_H + ROW_H * i);
-      linesEl.appendChild(l);
-    }
-  }
-
-  function measure() {
-    width = rowsEl.clientWidth || 1100;
-    nowX = width - 12;
-    k = (nowX - 4) / WINDOW_MS;
-    $('now-line').style.left = px(nowX);
-    buildGrid();
-    for (const it of items) it.place();
-  }
-
-  function buildGrid() {
-    gridEl.textContent = '';
-    axisEl.textContent = '';
-    for (let s = 0; s <= 60; s += 5) {
-      const x = nowX - s * 1000 * k;
-      if (x < 0) continue;
-      const g = document.createElement('div');
-      g.className = 'gl';
-      g.style.left = px(x);
-      gridEl.appendChild(g);
-      const t = document.createElement('span');
-      t.className = 'tick';
-      t.style.left = px(x);
-      axisEl.appendChild(t);
-      if (s % 15 === 0) {
-        const l = document.createElement('span');
-        l.className = 'tl2' + (s === 0 ? ' tnow' : '');
-        l.style.left = px(x);
-        l.textContent = s === 0 ? 'now' : '−' + s + 's';
-        axisEl.appendChild(l);
+  function traceMetrics(trace) {
+    const derived = { cacheHits:0, promoted:0, misses:0, speculations:0, served:0 };
+    if (trace?.events?.length) {
+      for (const event of trace.events) {
+        if (event.type === 'speculate') derived.speculations++;
+        if (event.type === 'serve' && event.outcome === 'hit') { derived.cacheHits++; derived.served++; }
+        else if (event.type === 'serve' && event.outcome === 'promoted') { derived.promoted++; derived.served++; }
+        else if (event.type === 'serve') derived.misses++;
       }
     }
+    return { savedMs:Number(trace?.savedMs || 0), wastedMs:Number(trace?.wastedMs || 0), served:Number(trace?.served ?? trace?.catches ?? derived.served), asks:Number(trace?.asks || 0), cacheHits:Number(trace?.cacheHits ?? derived.cacheHits), promoted:Number(trace?.promoted ?? derived.promoted), misses:Number(trace?.misses ?? derived.misses), speculations:Number(trace?.speculations ?? derived.speculations) };
   }
-
-  function addItem(it) { items.push(it); it.place(); return it; }
-
-  // heuristic: the reasoning bar spans from the last codex event to now while
-  // codex is active; each exec or edit closes the bar and opens a fresh one
-  function openReason(t) {
-    if (reason) return;
-    const b = el('div', 'bar reason');
-    b.style.top = px(MARGIN_H + 15);
-    const r = { t, end: null, els: [b], place() {
-      const x0 = X(r.t), x1 = X(r.end == null ? lastNow : r.end);
-      b.style.left = px(x0);
-      b.style.width = px(Math.max(2, x1 - x0));
-      b.textContent = x1 - x0 > 62 ? 'reasoning' : '';
-    }};
-    reason = r;
-    addItem(r);
+  function selectedTrace() { return selectedSessionId === 'live' ? null : traceHistory.find((trace) => trace.id === selectedSessionId) || null; }
+  function selectedMetrics() {
+    const trace = selectedTrace();
+    return trace ? traceMetrics(trace) : { savedMs:state.savedMs, wastedMs:state.wastedMs, served:state.hits, asks:state.asks, cacheHits:state.cacheHits, promoted:state.promoted, misses:state.misses, speculations:state.specs };
   }
-  function closeReason(t) {
-    if (!reason) return;
-    reason.end = t;
-    reason.place();
-    reason = null;
+  function totalMetrics() {
+    const totals = traceHistory.reduce((sum,trace) => { const value=traceMetrics(trace); sum.savedMs+=value.savedMs; sum.cacheHits+=value.cacheHits; sum.speculations+=value.speculations; sum.served+=value.served; return sum; },{savedMs:0,cacheHits:0,speculations:0,served:0});
+    if (!state.closed && state.events.length) { totals.savedMs+=state.savedMs; totals.cacheHits+=state.cacheHits; totals.speculations+=state.specs; totals.served+=state.hits; }
+    return totals;
   }
-  function splitReason(t) {
-    if (!reason) return;
-    closeReason(t);
-    openReason(t);
+  function setMetric(id,value,suffix='') {
+    const element=$(id); const target=Number(value || 0); const previous=Number(element.dataset.value || 0);
+    metricFrames.has(id) && cancelAnimationFrame(metricFrames.get(id)); element.dataset.value=String(target);
+    if (reduced || previous === target) { element.textContent=`${Math.round(target)}${suffix}`; return; }
+    const started=performance.now(); const duration=360;
+    const tick=(time) => { const progress=Math.min(1,(time-started)/duration); const eased=1-Math.pow(1-progress,3); element.textContent=`${Math.round(previous+(target-previous)*eased)}${suffix}`; if (progress<1) metricFrames.set(id,requestAnimationFrame(tick)); else metricFrames.delete(id); };
+    metricFrames.set(id,requestAnimationFrame(tick));
+    element.animate([{opacity:.55,transform:'translateY(2px)'},{opacity:1,transform:'translateY(0)'}],{duration:260,easing:'cubic-bezier(.22,1,.36,1)'});
   }
-
-  function addExec(t, cmd) {
-    const b = el('div', 'bar term');
-    b.style.top = px(MARGIN_H + ROW_H + 8);
-    const c = el('div', 'cmd', slayer, '$ ' + trunc(stripCmd(cmd), 30));
-    c.style.top = px(MARGIN_H + ROW_H + 28 + (cmdParity++ % 2) * 12);
-    const it = { t, end: t, durMs: 0, cmd: stripCmd(cmd), els: [b, c], place() {
-      b.style.left = px(X(t));
-      b.style.width = px(Math.max(6, (it.durMs || 0) * k));
-      c.style.left = px(X(t));
-    }};
-    addItem(it);
-    openExecs.push(it);
-    if (openExecs.length > 12) openExecs.shift();
+  function updateStats() {
+    const metrics = selectedMetrics();
+    const totals = totalMetrics();
+    const viewEpoch = selectedHistoryModel?.epoch ?? state.epoch;
+    $('session').textContent = viewEpoch == null ? 'epoch ·' : `epoch ${viewEpoch}`;
+    $('cache-hits').textContent = String(state.cacheHits);
+    $('cache-promoted').textContent = String(state.promoted);
+    $('cache-misses').textContent = String(state.misses);
+    $('cache-rate').textContent = state.asks ? `${Math.round(state.cacheHits/state.asks*100)}%` : '—';
+    $('cache-wasted').textContent = ms(state.wastedMs);
+    $('cache-summary').textContent = `${state.cacheHits} cache hits · ${state.misses} misses`;
+    setMetric('pm-session-cache',metrics.cacheHits);
+    setMetric('pm-total-cache',totals.cacheHits);
+    setMetric('pm-session-launched',metrics.speculations);
+    setMetric('pm-total-launched',totals.speculations);
+    setMetric('pm-session-saved',metrics.savedMs,'ms');
+    setMetric('pm-total-saved',totals.savedMs,'ms');
+    setMetric('pm-session-served',metrics.served);
+    setMetric('pm-total-served',totals.served);
+    renderMetricChart(metrics,totals);
   }
-
-  // heuristic: a done event is matched to the newest exec bar with the same
-  // stripped command; unmatched bars keep the visible minimum width
-  function matchDone(cmd, durMs) {
-    const c = stripCmd(cmd);
-    for (let i = openExecs.length - 1; i >= 0; i--) {
-      if (openExecs[i].cmd === c) {
-        openExecs[i].durMs = durMs || 0;
-        openExecs[i].place();
-        openExecs.splice(i, 1);
-        return;
-      }
+  function statusDone(detail) {
+    return detail === 'turn/completed' || (detail && (detail.type === 'turn/completed' || detail.type === 'idle'));
+  }
+  function eventTime(e) {
+    const date = new Date(e.t || Date.now());
+    return `${date.toTimeString().slice(0,8)}.${String(date.getMilliseconds()).padStart(3,'0')}`;
+  }
+  function ledgerInfo(e) {
+    if (e.type === 'codex' && e.what === 'exec') return ['agent','tool',commandKey(e.command)];
+    if (e.type === 'codex' && e.what === 'done') return ['agent','done',`${commandKey(e.command)} · exit ${e.exitCode ?? '·'} · ${ms(e.durationMs)}`];
+    if (e.type === 'codex' && e.what === 'edit') return ['edit','edit',`${e.path || e.sig || 'file change'}`];
+    if (e.type === 'codex') return ['system',e.what || 'codex',typeof e.detail === 'string' ? e.detail : e.detail?.type || 'status'];
+    if (e.type === 'speculate') return ['spec','speculate',`${e.kind} · ${(e.argv || []).join(' ')}`];
+    if (e.type === 'serve' && (e.outcome === 'hit' || e.outcome === 'promoted')) return ['served',e.outcome,`${e.kind} · ${ms(e.savedMs)} saved`];
+    if (e.type === 'serve') return ['system',e.outcome || 'miss',`${e.kind} · ${ms(e.waitMs)} wait`];
+    if (e.type === 'outcome') return ['evicted',e.outcome,`${e.kind} · ${ms(e.wastedMs)} wasted`];
+    if (e.type === 'predict') return ['system','predict',(e.candidates || []).map((c) => `${c.kind} ${Math.round(Number(c.p)*100)}%`).join(' · ')];
+    if (e.type === 'tokens') return ['system','tokens',String(e.total ?? '·')];
+    if (e.type === 'reset') return ['system','reset','replay/session boundary'];
+    return ['system',e.type || 'event',e.kind || e.method || ''];
+  }
+  function appendLedger(e) {
+    ledgerTotal++;
+    const ledger = $('ledger');
+    if (ledger.querySelector('.empty-row')) ledger.textContent = '';
+    const [tone,type,detail] = ledgerInfo(e);
+    const row = document.createElement('div'); row.className = `ledger-row ${tone}`;
+    const time = document.createElement('span'); time.className = 'time'; time.textContent = eventTime(e);
+    const typeEl = document.createElement('span'); typeEl.className = 'type'; typeEl.textContent = type;
+    const detailEl = document.createElement('span'); detailEl.className = 'detail'; detailEl.textContent = detail;
+    row.append(time,typeEl,detailEl); ledger.prepend(row);
+    while (ledger.children.length > 500) ledger.lastElementChild.remove();
+    $('ledger-count').textContent = `${ledgerTotal} events`;
+  }
+  function showPostmortem(trace) {
+    completedTrace = trace || completedTrace;
+    $('post-title').textContent = trace ? 'Session postmortem' : 'Live performance';
+    $('post-context').textContent = trace ? new Date(trace.completedAt).toLocaleString() : 'current session';
+    $('save-trace').disabled = !trace;
+    updateStats();
+  }
+  function downloadTrace(trace) {
+    if (!trace?.events?.length) return;
+    const blob = new Blob([trace.events.map((event) => JSON.stringify(event)).join('\n')+'\n'], {type:'application/x-ndjson'});
+    const url = URL.createObjectURL(blob); const link = document.createElement('a');
+    link.href = url; link.download = `spex-trace-${trace.id}.jsonl`; link.click();
+    setTimeout(() => URL.revokeObjectURL(url),0);
+  }
+  function renderTraces() {
+    const list = $('trace-list'); list.textContent = '';
+    $('trace-count').textContent = `${traceHistory.length} session${traceHistory.length === 1 ? '' : 's'}`;
+    if (!traceHistory.length) { const empty = document.createElement('div'); empty.className='empty-row'; empty.textContent='Completed sessions are saved locally.'; list.append(empty); return; }
+    for (const trace of traceHistory) {
+      const row = document.createElement('div'); row.className='trace-row';
+      const name = document.createElement('span'); name.className='trace-name'; name.textContent = new Date(trace.completedAt).toLocaleString();
+      const saved = document.createElement('span'); saved.className='trace-stat'; saved.textContent=`${ms(trace.savedMs)} saved`;
+      const catches = document.createElement('span'); catches.className='trace-stat'; catches.textContent=`${traceMetrics(trace).served} served`;
+      const events = document.createElement('span'); events.className='trace-stat'; events.textContent=`${trace.events.length} events`;
+      const button = document.createElement('button'); button.textContent='JSONL'; button.addEventListener('click',() => downloadTrace(trace));
+      row.append(name,saved,catches,events,button); list.append(row);
     }
+    renderSessionOptions();
   }
-
-  function addEdit(t, path) {
-    const tick = el('div', 'edit-tick');
-    tick.style.top = px(MARGIN_H + 2 * ROW_H + 6);
-    const lab = el('div', 'edit-lab');
-    lab.style.top = px(MARGIN_H + 2 * ROW_H + 32 - (editParity++ % 2) * 12);
-    const b = document.createElement('span');
-    b.className = 'b';
-    b.textContent = String(path || '').split('/').pop();
-    lab.appendChild(b);
-    addItem({ t, end: t, els: [tick, lab], place() {
-      tick.style.left = px(X(t));
-      lab.style.left = px(X(t) + 4);
-    }});
-  }
-
-  function addFired(t, n) {
-    const rule = el('div', 'fired-rule');
-    const ts = el('div', 't-ts', slayer, clock());
-    const fl = el('div', 't-fl', slayer, 'FIRED #' + n);
-    addItem({ t, end: t, els: [rule, ts, fl], place() {
-      rule.style.left = px(X(t));
-      ts.style.left = px(X(t));
-      fl.style.left = px(X(t));
-    }});
-  }
-
-  function addSpec(t, kind, epoch, argv) {
-    const lane = addKindLane(kind);
-    const b = el('div', 'bar spec');
-    b.style.top = px(lane.y + 15);
-    const lbl = document.createElement('span');
-    lbl.textContent = trunc('#' + S.specCount + ' ' + kind + ' · ' + (argv || []).join(' ') + ' · e' + epoch, 44);
-    b.appendChild(lbl);
-    const s = {
-      t, end: null, kind, epoch, y: lane.y + 15, state: 'running', parallelNoted: false,
-      bar: b, kx: null, els: [b],
-      place() {
-        const x0 = X(s.t), x1 = X(s.end == null ? lastNow : s.end);
-        b.style.left = px(x0);
-        b.style.width = px(Math.max(3, x1 - x0));
-        if (s.kx) { s.kx.style.left = px(x1 - 4); s.kx.style.top = px(s.y - 1); }
-      }
-    };
-    specs.set(kind + ':' + epoch, s);
-    addItem(s);
-    return s;
-  }
-
-  function finishSpec(s, end, state, text) {
-    if (s.state !== 'running') return;
-    s.state = state;
-    s.end = end;
-    s.bar.textContent = text;
-    s.bar.classList.remove('spec');
-    if (state === 'served') {
-      s.bar.classList.add('served');
-    } else {
-      s.bar.classList.add('discard');
-      s.kx = el('div', 'killx', slayer, '×');
-      s.els.push(s.kx);
+  function renderSessionOptions() {
+    const select = $('session-select');
+    select.textContent = '';
+    const live = document.createElement('option'); live.value = 'live'; live.textContent = 'Live session'; select.append(live);
+    for (const trace of traceHistory) {
+      const option = document.createElement('option'); option.value = trace.id;
+      option.textContent = `${new Date(trace.completedAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})} · ${ms(trace.savedMs)} saved · ${traceMetrics(trace).served} served`;
+      select.append(option);
     }
-    s.place();
+    if (![...select.options].some((option) => option.value === selectedSessionId)) selectedSessionId = 'live';
+    select.value = selectedSessionId;
   }
-
-  function addAbstain(t, kind, door) {
-    const lane = addKindLane(kind);
-    const b = el('div', 'bar abstain', slayer, 'abstain · ' + door);
-    b.style.top = px(lane.y + 15);
-    addItem({ t, end: t, els: [b], place() { b.style.left = px(X(t)); } });
+  function finishSession(reason) {
+    if (state.closed || !state.events.length) return;
+    closeAgent(performance.now()); closeCalls(performance.now());
+    const first = state.events[0], last = state.events[state.events.length-1];
+    const id = `${first.t || 0}-${last.t || 0}-${state.events.length}-${Math.round(state.savedMs)}`;
+    const trace = { id, reason, completedAt:Date.now(), savedMs:state.savedMs, wastedMs:state.wastedMs, catches:state.hits, served:state.hits, speculations:state.specs, asks:state.asks, cacheHits:state.cacheHits, promoted:state.promoted, misses:state.misses, top3Hits:state.top3Hits, top3Total:state.top3Total, events:state.events.slice() };
+    const existing = traceHistory.find((item) => item.id === id);
+    if (!existing) { traceHistory.unshift(trace); persistHistory(); }
+    state.closed = true; completedTrace = existing || trace; selectedSessionId = completedTrace.id; selectedHistoryModel = buildHistoryModel(completedTrace); renderTraces(); showPostmortem(completedTrace); render();
   }
-
-  function addParallelNote(s) {
-    s.parallelNoted = true;
-    const n = el('div', 'note', slayer, 'parallel: ran while model worked');
-    n.style.top = px(s.y - 12);
-    const t = s.t;
-    addItem({ t, end: t, els: [n], place() { n.style.left = px(X(t) + 2); } });
-  }
-
-  function addCallout(t, y, text, num) {
-    const note = document.createElement('div');
-    note.className = 'callout';
-    note.append(text + ' · ');
-    const strong = document.createElement('span');
-    strong.className = 'num';
-    strong.textContent = num;
-    note.appendChild(strong);
-    note.style.top = px(Math.max(2, y - 26));
-    const lead = document.createElement('div');
-    lead.className = 'lead';
-    lead.style.top = px(y - 15);
-    flayer.append(lead, note);
-    callouts.push({ t, els: [note, lead], lead, note });
-    while (callouts.length > 3) {
-      const old = callouts.shift();
-      for (const e of old.els) e.remove();
-    }
-    callouts.forEach((c, i) => {
-      const op = String(1 - (callouts.length - 1 - i) * 0.35);
-      c.note.style.opacity = op;
-      c.lead.style.opacity = op;
+  function renderMetricChart(metrics,totals=totalMetrics()) {
+    const signature = `${selectedSessionId}:${metricView}:${metrics.savedMs}:${metrics.cacheHits}:${metrics.speculations}:${metrics.served}:${totals.savedMs}:${totals.cacheHits}:${totals.speculations}:${totals.served}`;
+    if (signature === lastMetricSignature) return;
+    lastMetricSignature = signature;
+    const chart = $('metric-chart'); chart.textContent = ''; chart.setAttribute('viewBox','0 0 430 142');
+    const rows = metricView === 'cache'
+      ? [['session hits',metrics.cacheHits,'#76efb1'],['total hits',totals.cacheHits,'#f2ff72']]
+      : metricView === 'speculations'
+        ? [['session launched',metrics.speculations,'#69a8ff'],['total launched',totals.speculations,'#f2ff72'],['session served',metrics.served,'#76efb1'],['total served',totals.served,'#9ff5c7']]
+        : [['session saved',Math.round(metrics.savedMs),'#76efb1'],['total saved',Math.round(totals.savedMs),'#f2ff72']];
+    const max = Math.max(1,...rows.map((row) => Number(row[1]) || 0));
+    rows.forEach((row,index) => {
+      const spacing = rows.length > 3 ? 33 : 52; const y = 15 + index * spacing; const value = Number(row[1]) || 0; const length = value/max*292;
+      chart.append(node('text',{x:0,y,class:'metric-label'},row[0]));
+      chart.append(node('text',{x:428,y,'text-anchor':'end',class:'metric-value'},`${value}${row[3] || (metricView === 'latency' ? 'ms' : '')}`));
+      chart.append(node('line',{x1:0,y1:y+14,x2:428,y2:y+14,class:'metric-track'}));
+      const bar = node('line',{x1:0,y1:y+14,x2:length,y2:y+14,class:'metric-bar',stroke:row[2]}); chart.append(bar);
+      if (!reduced && length > 0) bar.animate([{strokeDasharray:`${length} ${length}`,strokeDashoffset:length,opacity:.35},{strokeDasharray:`${length} ${length}`,strokeDashoffset:0,opacity:1}],{duration:420+index*70,easing:'cubic-bezier(.22,1,.36,1)',fill:'both'});
     });
   }
-
-  function placeCallouts(tx) {
-    for (let i = callouts.length - 1; i >= 0; i--) {
-      const c = callouts[i];
-      const sx = tx + X(c.t);
-      const noteLeft = width - 8 - c.note.offsetWidth;
-      if (sx < 20 || sx > noteLeft) {
-        for (const e of c.els) e.remove();
-        callouts.splice(i, 1);
-        continue;
+  function buildHistoryModel(trace) {
+    const model = { branches:[], main:[], calls:[], edits:[], firstAt:null, endAt:null, epoch:null };
+    const events = Array.isArray(trace?.events) ? trace.events : [];
+    const rawStart = Number(events.find((event) => Number.isFinite(Number(event.t)))?.t || 0);
+    const timeAt = (event,index) => Number.isFinite(Number(event.t)) ? Number(event.t) : rawStart + index;
+    const openHistoryAgent = (at) => { if (!model.main.some((item) => item.type === 'agent' && item.end == null)) model.main.push({type:'agent',at,end:null}); };
+    const closeHistoryAgent = (at) => { for (let i=model.main.length-1;i>=0;i--) if (model.main[i].type === 'agent' && model.main[i].end == null) { model.main[i].end=at; return; } };
+    const closeHistoryCalls = (at,key='') => { for (let i=model.calls.length-1;i>=0;i--) { const call=model.calls[i]; if (call.end != null || (key && call.key !== key)) continue; call.end=at; if (key) return; } };
+    const historyBranch = (event) => { const key=branchKey(event); for (let i=model.branches.length-1;i>=0;i--) if (model.branches[i].key===key && !model.branches[i].end) return model.branches[i]; return null; };
+    events.forEach((event,index) => {
+      const at=timeAt(event,index); if (model.firstAt == null) model.firstAt=at; model.endAt=at; if (event.epoch != null) model.epoch=event.epoch;
+      if (event.type === 'codex') {
+        if (event.what === 'exec') { openHistoryAgent(at); closeHistoryCalls(at); model.calls.push({key:commandKey(event.command),kind:callKind(event.command),at,end:null}); }
+        else if (event.what === 'done') closeHistoryCalls(at,commandKey(event.command));
+        else if (event.what === 'edit') { closeHistoryCalls(at); openHistoryAgent(at); model.edits.push({at,end:at+EDIT_WINDOW_MS}); }
+        else if (event.what === 'status' && statusDone(event.detail)) { closeHistoryCalls(at); closeHistoryAgent(at); }
+        else { closeHistoryCalls(at); openHistoryAgent(at); }
       }
-      c.lead.style.left = px(sx);
-      c.lead.style.width = px(Math.max(0, noteLeft - sx));
+      if (event.type === 'speculate') model.branches.push({key:branchKey(event),kind:event.kind || 'tool',epoch:event.epoch,start:at,end:null,outcome:'running',savedMs:0,wastedMs:0});
+      if (event.type === 'serve') { const branch=historyBranch(event); if (branch) Object.assign(branch,{end:at,outcome:event.outcome,savedMs:event.savedMs || 0,wastedMs:event.wastedMs || 0}); }
+      if (event.type === 'outcome' && (event.outcome === 'discarded' || event.outcome === 'preempted')) { const branch=historyBranch(event); if (branch) Object.assign(branch,{end:at,outcome:event.outcome,wastedMs:event.wastedMs || 0}); }
+    });
+    const end = model.endAt ?? model.firstAt ?? 0; closeHistoryCalls(end); closeHistoryAgent(end);
+    for (const branch of model.branches) if (!branch.end) branch.end=end;
+    return model;
+  }
+  function addMain(type, at) {
+    const item = { type, at, end: null };
+    state.main.push(item);
+    if (state.main.length > 160) state.main.shift();
+    return item;
+  }
+  function openAgent(at) {
+    if (state.main.some((item) => item.type === 'agent' && item.end == null)) return;
+    addMain('agent', at);
+  }
+  function closeAgent(at) {
+    for (let i = state.main.length - 1; i >= 0; i--) {
+      const item = state.main[i];
+      if (item.type !== 'agent' || item.end != null) continue;
+      item.end = at;
+      return;
     }
   }
-
-  function addTurnRule(t, label) {
-    const rule = el('div', 'turn-rule');
-    const lab = el('div', 'turn-lab', slayer, label);
-    addItem({ t, end: t, els: [rule, lab], place() {
-      rule.style.left = px(X(t));
-      lab.style.left = px(X(t) + 4);
-    }});
-  }
-
-  function openEpochSeg(t, n) {
-    const b = el('div', 'eseg cur', etrack, String(n));
-    const seg = { t, end: null, els: [b], place() {
-      const x0 = X(seg.t), x1 = X(seg.end == null ? lastNow : seg.end);
-      b.style.left = px(x0);
-      b.style.width = px(Math.max(2, x1 - x0));
-    }};
-    curSeg = seg;
-    addItem(seg);
-  }
-  function closeEpochSeg(t) {
-    if (!curSeg) return;
-    curSeg.end = t;
-    curSeg.els[0].classList.remove('cur');
-    curSeg.place();
-    curSeg = null;
-  }
-
-  function setEpoch(epoch, now) {
-    if (epoch == null || (S.epoch != null && epoch <= S.epoch)) return;
-    const prev = S.epoch;
-    S.epoch = epoch;
-    $('m-epoch').textContent = 'epoch ' + epoch;
-    $('stamp-epoch').textContent = 'epoch ' + epoch;
-    closeEpochSeg(now);
-    openEpochSeg(now, epoch);
-    const kills = pendingKills.splice(0);
-    if (prev != null && kills.length) {
-      const kx = el('div', 'ekill', etrack, '×');
-      const lab = el('div', 'elab terra', etrack,
-        'e' + epoch + ' · × killed ' + kills.map((x) => x.kind).join(', '));
-      addItem({ t: now, end: now, els: [kx, lab], place() {
-        kx.style.left = px(X(now));
-        lab.style.left = px(X(now) + 3);
-      }});
-      ledger('terra', 'epoch', prev + ' → ' + epoch + ' · killed ' +
-        kills.map((x) => x.kind + ' (' + fmtS(x.wastedMs) + 's wasted)').join(' · '));
-    } else if (prev != null) {
-      ledger('hollow', 'epoch', prev + ' → ' + epoch);
-    }
-    renderKinds();
-  }
-
-  function markTurnStart(now) {
-    if (turnStartT == null) turnStartT = now;
-  }
-
-  function turnDone(now) {
-    if (now - lastTurnDone < 2000) return;
-    lastTurnDone = now;
-    closeReason(now);
-    const start = turnStartT == null ? now : turnStartT;
-    const wall = Math.max(now - start, 1);
-    const pct = Math.min(100, Math.round((turnHidden / wall) * 100));
-    const box = $('turns');
-    const ph = box.querySelector('.empty');
-    if (ph) ph.remove();
-    const cell = document.createElement('div');
-    cell.className = 'turn-cell';
-    const t = document.createElement('span');
-    t.className = 't';
-    t.textContent = 'TURN ' + turnNum;
-    const d = document.createElement('span');
-    d.className = 'd';
-    d.textContent = ' · ' + fmtS(wall) + 's wall · ' + fmtS(turnHidden) + 's hidden (' + pct + '%)';
-    const fill = document.createElement('span');
-    fill.className = 'fill';
-    fill.style.width = pct + '%';
-    cell.append(t, d, fill);
-    box.appendChild(cell);
-    while (box.children.length > 3) box.firstChild.remove();
-    ledger('ink', 'TURN', turnNum + ' done · ' + fmtS(wall) + 's wall · ' + fmtS(turnHidden) + 's hidden');
-    addTurnRule(now, 'TURN ' + (turnNum + 1));
-    turnNum++;
-    turnStartT = null;
-    turnHidden = 0;
-  }
-
-  let scrollBack = 0;
-  let frozenAt = null;
-  const followBtn = $('tl-follow');
-  function following() { return frozenAt === null && scrollBack === 0; }
-  function syncFollowBtn() {
-    followBtn.textContent = following() ? 'pause' : 'live';
-    followBtn.classList.toggle('paused', !following());
-  }
-  followBtn.addEventListener('click', () => {
-    if (following()) frozenAt = performance.now();
-    else { frozenAt = null; scrollBack = 0; }
-    syncFollowBtn();
-  });
-  rowsEl.addEventListener('wheel', (e) => {
-    if (Math.abs(e.deltaX) < Math.abs(e.deltaY)) return;
-    e.preventDefault();
-    const ref = frozenAt === null ? performance.now() : frozenAt;
-    const maxBack = Math.max(0, (ref - originT) * k - nowX + 60);
-    scrollBack = Math.min(maxBack, Math.max(0, scrollBack + e.deltaX));
-    syncFollowBtn();
-  }, { passive: false });
-
-  function tick() {
-    lastNow = performance.now();
-    const viewNow = frozenAt === null ? lastNow : frozenAt;
-    const tx = nowX - (viewNow - originT) * k + scrollBack;
-    slayer.style.transform = 'translateX(' + tx + 'px)';
-    etrack.style.transform = 'translateX(' + tx + 'px)';
-    if (reason) reason.place();
-    if (curSeg) curSeg.place();
-    for (const s of specs.values()) {
-      if (s.state !== 'running') continue;
-      s.place();
-      if (!s.parallelNoted && reason) addParallelNote(s);
-    }
-    placeCallouts(tx);
-    for (let i = items.length - 1; i >= 0; i--) {
-      const it = items[i];
-      const end = it.end == null ? lastNow : it.end;
-      if (lastNow - end > 900000) {
-        for (const e of it.els) e.remove();
-        if (it.kind !== undefined && it.epoch !== undefined) specs.delete(it.kind + ':' + it.epoch);
-        items.splice(i, 1);
-      }
+  function closeCalls(at, key = '') {
+    for (let i = state.calls.length - 1; i >= 0; i--) {
+      const call = state.calls[i];
+      if (call.end != null || (key && call.key !== key)) continue;
+      call.end = at;
+      if (key) return;
     }
   }
-
-  if (RM) setInterval(tick, 1000);
-  else (function loop() { tick(); requestAnimationFrame(loop); })();
-
-  addEventListener('resize', measure);
-
-  function renderStats() {
-    $('s-saved').textContent = fmtS(S.savedMs);
-    $('s-hits').textContent = S.hits;
-    $('s-asks').textContent = S.asks;
-    $('s-specs').textContent = S.specCount;
-    let flight = 0;
-    for (const s of specs.values()) if (s.state === 'running') flight++;
-    $('s-flight').textContent = flight;
-    $('s-wasted').textContent = fmtS(S.wastedMs);
-    $('s-tokens').textContent = S.tokBase == null ? '·' : '+' + (S.tokLast - S.tokBase);
-    $('rot').textContent = 'wait hidden Σ ' + fmtS(S.savedMs) + 's';
-    let abst = 0;
-    for (const n of doors.values()) abst += n;
-    $('f-sum').textContent = S.specCount + ' speculations · ' + S.hits + ' served · ' +
-      S.discards + ' discarded · ' + abst + ' abstain · ' +
-      (S.tokBase == null ? '+0' : '+' + (S.tokLast - S.tokBase)) + ' tokens';
+  function findBranch(e) {
+    const key = branchKey(e);
+    for (let i = state.branches.length - 1; i >= 0; i--) if (state.branches[i].key === key && !state.branches[i].end) return state.branches[i];
+    return null;
   }
-
-  function kindRow(kind) {
-    if (!perKind.has(kind)) perKind.set(kind, { spec: 0, served: 0, hidden: 0, wasted: 0, abstain: 0 });
-    return perKind.get(kind);
-  }
-
-  function renderKinds() {
-    const body = $('kinds-body');
-    body.textContent = '';
-    $('kinds-empty').style.display = perKind.size ? 'none' : '';
-    $('fig2-fr').textContent = S.epoch == null ? 'live' : 'epoch ' + S.epoch + ' · live';
-    const tot = { spec: 0, served: 0, hidden: 0, wasted: 0 };
-    for (const [kind, r] of perKind) {
-      const tr = document.createElement('tr');
-      const kd = document.createElement('td');
-      kd.className = 'kind';
-      const sw = document.createElement('span');
-      sw.className = 'swatch';
-      kd.append(sw, kind);
-      if (r.abstain) {
-        const cn = document.createElement('span');
-        cn.className = 'cell-note';
-        cn.textContent = ' +' + r.abstain + ' abstain';
-        kd.appendChild(cn);
-      }
-      tr.appendChild(kd);
-      const cells = [
-        [r.spec ? '' : 'dim', String(r.spec)],
-        [r.served ? '' : 'dim', String(r.served)],
-        [r.hidden ? '' : 'dim', r.hidden ? fmtS(r.hidden) + 's' : '·'],
-        [r.wasted ? 'terra' : 'dim', r.wasted ? fmtS(r.wasted) + 's' : '·'],
-      ];
-      for (const [cls, val] of cells) {
-        const td = document.createElement('td');
-        td.className = 'n' + (cls === 'dim' ? ' dim' : '');
-        if (cls === 'terra') {
-          const sp = document.createElement('span');
-          sp.className = 'terra-t';
-          sp.textContent = val;
-          td.appendChild(sp);
-        } else td.textContent = val;
-        tr.appendChild(td);
-      }
-      body.appendChild(tr);
-      tot.spec += r.spec; tot.served += r.served; tot.hidden += r.hidden; tot.wasted += r.wasted;
-    }
-    if (perKind.size) {
-      const tr = document.createElement('tr');
-      tr.className = 'total';
-      const vals = ['Σ', String(tot.spec), String(tot.served), fmtS(tot.hidden) + 's', fmtS(tot.wasted) + 's'];
-      vals.forEach((v, i) => {
-        const td = document.createElement('td');
-        if (i) td.className = 'n';
-        td.textContent = v;
-        tr.appendChild(td);
-      });
-      body.appendChild(tr);
-    }
-  }
-
-  function renderGate() {
-    const body = $('gate-body');
-    body.textContent = '';
-    const any = S.specCount || doors.size;
-    $('gate-empty').style.display = any ? 'none' : '';
-    if (!any) return;
-    const row = (a, b, c, cls) => {
-      const tr = document.createElement('tr');
-      if (cls) tr.className = cls;
-      [[a, ''], [b, ''], [c, 'n']].forEach(([v, tc]) => {
-        const td = document.createElement('td');
-        if (tc) td.className = tc;
-        if (v && v.nodeType) td.appendChild(v); else td.textContent = v;
-        tr.appendChild(td);
-      });
-      body.appendChild(tr);
-    };
-    const fire = document.createElement('span');
-    fire.className = 'green-t';
-    fire.textContent = 'fired';
-    row(fire, '·', String(S.specCount));
-    let abst = 0;
-    for (const [door, n] of doors) {
-      const ab = document.createElement('span');
-      ab.className = 'terra-t';
-      ab.textContent = 'abstain';
-      row(ab, String(door), String(n));
-      abst += n;
-    }
-    row('Σ ' + (S.specCount + abst), abst + ' abstain', S.specCount + ' fired', 'total');
-  }
-
-  function ledger(mark, key, detail) {
-    evCount++;
-    $('ev-count').textContent = evCount;
-    $('ledger-empty').style.display = 'none';
-    const box = $('ledger');
-    const row = document.createElement('div');
-    row.className = 'lrow';
-    const m = document.createElement('span');
-    m.className = 'lmark ' + mark;
-    const lt = document.createElement('span');
-    lt.className = 'lt';
-    lt.textContent = clock();
-    const lk = document.createElement('span');
-    lk.className = 'lk';
-    lk.textContent = key;
-    const ld = document.createElement('span');
-    ld.className = 'ld';
-    ld.textContent = trunc(detail, 90);
-    row.append(m, lt, lk, ld);
-    const stick = box.scrollTop + box.clientHeight >= box.scrollHeight - 8;
-    box.appendChild(row);
-    while (box.children.length > 200) box.firstChild.remove();
-    if (stick) box.scrollTop = box.scrollHeight;
-  }
-
-  function markSeen() {
-    if (!sawItem) {
-      sawItem = true;
-      $('tl-empty').style.display = 'none';
-      $('m-t0').textContent = clock();
-      $('f-t0').textContent = clock();
-    }
-  }
-
   function reset() {
-    for (const it of items) for (const e of it.els) e.remove();
-    items.length = 0;
-    specs.clear();
-    for (const c of callouts.splice(0)) for (const e of c.els) e.remove();
-    openExecs.length = 0;
-    pendingKills.length = 0;
-    perKind.clear();
-    doors.clear();
-    reason = null;
-    curSeg = null;
-    cmdParity = 0; editParity = 0;
-    sawItem = false;
-    turnStartT = null; turnHidden = 0; turnNum = 1; lastTurnDone = -1e9;
-    for (const lane of kindLanes.values()) { lane.labEl.remove(); lane.lineEl.remove(); }
-    kindLanes.clear();
-    addKindLane('test');
-    Object.assign(S, { savedMs: 0, wastedMs: 0, asks: 0, hits: 0, specCount: 0, discards: 0, tokBase: null, tokLast: null, epoch: null });
-    $('m-epoch').textContent = 'epoch ·';
-    $('stamp-epoch').textContent = 'epoch ·';
-    $('m-t0').textContent = '·';
-    $('f-t0').textContent = '·';
-    const turns = $('turns');
-    turns.textContent = '';
-    const ph = document.createElement('div');
-    ph.className = 'turn-cell empty';
-    const pt = document.createElement('span');
-    pt.className = 't';
-    pt.textContent = 'TURNS';
-    const pd = document.createElement('span');
-    pd.className = 'd';
-    pd.textContent = ' · awaiting completion';
-    ph.append(pt, pd);
-    turns.appendChild(ph);
-    renderStats(); renderKinds(); renderGate();
-    ledger('hollow', 'RESET', 'session reset · replay restarting');
+    state.branches.length = 0; state.main.length = 0; state.calls.length = 0; state.edits.length = 0; state.offsetMs = 0; state.following = true;
+    state.savedMs = 0; state.wastedMs = 0; state.asks = 0; state.hits = 0; state.cacheHits = 0; state.promoted = 0; state.misses = 0; state.specs = 0;
+    state.top3Hits = 0; state.top3Total = 0; state.pendingTop3 = []; state.epoch = null; state.firstAt = null; state.events.length = 0; state.closed = false;
+    $('follow').textContent = 'following'; $('follow').classList.remove('paused'); updateStats(); render();
   }
-
   function handle(e) {
-    const now = performance.now();
-    if (e.type === 'reset' && e.epoch === undefined) { reset(); return; }
-    setEpoch(e.epoch, now);
-
+    if (e.type === 'reset') { appendLedger(e); finishSession('reset'); reset(); return; }
+    if (state.closed) reset();
+    const at = performance.now();
+    state.events.push(e); appendLedger(e);
+    if (state.firstAt == null) state.firstAt = at;
+    if (e.epoch != null) state.epoch = e.epoch;
+    let sessionDone = false;
     if (e.type === 'codex') {
-      if (e.what === 'edit') {
-        markSeen(); markTurnStart(now);
-        splitReason(now);
-        addEdit(now, e.path);
-        ledger('ink', 'EDIT', String(e.path || '').split('/').pop() + (e.sig ? ' · ' + e.sig : ''));
-      } else if (e.what === 'exec') {
-        markSeen(); markTurnStart(now);
-        splitReason(now);
-        addExec(now, e.command);
-        ledger('hollow', 'EXEC', '$ ' + stripCmd(e.command));
+      if (e.what === 'exec') {
+        openAgent(at);
+        closeCalls(at);
+        state.calls.push({ key:commandKey(e.command), kind:callKind(e.command), at, end:null });
+        if (state.calls.length > 160) state.calls.shift();
       } else if (e.what === 'done') {
-        matchDone(e.command, e.durationMs);
-        if (e.exitCode !== 0 && e.exitCode != null) {
-          ledger('terra', 'EXIT', 'code ' + e.exitCode + ' · ' + stripCmd(e.command));
-        }
+        closeCalls(at, commandKey(e.command));
+      } else if (e.what === 'edit') {
+        closeCalls(at);
+        openAgent(at);
+        state.edits.push({ at, end:at+EDIT_WINDOW_MS });
+        if (state.edits.length > 160) state.edits.shift();
       } else if (e.what === 'status') {
-        const d = e.detail;
-        if (d === 'turn/completed' || (d && d.type === 'turn/completed') || (d && d.type === 'idle')) {
-          turnDone(now);
-        } else if (d && d.type === 'active') {
-          markSeen(); markTurnStart(now);
-          openReason(now);
-        }
-      }
-      return;
-    }
-
-    if (e.type === 'predict') {
-      const cands = (e.candidates || []).map((c) => c.kind + ' p=' + Number(c.p).toFixed(2)).join(' · ');
-      ledger('hollow', 'PREDICT', cands || 'nothing');
-      return;
-    }
-
-    if (e.type === 'admit') {
-      ledger('hollow', 'ADMIT', e.kind + ' → ' + (e.argv || []).join(' '));
-      return;
-    }
-
-    if (e.type === 'speculate') {
-      markSeen();
-      S.specCount++;
-      kindRow(e.kind).spec++;
-      addSpec(now, e.kind, e.epoch, e.argv);
-      addFired(now, S.specCount);
-      ledger('ink', 'fired', '#' + S.specCount + ' ' + e.kind + ' · e' + e.epoch + ' · ' + (e.argv || []).join(' '));
-      renderStats(); renderKinds(); renderGate();
-      return;
-    }
-
-    if (e.type === 'abstain') {
-      markSeen();
-      addAbstain(now, e.kind, e.door);
-      kindRow(e.kind).abstain++;
-      doors.set(e.door, (doors.get(e.door) || 0) + 1);
-      ledger('hollow', 'ABSTAIN', e.kind + ' · door: ' + e.door);
-      renderStats(); renderKinds(); renderGate();
-      return;
-    }
-
-    if (e.type === 'serve') {
-      S.asks++;
-      const won = e.outcome === 'hit' || e.outcome === 'promoted';
-      if (won) {
-        S.hits++;
-        S.savedMs += e.savedMs || 0;
-        turnHidden += e.savedMs || 0;
-        const r = kindRow(e.kind);
-        r.served++;
-        r.hidden += e.savedMs || 0;
-        const s = specs.get(e.kind + ':' + e.epoch);
-        const promoted = e.outcome === 'promoted';
-        const barText = promoted
-          ? 'promoted · lead ' + fmtS(e.savedMs || 0) + 's'
-          : 'served · hid ' + fmtS(e.savedMs || 0) + 's';
-        if (s) finishSpec(s, now, 'served', barText);
-        addCallout(now, s ? s.y : addKindLane(e.kind).y + 15,
-          promoted ? 'ask → attached mid-run' : 'ask → served from cache',
-          (promoted ? 'lead ' : 'hid ') + fmtS(e.savedMs || 0) + 's');
-        ledger('green', promoted ? 'PROMOTE' : 'served',
-          e.kind + ' → ' + (promoted ? 'attached mid-run · lead ' : 'cache hit · hid ') + fmtS(e.savedMs || 0) + 's');
+        closeCalls(at);
+        const detail = e.detail;
+        if (statusDone(detail)) { closeAgent(at); sessionDone = true; }
+        else openAgent(at);
       } else {
-        kindRow(e.kind);
-        const label = e.outcome === 'miss' ? 'miss' : 'miss (' + e.outcome + ')';
-        ledger('hollow', 'miss', e.kind + ' · ' + label + ' · nothing cached, ran fresh');
+        closeCalls(at);
+        openAgent(at);
       }
-      renderStats(); renderKinds();
-      return;
     }
-
-    if (e.type === 'outcome') {
-      if (e.outcome === 'discarded' || e.outcome === 'preempted') {
-        S.wastedMs += e.wastedMs || 0;
-        S.discards++;
-        kindRow(e.kind).wasted += e.wastedMs || 0;
-        pendingKills.push({ kind: e.kind, outcome: e.outcome, wastedMs: e.wastedMs || 0 });
-        const s = specs.get(e.kind + ':' + e.epoch);
-        if (s) finishSpec(s, now, 'dead', e.outcome + ' · −' + fmtS(e.wastedMs || 0) + 's');
-        const why = e.outcome === 'discarded' ? 'code changed' : 'newer speculation';
-        ledger('terra', 'DISCARD', e.kind + ' · ' + why + ' · e' + e.epoch + ' · wasted ' + fmtS(e.wastedMs || 0) + 's');
-        renderStats(); renderKinds();
-      }
-      return;
+    if (e.type === 'speculate') {
+      state.specs++;
+      state.branches.push({ key: branchKey(e), kind: e.kind || 'tool', epoch: e.epoch, argv: (e.argv || []).join(' '), start: at, end: null, outcome: 'running', savedMs: 0, wastedMs: 0 });
     }
-
-    if (e.type === 'tokens') {
-      if (S.tokBase == null) S.tokBase = e.total;
-      S.tokLast = e.total;
-      renderStats();
-      return;
+    if (e.type === 'predict') state.pendingTop3 = (e.candidates || []).slice(0,3).map((candidate) => candidate.kind);
+    if (e.type === 'serve') {
+      state.asks++;
+      const hit = e.outcome === 'hit' || e.outcome === 'promoted';
+      if (state.pendingTop3.length) { state.top3Total++; if (state.pendingTop3.includes(e.kind)) state.top3Hits++; state.pendingTop3 = []; }
+      const branch = findBranch(e);
+      if (hit) {
+        state.hits++; state.savedMs += e.savedMs || 0;
+        if (e.outcome === 'hit') state.cacheHits++; else state.promoted++;
+        if (branch) Object.assign(branch, { end: at, outcome: e.outcome, savedMs: e.savedMs || 0 });
+      } else if (branch) {
+        state.misses++;
+        Object.assign(branch, { end: at, outcome: 'miss', wastedMs: e.wastedMs || 0 });
+      } else state.misses++;
     }
+    if (e.type === 'outcome' && (e.outcome === 'discarded' || e.outcome === 'preempted')) {
+      state.wastedMs += e.wastedMs || 0;
+      const branch = findBranch(e);
+      if (branch) Object.assign(branch, { end: at, outcome: e.outcome, wastedMs: e.wastedMs || 0 });
+    }
+    updateStats(); render();
+    if (sessionDone) finishSession('completed');
   }
 
-  function setConn(live) {
-    $('stamp-dot').classList.toggle('on', live);
-    $('stamp-conn').textContent = live ? 'live' : 'reconnecting';
-    $('conn-note').textContent = (live ? 'live' : 'reconnecting') + ' · codex + spex sidecar';
+  function render() {
+    const width = Math.max(720, stage.clientWidth);
+    const model = selectedHistoryModel || state;
+    const historical = selectedHistoryModel != null;
+    const historyDuration = historical ? Math.max(1,model.endAt-model.firstAt) : 0;
+    const viewWindowMs = historical ? Math.max(1000,historyDuration*1.08) : state.windowMs;
+    const now = historical ? model.endAt + historyDuration*.04 : liveNow();
+    const viewFollowing = !historical && state.following;
+    svg.setAttribute('viewBox', `0 0 ${width} 470`);
+    svg.textContent = '';
+    const defs = node('defs');
+    const servedHatch = node('pattern', { id:'served-hatch', width:5, height:5, patternUnits:'userSpaceOnUse', patternTransform:'rotate(45)' });
+    servedHatch.append(node('rect', { width:5, height:5, fill:'#76efb1', 'fill-opacity':.12 }));
+    servedHatch.append(node('line', { x1:0, y1:0, x2:0, y2:5, stroke:'#76efb1', 'stroke-opacity':.92, 'stroke-width':1 }));
+    const callHatch = node('pattern', { id:'call-hatch', width:5, height:5, patternUnits:'userSpaceOnUse', patternTransform:'rotate(45)' });
+    callHatch.append(node('rect', { width:5, height:5, fill:'#69a8ff', 'fill-opacity':.28 }));
+    callHatch.append(node('line', { x1:0, y1:0, x2:0, y2:5, stroke:'#d5e7ff', 'stroke-opacity':.96, 'stroke-width':1 }));
+    const editHatch = node('pattern', { id:'edit-hatch', width:4, height:7, patternUnits:'userSpaceOnUse' });
+    editHatch.append(node('rect', { width:4, height:7, fill:'#c892ff', 'fill-opacity':.22 }));
+    editHatch.append(node('line', { x1:0, y1:0, x2:0, y2:7, stroke:'#c892ff', 'stroke-opacity':.98, 'stroke-width':1 }));
+    const testHatch = node('pattern', { id:'test-hatch', width:6, height:6, patternUnits:'userSpaceOnUse' });
+    testHatch.append(node('rect', { width:6, height:6, fill:'#ffd166', 'fill-opacity':.16 }));
+    testHatch.append(node('path', { d:'M0 0L6 6M6 0L0 6', stroke:'#ffd166', 'stroke-opacity':.92, 'stroke-width':.8 }));
+    defs.append(servedHatch, callHatch, editHatch, testHatch); svg.append(defs);
+    const plotRight = width - PAD_R;
+
+    for (let i = 0; i <= 6; i++) {
+      const x = PAD_L + i * (plotRight - PAD_L) / 6;
+      svg.append(node('line', { x1:x, y1:58, x2:x, y2:AXIS_Y, stroke:'#252826', 'stroke-width':1 }));
+      const ago = viewWindowMs * (6 - i) / 6;
+      svg.append(node('text', { x, y:AXIS_Y + 22, 'text-anchor':i === 6 ? 'end' : 'middle', class:i === 6 ? 'now-label' : 'axis-label' }, i === 6 ? (viewFollowing ? 'now' : historical ? 'session end' : 'inspection') : `−${Math.round(ago)}ms`));
+    }
+
+    svg.append(node('text', { x:18, y:REAL_Y + 4, class:'queue-label' }, 'real queue'));
+    svg.append(node('text', { x:18, y:SHADOW_Y + 4, class:'queue-label' }, 'shadow queue'));
+    svg.append(node('line', { x1:PAD_L, y1:REAL_Y, x2:plotRight, y2:REAL_Y, stroke:'#3e4650', 'stroke-width':1 }));
+    svg.append(node('line', { x1:PAD_L, y1:SHADOW_Y, x2:plotRight, y2:SHADOW_Y, stroke:'#393c3a', 'stroke-width':1 }));
+    svg.append(node('line', { x1:plotRight, y1:75, x2:plotRight, y2:365, stroke:'#d9dbd8', 'stroke-width':1, 'stroke-dasharray':'3 4' }));
+
+    const mainBoundaries = new Set();
+    function drawMainSegment(start, end, fill, stroke, opacity = 1) {
+      const left = Math.max(PAD_L, xFor(start, width, now, viewWindowMs));
+      const right = Math.min(plotRight, xFor(end, width, now, viewWindowMs));
+      if (right < PAD_L || left > plotRight || end <= start) return;
+      svg.append(node('rect', { x:left, y:REAL_Y-BAR_HALF, width:Math.max(.5,right-left), height:BAR_SIZE, fill, 'fill-opacity':opacity, stroke, 'stroke-opacity':.96, 'stroke-width':.6, 'shape-rendering':'crispEdges' }));
+    }
+    function markMainBoundary(at) {
+      const x = xFor(at,width,now,viewWindowMs);
+      if (x > PAD_L && x < plotRight) mainBoundaries.add(x.toFixed(2));
+    }
+    const phases = [
+      ...model.calls.map((call) => ({ at:call.at, end:call.end || now, kind:call.kind })),
+      ...model.edits.map((edit) => ({ at:edit.at, end:Math.min(edit.end,now), kind:'edit' }))
+    ].sort((a,b) => a.at-b.at);
+    const visibleMain = model.main.filter((span) => (span.end || now) >= now-viewWindowMs && span.at <= now);
+    for (const span of visibleMain) {
+      const spanEnd = span.end || now;
+      let cursor = span.at;
+      for (const phase of phases) {
+        const phaseStart = Math.max(span.at, phase.at);
+        const phaseEnd = Math.min(spanEnd, phase.end);
+        if (phaseEnd <= phaseStart || phaseEnd <= cursor) continue;
+        if (phaseStart > cursor) drawMainSegment(cursor, phaseStart, '#69a8ff', '#69a8ff', span.end ? .68 : .82);
+        markMainBoundary(phaseStart);
+        const start = Math.max(cursor, phaseStart);
+        if (phase.kind === 'edit') drawMainSegment(start, phaseEnd, 'url(#edit-hatch)', '#c892ff');
+        else if (phase.kind === 'test') drawMainSegment(start, phaseEnd, 'url(#test-hatch)', '#ffd166');
+        else drawMainSegment(start, phaseEnd, 'url(#call-hatch)', '#d5e7ff');
+        if (phaseEnd < spanEnd) markMainBoundary(phaseEnd);
+        cursor = phaseEnd;
+      }
+      if (cursor < spanEnd) drawMainSegment(cursor, spanEnd, '#69a8ff', '#69a8ff', span.end ? .68 : .82);
+    }
+    for (const value of mainBoundaries) {
+      const x = Number(value);
+      svg.append(node('line',{x1:x,y1:REAL_Y-BAR_HALF,x2:x,y2:REAL_Y+BAR_HALF,stroke:'#0b0c0c','stroke-opacity':.96,'stroke-width':1.15,'shape-rendering':'crispEdges'}));
+    }
+
+    const visibleBranches = model.branches.filter((b) => (b.end || now) >= now - viewWindowMs && b.start <= now);
+    for (const b of visibleBranches) {
+      const x0 = Math.max(PAD_L, xFor(b.start, width, now, viewWindowMs));
+      const x1 = Math.min(plotRight, xFor(b.end || now, width, now, viewWindowMs));
+      if (x1 < PAD_L || x0 > plotRight) continue;
+      const join = b.outcome === 'hit' || b.outcome === 'promoted';
+      const running = !b.end;
+      const evicted = !running && !join;
+      const splitX = x0;
+      const mergeX = x1;
+      const barWidth = Math.max(0, mergeX - splitX);
+      const barHeight = BAR_SIZE;
+      const realBottom = REAL_Y + BAR_HALF;
+      const shadowTop = SHADOW_Y - BAR_HALF;
+      const shadowBottom = SHADOW_Y + BAR_HALF;
+      const splitProgress = reduced || historical ? 1 : Math.min(1,Math.max(0,(now-b.start)/180));
+      const splitEase = 1-Math.pow(1-splitProgress,3);
+      svg.append(node('line', { x1:splitX, y1:realBottom, x2:splitX, y2:realBottom+(shadowTop-realBottom)*splitEase, stroke:'#76efb1', 'stroke-opacity':running ? .62 : .86, 'stroke-width':1.1, 'stroke-linecap':'butt' }));
+      if (join && barWidth > 0) {
+        svg.append(node('rect', { x:splitX, y:shadowTop, width:barWidth, height:barHeight, fill:'url(#served-hatch)', stroke:'#76efb1', 'stroke-opacity':.88, 'stroke-width':.7, 'shape-rendering':'crispEdges' }));
+      } else if (running && barWidth > 0) {
+        svg.append(node('rect', { x:splitX, y:shadowTop, width:barWidth, height:barHeight, fill:'#76efb1', 'fill-opacity':.24, stroke:'#76efb1', 'stroke-opacity':.56, 'stroke-width':.7, 'shape-rendering':'crispEdges', class:reduced ? '' : 'pulse' }));
+      } else if (barWidth > 0) {
+        const tailX = Math.max(splitX, mergeX - 10);
+        if (tailX > splitX) svg.append(node('rect', { x:splitX, y:shadowTop, width:tailX-splitX, height:barHeight, fill:'#76efb1', 'fill-opacity':.18, stroke:'#76efb1', 'stroke-opacity':.38, 'stroke-width':.7, 'shape-rendering':'crispEdges' }));
+        svg.append(node('rect', { x:tailX, y:shadowTop, width:mergeX-tailX, height:barHeight, fill:'#ff7f64', 'fill-opacity':.88, stroke:'#ff7f64', 'stroke-width':.7, 'shape-rendering':'crispEdges' }));
+        if (tailX > splitX) svg.append(node('line',{x1:tailX,y1:shadowTop,x2:tailX,y2:shadowBottom,stroke:'#0b0c0c','stroke-width':1.1,'shape-rendering':'crispEdges'}));
+      }
+      const resolutionProgress = reduced || historical || !b.end ? 1 : Math.min(1,Math.max(0,(now-b.end)/210));
+      const resolutionEase = 1-Math.pow(1-resolutionProgress,3);
+      if (join) {
+        svg.append(node('line', { x1:mergeX, y1:shadowTop, x2:mergeX, y2:shadowTop-(shadowTop-realBottom)*resolutionEase, stroke:'#76efb1', 'stroke-opacity':.96, 'stroke-width':1.1, 'stroke-linecap':'butt' }));
+        if (b.savedMs > 0 && resolutionProgress > .55) {
+          const rightSide = mergeX < plotRight - 92;
+          const labelX = mergeX + (rightSide ? 12 : -12);
+          const labelY = REAL_Y - 25;
+          svg.append(node('line', { x1:mergeX, y1:REAL_Y-BAR_HALF, x2:mergeX+(labelX-mergeX)*resolutionEase, y2:REAL_Y-BAR_HALF+(labelY+4-(REAL_Y-BAR_HALF))*resolutionEase, stroke:'#76efb1', 'stroke-opacity':.76, 'stroke-width':1, 'stroke-dasharray':'2 3' }));
+          svg.append(node('text', { x:labelX, y:labelY, 'text-anchor':rightSide ? 'start' : 'end', class:'save-label', opacity:resolutionEase }, `${Math.round(b.savedMs)}ms saved`));
+        }
+      } else if (evicted) {
+        svg.append(node('line', { x1:mergeX, y1:shadowTop, x2:mergeX, y2:shadowTop-(shadowTop-realBottom)*resolutionEase, stroke:'#ff7f64', 'stroke-opacity':.96, 'stroke-width':1.1, 'stroke-linecap':'butt' }));
+      }
+    }
+
+    $('empty').style.display = model.firstAt == null ? 'grid' : 'none';
   }
 
-  const es = new EventSource('/events');
-  es.onopen = () => setConn(true);
-  es.onerror = () => setConn(false);
-  es.onmessage = (m) => {
-    let e;
-    try { e = JSON.parse(m.data); } catch { return; }
-    try { handle(e); } catch {}
-  };
+  function setFollowing(value) {
+    if (value && selectedHistoryModel) {
+      selectedSessionId = 'live'; selectedHistoryModel = null; $('session-select').value = 'live'; showPostmortem(null);
+    }
+    state.following = value;
+    if (value) state.offsetMs = 0;
+    $('follow').textContent = value ? 'following' : 'follow now';
+    $('follow').classList.toggle('paused', !value); render();
+  }
+  document.querySelectorAll('[data-density]').forEach((button) => button.addEventListener('click', () => {
+    state.density = Number(button.dataset.density); state.windowMs = 12000 / state.density;
+    document.querySelectorAll('[data-density]').forEach((b) => b.classList.toggle('active', b === button)); render();
+  }));
+  $('follow').addEventListener('click', () => setFollowing(true));
+  $('session-select').addEventListener('change', (event) => {
+    selectedSessionId = event.target.value; state.offsetMs = 0;
+    const trace = selectedTrace(); selectedHistoryModel = trace ? buildHistoryModel(trace) : null;
+    showPostmortem(trace); render();
+  });
+  $('metric-select').addEventListener('change', (event) => { metricView = event.target.value; renderMetricChart(selectedMetrics()); });
+  $('save-trace').addEventListener('click', () => downloadTrace(selectedTrace()));
+  stage.addEventListener('wheel', (event) => { event.preventDefault(); setFollowing(false); state.offsetMs = Math.max(0, state.offsetMs + event.deltaY * 18 + event.deltaX * 18); render(); }, { passive:false });
+  stage.addEventListener('pointerdown', (event) => { stage.setPointerCapture(event.pointerId); stage.classList.add('dragging'); state.dragX = event.clientX; state.dragOffset = state.offsetMs; });
+  stage.addEventListener('pointermove', (event) => { if (!stage.hasPointerCapture(event.pointerId)) return; setFollowing(false); const plot = Math.max(1, stage.clientWidth - PAD_L - PAD_R); state.offsetMs = Math.max(0, state.dragOffset + (event.clientX - state.dragX) / plot * state.windowMs); render(); });
+  stage.addEventListener('pointerup', (event) => { if (stage.hasPointerCapture(event.pointerId)) stage.releasePointerCapture(event.pointerId); stage.classList.remove('dragging'); });
 
-  $('m-date').textContent = new Date().toISOString().slice(0, 10);
-  baseLines();
-  addKindLane('test');
-  syncHeights();
-  measure();
-  renderStats(); renderKinds(); renderGate();
+  const events = new EventSource('/events');
+  events.onopen = () => { $('conn-dot').classList.add('on'); $('conn').textContent = 'live'; };
+  events.onerror = () => { $('conn-dot').classList.remove('on'); $('conn').textContent = 'reconnecting'; };
+  events.onmessage = (message) => { try { handle(JSON.parse(message.data)); } catch {} };
+  addEventListener('resize', render);
+  if (reduced) setInterval(() => { if (selectedSessionId === 'live' && state.following && state.firstAt != null) render(); },1000);
+  else {
+    let lastFrame = 0;
+    const animateTimeline = (timestamp) => {
+      if (document.visibilityState === 'visible' && selectedSessionId === 'live' && state.following && state.firstAt != null && timestamp-lastFrame >= 32) { render(); lastFrame=timestamp; }
+      requestAnimationFrame(animateTimeline);
+    };
+    requestAnimationFrame(animateTimeline);
+  }
+  renderTraces();
+  showPostmortem(null); render();
 })();
 </script>
 </body>
