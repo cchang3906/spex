@@ -16,7 +16,7 @@ verification wait deleted.
 ## demo
 <img width="3584" height="2240" alt="Spex Demo Video" src="https://github.com/user-attachments/assets/9407a262-f4cd-4ad6-8ae9-81863acf2ebf" />
 
-The time save due to Spex was recorded to be 8.5 seconds, but it was actually 17 seconds because Spex helped avoid a package conflict error.
+Dynamic tooling also prevents version conflicts caused by package drift, eliminating the agent’s need for multiple troubleshooting turns. In this case, it saved 8.5 seconds on the tool call itself and avoided additional time that would have been spent diagnosing and fixing the dependency mismatch, resulting in a total time save of 17 seconds.
 
 
 ## measured results
