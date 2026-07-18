@@ -1,0 +1,25 @@
+Some sample trajectories I found. Each contain around .5~2.5GB of data.
+
+evaluation/verified/20251127_openhands_claude-opus-4-5
+evaluation/verified/20251215_livesweagent_claude-opus-4-5
+evaluation/verified/20250807_openhands_gpt5
+evaluation/verified/20250524_openhands_claude_4_sonnet
+evaluation/verified/20250522_sweagent_claude-4-sonnet-20250514
+evaluation/verified/20240402_sweagent_gpt4
+evaluation/verified/20240402_sweagent_claude3opus
+evaluation/verified/20250415_openhands
+evaluation/verified/20250203_openhands_4x_scaled
+
+evaluation/verified/20240728_sweagent_gpt4o
+evaluation/verified/20240620_sweagent_claude3.5sonnet
+evaluation/verified/20250225_sweagent_claude-3-7-sonnet
+evaluation/verified/20250511_sweagent_lm_32b
+
+evaluation/verified/20250725_sweagent_devstral_small_2507
+evaluation/verified/20250804_codesweep_sweagent_kimi_k2_instruct
+
+evaluation/verified/20241029_OpenHands-CodeAct-2.1-sonnet-20241022
+evaluation/verified/20250805_openhands-Qwen3-Coder-480B-A35B-Instruct
+evaluation/verified/20251103_SalesforceAIResearch_SAGE_OpenHands
+evaluation/verified/20250716_openhands_kimi_k2
+evaluation/verified/20250520_openhands_devstral_small
