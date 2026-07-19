@@ -60,12 +60,3 @@ event trace per run in `speculator/bench-runs/`.
   (`documentation/cli-ui-mvp.md`), the dashboard handoff, and the
   implementation plan.
 - `schemas/` generated app-server protocol bindings (codex-cli 0.144.4).
-
-## the site
-
-The blog presenting the system and the live benchmark evidence:
-https://lawrence-deliver-bull-trends.trycloudflare.com
-
-It is also in this repo: `cd blog && npm install && npm run dev`, or serve the
-prebuilt `blog/dist/` with any static server. All eval numbers on the site
-are computed from the same committed dataset as this README.
