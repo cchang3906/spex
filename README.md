@@ -3,26 +3,10 @@
 
 A speculative execution layer for a coding agent's tool calls.
 
-Codex codes in a serial tool loop: think, call a tool, read the output, think
-again. Every verification (tests, lint, typecheck) freezes that loop while
-the model waits for results. Spex wraps Codex, unmodified, watches the
-session over the public `codex app-server` protocol, and predicts Codex's
-future tool calls from its current trajectory: mined tool chain probabilities
-say what usually comes next, and a verifier lookup says exactly which command
-this repo uses. Confident predictions execute immediately in a background
-shadow queue (two slots, Codex's own sandbox) and cache their output. When a
-speculation is still running as Codex asks, the process is dynamically
-promoted to the main queue and keeps its head start. Through Spex, Codex has
-access to tool outputs before it even knows it needs them. Wrong guesses cost
-laptop CPU only, are never shown to the model, and every file edit fences
-stale results so nothing out of date can ever serve.
-
-The claim: same model, same prompts, the verification wait deleted.
+Codex uses a serial tool loop to code: think, call tool, read output, and think again. This sequential process is too slow, and forces Codex to wait for tool results. Our client predicts Codex's future tool calls based its current trajectory, runs multiple speculative tools in parallel, and caches them so Codex instantly retrieves tool results upon request. Through Spex, Codex has access to tool outputs before it even knows it needs it.
 
 ## demo
 <img width="3584" height="2240" alt="Spex Demo Video" src="https://github.com/user-attachments/assets/9407a262-f4cd-4ad6-8ae9-81863acf2ebf" />
-
-The predicted tool-call savings were 8.5 seconds. But dynamic tooling also prevented a package-version conflict and the multi-turn troubleshooting it would have triggered, bringing the total time saved to about 17 seconds. See below for more detailed reasoning.
 
 ## measured results
 
@@ -40,54 +24,7 @@ Add up every second across all 58 runs and the picture is simple:
 | head starts banked by speculation | none | 85.7 s | |
 | CPU wasted on wrong guesses | none | 0.0 s | nothing thrown away |
 
-The number to remember is 37 percent: the model spent about a third less of
-its life frozen waiting for test results, and it happened in 100 percent of
-steered runs (29 of 29, sign test p < 0.000001). The 15.8 percent wall clock
-figure carries a caveat stated plainly in the report: the arms resolved
-unevenly under venue network conditions, so treat it as directional. The
-verification waiting row has no such caveat; it is measured by local clocks
-around local test processes and the network cannot touch it.
-
-Where does the saving come from? It scales with what your tests cost:
-
-| suite cost | waiting deleted per run |
-| --- | --- |
-| 0.3 s (control) | 0.1 s |
-| 1.5 s | 1.4 s |
-| 6.7 s | 9.5 s |
-| 19 s | 18.8 s |
-
-- On a 19 second suite, spex deletes essentially the whole suite from the
-  model's experience on every verification.
-- On the deliberately cheap control there is nothing to hide and almost
-  nothing is saved. That is the point of the control: the effect is real
-  verification burden moved off the clock, not an artifact of the harness.
-- 78 percent of verification calls (47 of 60) were answered from speculation.
-- Prediction accuracy, live: top-1 and top-3 both 46 of 46 (100 percent),
-  every prediction preceding an ask named what Codex actually asked for.
-- Prediction accuracy, offline: top-3 recall 75.4 percent on 2,766 held out
-  events the table never trained on (`python3 mining/eval.py`, receipt in
-  `speculator/evals/output/`). Offline measures how often the table fires at
-  all; live measures that when it fired, it was right.
-- Tokens are neutral by construction: a served result is byte identical to
-  what the terminal would have printed.
-- Every number recomputes from the committed raw traces via the extraction
-  map in `speculator/bench-runs/README.md`; a cold clone reproduction audit
-  verified them independently.
-
-## a demo moment
-
-<!-- gif goes here -->
-
-- The demo environment had drifted: a package version collision that would
-  normally cost the agent several turns of dependency debugging.
-- Spex had already executed the suite in the real environment, so the served
-  output showed the actual failure state directly.
-- The model skipped the whole multi turn loop of chasing the drift.
-- The point: speculation does not just hide the wait. The result comes from
-  a real run in the real sandbox, so it also short circuits the reasoning
-  the model would spend reconciling what it expects with what the
-  environment actually is.
+Spex mined thousands of agent trajectories from SWEBench and OpenHands using PrefixSpan and created a transition-probability matrix for tool chains. Indexing into this table, Spex instantly loads the most likely tool type based on the previous tool calls, and the most likely path variation for its argument. The client then executes the top 3 in parallel in a background shadow queue and caches the output upon completion. If a speculation hits while running, the running process is dynamically promoted to the main queue. Agents are instructed to use our custom dynamic tool for testing, linting, and typechecking. Upon calling the tool, the cached results are instantly returned to Codex and cuts any latency and additional tool reasoning from occuring, saving both time and cost.
 
 ## reproduce
 
@@ -109,7 +46,6 @@ event trace per run in `speculator/bench-runs/`.
 
 <img width="722" height="607" alt="Screenshot 2026-07-18 at 2 56 20 PM" src="https://github.com/user-attachments/assets/71a091db-8174-4091-839d-a7d233d6e75b" />
 
-We did not have time to fully implement it, but a future version could include a user-friendly dashboard for visualizing live speculation, cache hits and misses, tool-call timelines, and cumulative latency savings across sessions.
 
 ## repo map
 
