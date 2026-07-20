@@ -41,6 +41,8 @@ One steered run (r1, sympy-24562) escaped its workspace: the trace shows it sear
 
 ## disclosures
 
+- In one serve of 47 (r2, sympy-21930), two concurrent tool calls joined the same in-flight speculative run and each was credited its own head start (0.7 s and 3.7 s, both arithmetically correct for their own ask times, combined still below the one suite's cost). Strictly, one execution earned two credits; the effect on the corpus is about 3.7 s of the 85.7 s total.
+
 - Instance selection is mechanical and pre-registered: candidates in deterministic order, vetted offline (repo generates, failing tests fail pre-fix, suite timed) with no model runs before selection. All vetted instances ran; all runs are reported.
 - The wide session ran 4 instance-pairs concurrently; arms within each pair ran sequentially on the same machine. Timing magnitudes from that session are directional; binary outcomes and savedMs (local clocks) are exact.
 - The steered arm's verifier is seeded with the instance's verify command; the identical command appears verbatim in both arms' prompts.

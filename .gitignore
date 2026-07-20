@@ -3,3 +3,4 @@ mining/raw/
 mining/work/
 .prefetch/
 __pycache__/
+.DS_Store

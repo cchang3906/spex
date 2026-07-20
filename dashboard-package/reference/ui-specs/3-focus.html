@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spex · Focus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0a;
+    --grey-1: #6b6b6b;
+    --grey-2: #9b9b9b;
+    --grey-3: #ececec;
+    --green: #bfe3c8;
+    --terracotta: #e08a6e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0; }
+
+  html, body { height: 100%; }
+
+  body {
+    background: #ffffff;
+    color: var(--ink);
+    font-family: "Geist", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .mono {
+    font-family: "Geist", "SFMono-Regular", Menlo, Consolas, monospace;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 32px;
+    border-bottom: 1px solid var(--grey-3);
+    flex: 0 0 auto;
+  }
+
+  .wordmark {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .live {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "Geist", "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--grey-2);
+  }
+
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--green);
+  }
+
+  main {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 32px;
+  }
+
+  .big {
+    font-size: clamp(96px, 16vw, 160px);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+
+  .big-label {
+    margin-top: 20px;
+    font-size: clamp(18px, 2.2vw, 26px);
+    font-weight: 400;
+    color: var(--grey-1);
+    letter-spacing: 0.01em;
+  }
+
+  .quiet {
+    margin-top: 44px;
+    font-family: "Geist", "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: 13px;
+    color: var(--grey-2);
+    letter-spacing: 0.02em;
+  }
+
+  .filmstrip {
+    flex: 0 0 auto;
+    width: 100%;
+    height: 120px;
+    padding: 0 32px;
+    margin-bottom: 56px;
+  }
+
+  .filmstrip svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  footer {
+    flex: 0 0 auto;
+    border-top: 1px solid var(--grey-3);
+    padding: 14px 32px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .ticker {
+    font-family: "Geist", "SFMono-Regular", Menlo, Consolas, monospace;
+    font-size: 12px;
+    color: var(--grey-1);
+    letter-spacing: 0.04em;
+  }
+
+  .ticker .tag {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .ticker .sep { color: var(--grey-3); padding: 0 10px; }
+</style>
+</head>
+<body>
+
+  <header>
+    <div class="wordmark">Spex</div>
+    <div class="live"><span class="live-dot"></span>live</div>
+  </header>
+
+  <main>
+    <div class="big">6.1s</div>
+    <div class="big-label">of waiting deleted</div>
+    <div class="quiet">3 of 4 verifications served before codex asked &middot; 0 extra tokens</div>
+  </main>
+
+  <div class="filmstrip" aria-label="speculative run timeline">
+    <svg viewBox="0 0 1200 120" preserveAspectRatio="none" role="img">
+      <!-- trunk -->
+      <line x1="0" y1="78" x2="1200" y2="78" stroke="#ececec" stroke-width="2"/>
+
+      <!-- epoch 1 : edit, spec run, FIRED (hit, hid 4.1s) -->
+      <circle cx="110" cy="78" r="4.5" fill="#e08a6e"/>
+      <rect x="124" y="46" width="176" height="6" fill="#bfe3c8"/>
+      <rect x="300" y="46" width="34" height="6" fill="#0a0a0a"/>
+      <line x1="334" y1="30" x2="334" y2="102" stroke="#0a0a0a" stroke-width="2"/>
+      <text x="334" y="20" text-anchor="middle" font-family="Geist, monospace" font-size="10" letter-spacing="1.5" fill="#6b6b6b">FIRED</text>
+      <text x="334" y="116" text-anchor="middle" font-family="Geist, monospace" font-size="10" fill="#9b9b9b">4.1s</text>
+
+      <!-- epoch 2 : edit, spec run, FIRED (hit, 1.0s promoted) -->
+      <circle cx="470" cy="78" r="4.5" fill="#e08a6e"/>
+      <rect x="484" y="46" width="130" height="6" fill="#bfe3c8"/>
+      <rect x="614" y="46" width="28" height="6" fill="#0a0a0a"/>
+      <line x1="642" y1="30" x2="642" y2="102" stroke="#0a0a0a" stroke-width="2"/>
+      <text x="642" y="20" text-anchor="middle" font-family="Geist, monospace" font-size="10" letter-spacing="1.5" fill="#6b6b6b">FIRED</text>
+      <text x="642" y="116" text-anchor="middle" font-family="Geist, monospace" font-size="10" fill="#9b9b9b">1.0s</text>
+
+      <!-- epoch 3 : edit, spec run cut short by next edit (discard) -->
+      <circle cx="770" cy="78" r="4.5" fill="#e08a6e"/>
+      <rect x="784" y="46" width="112" height="6" fill="#bfe3c8" opacity="0.55"/>
+      <line x1="890" y1="42" x2="902" y2="56" stroke="#e08a6e" stroke-width="2"/>
+      <line x1="902" y1="42" x2="890" y2="56" stroke="#e08a6e" stroke-width="2"/>
+      <text x="896" y="20" text-anchor="middle" font-family="Geist, monospace" font-size="10" letter-spacing="1.5" fill="#9b9b9b">DISCARD</text>
+
+      <!-- epoch 4 : edit, no run (abstain) -->
+      <circle cx="1010" cy="78" r="4.5" fill="#e08a6e"/>
+      <line x1="1024" y1="49" x2="1120" y2="49" stroke="#9b9b9b" stroke-width="2" stroke-dasharray="2 6"/>
+      <text x="1072" y="20" text-anchor="middle" font-family="Geist, monospace" font-size="10" letter-spacing="1.5" fill="#9b9b9b">ABSTAIN</text>
+    </svg>
+  </div>
+
+  <footer>
+    <div class="ticker">
+      <span class="tag">SERVED</span>&nbsp;test &middot; hid 4.1s &middot; epoch 2
+      <span class="sep">/</span>PROMOTED test &middot; hid 1.0s &middot; epoch 1
+      <span class="sep">/</span>DISCARDED run &middot; superseded by edit &middot; epoch 3
+      <span class="sep">/</span>ABSTAINED &middot; low confidence &middot; epoch 4
+    </div>
+  </footer>
+
+</body>
+</html>

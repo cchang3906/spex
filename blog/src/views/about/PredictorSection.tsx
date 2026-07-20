@@ -5,7 +5,7 @@ import { ink, hairline, blue, yellow, mint } from "./palette";
 
 const lookup = [
   "The last few tool signatures of the live session form a string key.",
-  "A pattern table mined from 2,116 agent trajectories, about 105,000 events, answers with what usually comes next and how often.",
+  "A pattern table mined from 2,146 agent trajectories, about 90,000 events, answers with what usually comes next and how often.",
   "One hash map lookup, roughly 100 nanoseconds, no model anywhere in the loop.",
   "During a session, online counts blend with the mined prior, so a repo's local habits sharpen the table while it runs.",
 ];

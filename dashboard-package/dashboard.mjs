@@ -1,6 +1,6 @@
 import { createServer } from 'node:http';
 import { readFileSync } from 'node:fs';
-import { join, dirname, resolve, basename } from 'node:path';
+import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -18,11 +18,9 @@ export function createDashboard(port = 7777) {
       return;
     }
     if (req.url?.startsWith('/fonts/')) {
-      // basename() collapses any traversal so this only ever serves demo/fonts/
-      const file = resolve(join(here, '..', 'demo', 'fonts'), basename(req.url.slice('/fonts/'.length)));
       try {
-        const f = readFileSync(file);
-        res.writeHead(200, { 'content-type': 'font/woff2', 'cache-control': 'max-age=604800' });
+        const f = readFileSync(join(here, '..', 'demo', req.url.slice(1)));
+        res.writeHead(200, { 'content-type': 'font/woff2' });
         res.end(f);
       } catch {
         res.writeHead(404);
@@ -32,9 +30,6 @@ export function createDashboard(port = 7777) {
     }
     res.writeHead(200, { 'content-type': 'text/html', 'cache-control': 'no-store' });
     res.end(page);
-  });
-  server.on('error', (e) => {
-    console.error(`dashboard disabled: ${e.code === 'EADDRINUSE' ? `port ${port} already in use` : e.message}`);
   });
   server.listen(port, '127.0.0.1');
   const sink = (line) => {
@@ -50,20 +45,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const dash = createDashboard();
   console.log('dashboard: http://127.0.0.1:7777');
   if (file) {
-    let raw;
-    try {
-      raw = readFileSync(file, 'utf8');
-    } catch {
-      console.error(`replay file not found: ${file}`);
-      process.exit(1);
-    }
-    const lines = raw.trim().split('\n').filter((l) => {
-      try { JSON.parse(l); return true; } catch { return false; }
-    });
-    if (lines.length === 0) {
-      console.error(`no valid jsonl lines in: ${file}`);
-      process.exit(1);
-    }
+    const lines = readFileSync(file, 'utf8').trim().split('\n');
     const t0 = JSON.parse(lines[0]).t;
     let last = t0;
     (async function loop() {

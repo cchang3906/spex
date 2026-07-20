@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spex · instrument</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
+  :root {
+    --ink: #0a0a0a;
+    --g1: #6b6b6b;
+    --g2: #9b9b9b;
+    --g3: #ececec;
+    --grid: #f4f4f4;
+    --green: #bfe3c8;
+    --terra: #e08a6e;
+    --sans: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --mono: 'Geist', 'SF Mono', Menlo, Consolas, monospace;
+  }
+  html, body { background: #ffffff; color: var(--ink); font-family: var(--sans); font-size: 12px; }
+  body {
+    background-image:
+      linear-gradient(var(--g3) 1px, transparent 1px),
+      linear-gradient(90deg, var(--g3) 1px, transparent 1px),
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 64px 64px, 64px 64px, 8px 8px, 8px 8px;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono { font-family: var(--mono); }
+
+  .sheet {
+    max-width: 1344px;
+    margin: 32px auto 64px;
+    padding: 24px;
+    border: 1px solid var(--g3);
+    background: transparent;
+    position: relative;
+  }
+  .reg { position: absolute; font-family: var(--mono); font-size: 10px; color: var(--g2); line-height: 1; }
+  .reg.tl { top: -5px; left: -4px; }
+  .reg.tr { top: -5px; right: -4px; }
+  .reg.bl { bottom: -5px; left: -4px; }
+  .reg.br { bottom: -5px; right: -4px; }
+
+  /* ---------- top strip: title block + meta + stats + per-turn ---------- */
+  .strip {
+    display: flex; align-items: stretch;
+    border: 1px solid var(--ink); background: #ffffff;
+  }
+  .strip > div { border-right: 1px solid var(--g3); }
+  .strip > div:last-child { border-right: none; }
+
+  .s-brand { width: 216px; padding: 12px 16px 8px; }
+  .s-brand h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; line-height: 24px; }
+  .s-brand p { font-family: var(--mono); font-size: 9px; color: var(--g1); line-height: 14px; margin-top: 2px; }
+
+  .s-meta { width: 368px; display: grid; grid-template-columns: repeat(4, 1fr); }
+  .s-meta .mc { padding: 6px 10px 4px; border-right: 1px solid var(--g3); border-bottom: 1px solid var(--g3); }
+  .s-meta .mc:nth-child(4n) { border-right: none; }
+  .s-meta .mc:nth-child(n+5) { border-bottom: none; }
+  .mc .k { font-family: var(--mono); font-size: 7px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--g2); display: block; line-height: 10px; }
+  .mc .v { font-family: var(--mono); font-size: 10px; color: var(--ink); line-height: 14px; white-space: nowrap; }
+
+  .s-stats { flex: 1; display: flex; }
+  .s-stats .stat { flex: 1; padding: 8px 12px 6px; border-right: 1px solid var(--g3); }
+  .s-stats .stat:last-child { border-right: none; }
+  .stat .k { font-family: var(--mono); font-size: 7px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--g2); display: block; line-height: 10px; }
+  .stat .v { font-family: var(--mono); font-size: 17px; font-weight: 600; line-height: 24px; letter-spacing: -0.02em; }
+  .stat .v small { font-size: 10px; font-weight: 400; color: var(--g1); }
+  .stat .u { display: block; width: 24px; height: 3px; margin-top: 3px; }
+  .stat.hi .u { background: var(--green); }
+  .stat.warn .v { color: var(--terra); }
+  .stat.warn .u { background: var(--terra); }
+
+  .s-turns { width: 264px; display: flex; flex-direction: column; }
+  .turn-cell { flex: 1; position: relative; padding: 5px 12px 6px; border-bottom: 1px solid var(--g3); }
+  .turn-cell:last-child { border-bottom: none; }
+  .turn-cell .t { font-family: var(--mono); font-size: 9px; color: var(--ink); font-weight: 500; letter-spacing: 0.08em; }
+  .turn-cell .d { font-family: var(--mono); font-size: 9px; color: var(--g1); }
+  .turn-cell .fill { position: absolute; left: 0; bottom: 0; height: 3px; background: var(--green); }
+
+  /* ---------- legend ---------- */
+  .legend {
+    display: flex; gap: 18px; align-items: center; flex-wrap: wrap;
+    padding: 8px 0; margin-bottom: 8px;
+    font-family: var(--mono); font-size: 9px; color: var(--g1);
+    border-bottom: 1px solid var(--g3);
+  }
+  .legend .cap { color: var(--ink); font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; font-size: 9px; margin-right: 6px; }
+  .legend .item { display: flex; align-items: center; gap: 5px; }
+  .legend .fr { margin-left: auto; color: var(--g2); }
+  .chip { width: 12px; height: 9px; display: inline-block; }
+  .chip.reason { background: var(--g3); }
+  .chip.term { background: var(--g2); }
+  .chip.edit { width: 2px; height: 11px; background: var(--terra); }
+  .chip.oedit { width: 2px; height: 11px; background: var(--g2); }
+  .chip.spec { background: repeating-linear-gradient(45deg, var(--green) 0, var(--green) 2.5px, #fff 2.5px, #fff 5px); border: 1px solid var(--green); }
+  .chip.ready { background: var(--green); }
+  .chip.served { background: var(--ink); }
+  .chip.discard { background: var(--g3); position: relative; }
+  .chip.discard::after { content: ""; position: absolute; left: 0; top: 4px; width: 100%; height: 1px; background: var(--g2); }
+  .chip.abstain { background: #fff; border: 1px dashed var(--g2); }
+  .chip.fired { width: 2px; height: 11px; background: var(--ink); }
+  .chip.kill { width: auto; height: auto; color: var(--terra); font-weight: 600; font-size: 11px; line-height: 9px; }
+
+  /* ---------- waterfall ---------- */
+  .figcap { display: flex; justify-content: space-between; align-items: baseline; margin: 8px 0; }
+  .figcap .fl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink); font-weight: 500; }
+  .figcap .fr { font-family: var(--mono); font-size: 9px; color: var(--g2); }
+
+  .scroll { overflow-x: auto; }
+  .canvas { min-width: 1240px; }
+  .wgrid { display: grid; grid-template-columns: 152px 1fr 40px; }
+
+  .labels .lab {
+    display: flex; align-items: center; justify-content: flex-end;
+    gap: 6px; padding-right: 12px; border-bottom: 1px solid var(--g3);
+    font-family: var(--mono); font-size: 9px; color: var(--g1); height: 48px;
+  }
+  .labels .lab.mband { height: 36px; color: var(--g2); border-bottom: 1px solid var(--g2); }
+  .labels .lab .who { color: var(--g2); }
+  .labels .lab .sw { width: 7px; height: 7px; }
+
+  .rows { position: relative; height: 276px; }
+  .gl { position: absolute; top: 36px; bottom: 0; width: 1px; background: var(--g3); }
+  .rowline { position: absolute; left: 0; right: 0; height: 1px; background: var(--g3); }
+  .rowline.mline { background: var(--g2); }
+
+  .rmargin { position: relative; border-bottom: 1px solid var(--g3); }
+  .rmargin .brk { position: absolute; left: 10px; top: 195px; height: 66px; width: 5px; border: 1px solid var(--ink); border-left: none; }
+  .rmargin .rot {
+    position: absolute; left: 22px; top: 228px;
+    transform: rotate(-90deg); transform-origin: left top;
+    font-family: var(--mono); font-size: 9px; color: var(--ink); font-weight: 500; white-space: nowrap;
+  }
+
+  .t-ts { position: absolute; top: 6px; font-family: var(--mono); font-size: 9.5px; color: var(--ink); font-weight: 500; white-space: nowrap; }
+  .t-fl { position: absolute; top: 20px; font-family: var(--mono); font-size: 7.5px; letter-spacing: 0.1em; color: var(--g2); white-space: nowrap; }
+  .anch-c { transform: translateX(-50%); }
+  .anch-e { transform: translateX(calc(-100% - 4px)); }
+  .anch-s { transform: translateX(4px); }
+
+  .fired-rule { position: absolute; top: 30px; bottom: 0; width: 1px; background: var(--ink); z-index: 3; }
+  .turn-rule { position: absolute; top: 36px; bottom: 0; width: 0; border-left: 1px dashed var(--g2); }
+  .turn-lab { position: absolute; top: 40px; font-family: var(--mono); font-size: 8.5px; color: var(--g2); letter-spacing: 0.1em; }
+
+  .bar {
+    position: absolute; height: 18px;
+    display: flex; align-items: center;
+    padding: 0 4px; white-space: nowrap; overflow: hidden;
+    font-family: var(--mono); font-size: 8.5px; z-index: 2;
+  }
+  .bar.reason { background: var(--g3); color: var(--g1); top: 51px; }
+  .bar.term { background: var(--g2); top: 92px; height: 16px; }
+  .cmd { position: absolute; top: 112px; font-family: var(--mono); font-size: 8.5px; color: var(--g1); white-space: nowrap; }
+  .edit-tick { position: absolute; top: 138px; width: 2px; height: 24px; background: var(--terra); }
+  .edit-tick.oc { background: var(--g2); }
+  .edit-lab { position: absolute; top: 164px; font-family: var(--mono); font-size: 8px; color: var(--g1); white-space: nowrap; }
+  .edit-lab .b { color: var(--ink); font-weight: 500; }
+  .r-test .bar, .bar.r4 { top: 195px; }
+  .bar.r5 { top: 243px; }
+  .bar.spec {
+    background: repeating-linear-gradient(45deg, var(--green) 0, var(--green) 2.5px, #fff 2.5px, #fff 5px);
+    border: 1px solid var(--green); color: var(--ink);
+  }
+  .bar.spec span { background: #ffffff; padding: 0 3px; }
+  .bar.ready { background: var(--green); }
+  .bar.served { background: var(--ink); color: #ffffff; letter-spacing: -0.01em; }
+  .bar.discard { background: var(--g3); color: var(--g2); }
+  .bar.discard::after { content: ""; position: absolute; left: 0; right: 0; top: 8px; height: 1px; background: var(--g2); }
+  .bar.abstain { background: #ffffff; border: 1px dashed var(--g2); color: var(--g2); }
+  .killx { position: absolute; font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--terra); z-index: 4; background: #ffffff; padding: 0 1px; line-height: 10px; }
+
+  .connector { position: absolute; width: 0; border-left: 1px dotted var(--g1); z-index: 2; }
+  .connector.terra { border-left-color: var(--terra); }
+  .callout {
+    position: absolute; transform: translateX(-50%);
+    background: #ffffff; border: 1px dotted var(--g1);
+    padding: 2px 6px; z-index: 4;
+    font-family: var(--mono); font-size: 8.5px; color: var(--ink); white-space: nowrap;
+  }
+  .callout .num { font-weight: 600; }
+  .callout.terra { border-color: var(--terra); color: var(--terra); }
+  .note { position: absolute; font-family: var(--mono); font-size: 8px; color: var(--g1); white-space: nowrap; z-index: 4; }
+  .note.terra { color: var(--terra); font-weight: 500; }
+  .note .b { color: var(--ink); font-weight: 500; }
+
+  /* axis ruler */
+  .axis { height: 22px; position: relative; border-top: 1px solid var(--g3); }
+  .axis .tick { position: absolute; top: 0; width: 1px; height: 5px; background: var(--g2); }
+  .axis .tl2 { position: absolute; top: 8px; transform: translateX(-50%); font-family: var(--mono); font-size: 8px; color: var(--g2); }
+  .axis .tl2.t0 { transform: none; }
+  .axis-side { display: flex; align-items: center; justify-content: flex-end; padding-right: 12px; border-top: 1px solid var(--g3); font-family: var(--mono); font-size: 8px; color: var(--g2); }
+
+  /* epoch track */
+  .etrack-side { display: flex; align-items: center; justify-content: flex-end; padding-right: 12px; font-family: var(--mono); font-size: 9px; color: var(--g1); }
+  .etrack { position: relative; height: 20px; margin-top: 6px; }
+  .eseg {
+    position: absolute; top: 0; height: 20px;
+    border: 1px solid var(--g2); border-right: none;
+    display: flex; align-items: center; padding: 0 6px;
+    font-family: var(--mono); font-size: 9px; color: var(--ink); font-weight: 500;
+  }
+  .eseg:last-of-type { border-right: 1px solid var(--g2); }
+  .eseg.cur { background: var(--green); }
+  .eseg .d { color: var(--g1); font-weight: 400; margin-left: 5px; }
+  .elab { position: absolute; top: 26px; font-family: var(--mono); font-size: 8px; color: var(--g2); white-space: nowrap; }
+  .elab.terra { color: var(--terra); font-weight: 500; }
+  .ekill { position: absolute; top: 4px; transform: translateX(-50%); font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--terra); background: #ffffff; padding: 0 2px; line-height: 12px; z-index: 3; }
+  .etrack-wrap { height: 44px; }
+
+  /* ---------- bottom: matrix / ledger / gate ---------- */
+  .bottom { display: grid; grid-template-columns: 1fr 1.4fr 1.15fr; gap: 40px; margin-top: 24px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    font-family: var(--mono); font-size: 8px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--g1); font-weight: 500; text-align: left; padding: 0 6px 6px 0;
+    border-bottom: 1px solid var(--ink);
+  }
+  td { font-family: var(--mono); font-size: 10.5px; padding: 6px 6px 5px 0; border-bottom: 1px solid var(--g3); line-height: 14px; }
+  th.n, td.n { text-align: right; padding-right: 0; padding-left: 6px; }
+  td.kind { color: var(--ink); font-weight: 500; }
+  td.dim { color: var(--g2); }
+  td .terra-t { color: var(--terra); font-weight: 500; }
+  td .green-t { color: var(--ink); font-weight: 500; }
+  tr.total td { border-bottom: none; border-top: 1px solid var(--ink); font-weight: 500; }
+  .cell-note { color: var(--g2); font-size: 9px; }
+  .swatch { display: inline-block; width: 7px; height: 7px; vertical-align: baseline; margin-right: 6px; }
+
+  .ledger { font-family: var(--mono); font-size: 9.5px; line-height: 14px; }
+  .lrow { display: grid; grid-template-columns: 14px 76px 62px 1fr; padding: 3px 0 2px; border-bottom: 1px solid var(--grid); align-items: baseline; }
+  .lrow:last-child { border-bottom: none; }
+  .lmark { width: 6px; height: 6px; margin-top: 3px; align-self: start; }
+  .lmark.ink { background: var(--ink); }
+  .lmark.green { background: var(--green); }
+  .lmark.terra { background: var(--terra); }
+  .lmark.hollow { background: #ffffff; border: 1px solid var(--g2); }
+  .lt { color: var(--g2); }
+  .lk { color: var(--ink); font-weight: 500; letter-spacing: 0.04em; }
+  .ld { color: var(--g1); }
+  .ld em { font-style: normal; color: var(--ink); font-weight: 500; }
+  .ld .terra-t { color: var(--terra); font-weight: 500; }
+
+  /* footer */
+  footer {
+    margin-top: 24px; padding-top: 10px; border-top: 1px solid var(--g3);
+    font-family: var(--mono); font-size: 9px; color: var(--g2);
+    display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  .stamp { border: 1px solid var(--ink); padding: 2px; background: #ffffff; }
+  .stamp-inner {
+    border: 1px solid var(--g3); padding: 5px 12px;
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; color: var(--ink);
+  }
+  .stamp-inner .dot { width: 7px; height: 7px; background: var(--green); }
+  .stamp-inner .sep { color: var(--g2); }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <span class="reg tl">+</span><span class="reg tr">+</span><span class="reg bl">+</span><span class="reg br">+</span>
+
+  <!-- top strip: title + meta + inline stats + per-turn summaries -->
+  <div class="strip">
+    <div class="s-brand">
+      <h1>Spex</h1>
+      <p>speculative test execution &mdash; runs the agent&rsquo;s tests before the ask &middot; instrument sheet</p>
+    </div>
+    <div class="s-meta">
+      <div class="mc"><span class="k">dwg no.</span><span class="v">SPEC-INSTR-45</span></div>
+      <div class="mc"><span class="k">date</span><span class="v">2026-07-17</span></div>
+      <div class="mc"><span class="k">rev</span><span class="v">epoch 4</span></div>
+      <div class="mc"><span class="k">sheet</span><span class="v">01 / 01</span></div>
+      <div class="mc"><span class="k">session</span><span class="v">ses_9f2c</span></div>
+      <div class="mc"><span class="k">agent</span><span class="v">claude-code</span></div>
+      <div class="mc"><span class="k">t&#8320;</span><span class="v">14:02:00.0</span></div>
+      <div class="mc"><span class="k">span</span><span class="v">75 s</span></div>
+    </div>
+    <div class="s-stats">
+      <div class="stat hi"><span class="k">wait hidden &Sigma;</span><span class="v">6.1<small>s</small></span><span class="u"></span></div>
+      <div class="stat"><span class="k">served</span><span class="v">3<small>/4</small></span><span class="u"></span></div>
+      <div class="stat warn"><span class="k">wasted</span><span class="v">1.5<small>s</small></span><span class="u"></span></div>
+      <div class="stat"><span class="k">tokens</span><span class="v">+0</span><span class="u"></span></div>
+      <div class="stat"><span class="k">gate</span><span class="v">&tau; .55</span><span class="u"></span></div>
+    </div>
+    <div class="s-turns">
+      <div class="turn-cell">
+        <span class="t">TURN 1</span> <span class="d">&middot; 38s wall &middot; 4.1s hidden (11%)</span>
+        <span class="fill" style="width:11%"></span>
+      </div>
+      <div class="turn-cell">
+        <span class="t">TURN 2</span> <span class="d">&middot; 34s wall &middot; 2.0s hidden (6%)</span>
+        <span class="fill" style="width:6%"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="cap">key</span>
+    <span class="item"><span class="chip reason"></span>reasoning</span>
+    <span class="item"><span class="chip term"></span>terminal</span>
+    <span class="item"><span class="chip edit"></span>edit &middot; epoch bump</span>
+    <span class="item"><span class="chip oedit"></span>edit &middot; out of closure</span>
+    <span class="item"><span class="chip spec"></span>speculating</span>
+    <span class="item"><span class="chip ready"></span>ready</span>
+    <span class="item"><span class="chip served"></span>served</span>
+    <span class="item"><span class="chip discard"></span>discarded</span>
+    <span class="item"><span class="chip abstain"></span>abstain</span>
+    <span class="item"><span class="chip fired"></span>fired</span>
+    <span class="item"><span class="chip kill">&times;</span>epoch kill</span>
+    <span class="fr">frozen 14:03:15.0 &middot; codex + spex sidecar</span>
+  </div>
+
+  <div class="figcap">
+    <span class="fl">session waterfall</span>
+    <span class="fr">margin rules = fire events &middot; leaders = serve / discard / promote &middot; all dims in seconds &middot; 1 s &asymp; 14 px</span>
+  </div>
+
+  <div class="scroll">
+  <div class="canvas">
+
+    <div class="wgrid">
+      <div class="labels">
+        <div class="lab mband">fired &uarr; t event</div>
+        <div class="lab"><span class="sw" style="background:var(--g3)"></span><span class="who">codex &middot;</span> reasoning</div>
+        <div class="lab"><span class="sw" style="background:var(--g2)"></span><span class="who">codex &middot;</span> terminal</div>
+        <div class="lab"><span class="sw" style="background:var(--terra)"></span><span class="who">codex &middot;</span> edits</div>
+        <div class="lab"><span class="sw" style="background:var(--green)"></span><span class="who">spex &middot;</span> test</div>
+        <div class="lab"><span class="sw" style="background:var(--green)"></span><span class="who">spex &middot;</span> lint</div>
+      </div>
+
+      <div class="rows">
+        <!-- 5s gridlines -->
+        <div class="gl" style="left:6.667%"></div><div class="gl" style="left:13.333%"></div>
+        <div class="gl" style="left:20%"></div><div class="gl" style="left:26.667%"></div>
+        <div class="gl" style="left:33.333%"></div><div class="gl" style="left:40%"></div>
+        <div class="gl" style="left:46.667%"></div><div class="gl" style="left:53.333%"></div>
+        <div class="gl" style="left:60%"></div><div class="gl" style="left:66.667%"></div>
+        <div class="gl" style="left:73.333%"></div><div class="gl" style="left:80%"></div>
+        <div class="gl" style="left:86.667%"></div><div class="gl" style="left:93.333%"></div>
+        <div class="gl" style="left:100%"></div>
+
+        <div class="rowline mline" style="top:36px"></div>
+        <div class="rowline" style="top:84px"></div>
+        <div class="rowline" style="top:132px"></div>
+        <div class="rowline" style="top:180px"></div>
+        <div class="rowline" style="top:228px"></div>
+        <div class="rowline" style="top:276px"></div>
+
+        <!-- margin timestamps at fire events -->
+        <span class="t-ts anch-s" style="left:0%">t&#8320; 14:02:00.0</span>
+        <span class="t-ts anch-c" style="left:23.867%">14:02:17.9</span>
+        <span class="t-fl anch-c" style="left:23.867%">FIRED #1</span>
+        <span class="t-ts anch-e" style="left:72.4%">14:02:54.3</span>
+        <span class="t-fl anch-e" style="left:72.4%">FIRED #2</span>
+        <span class="t-ts anch-s" style="left:75.067%">14:02:56.3</span>
+        <span class="t-fl anch-s" style="left:75.067%">FIRED #3 &middot; REFIRE</span>
+        <span class="t-ts anch-c" style="left:88.4%">14:03:06.3</span>
+        <span class="t-fl anch-c" style="left:88.4%">FIRED #4</span>
+
+        <div class="fired-rule" style="left:23.867%"></div>
+        <div class="fired-rule" style="left:72.4%"></div>
+        <div class="fired-rule" style="left:75.067%"></div>
+        <div class="fired-rule" style="left:88.4%"></div>
+
+        <!-- turns -->
+        <div class="turn-lab" style="left:0.4%">TURN 1</div>
+        <div class="turn-rule" style="left:50.667%"></div>
+        <div class="turn-lab" style="left:51.2%">TURN 2</div>
+        <div class="turn-rule" style="left:96%"></div>
+        <div class="turn-lab" style="left:96.5%">END</div>
+
+        <!-- row 1: reasoning -->
+        <div class="bar reason" style="left:0.667%; width:7.733%">reasoning</div>
+        <div class="bar reason" style="left:12.667%; width:6.8%"></div>
+        <div class="bar reason" style="left:22.133%; width:17.067%">reasoning &middot; typing</div>
+        <div class="bar reason" style="left:41.333%; width:8.667%">reads results &middot; reply</div>
+        <div class="bar reason" style="left:51.333%; width:3.733%">reasoning</div>
+        <div class="bar reason" style="left:67.733%; width:10.4%">reasoning &middot; typing</div>
+        <div class="bar reason" style="left:80.8%; width:5.333%"></div>
+        <div class="bar reason" style="left:88.267%; width:6.267%"></div>
+
+        <!-- row 2: terminal -->
+        <div class="bar term" style="left:9.067%; width:3.2%"></div>
+        <div class="cmd" style="left:9.067%">$ rg -n 'round_mode' src/</div>
+        <div class="bar term" style="left:19.467%; width:2.4%"></div>
+        <div class="cmd" style="left:19.467%">$ rg -l 'CalcCfg' src/</div>
+        <div class="bar term" style="left:40.133%; width:0.8%"></div>
+        <div class="cmd" style="left:40.133%">$ pytest -q &middot; cache hit 0.6s</div>
+        <div class="bar term" style="left:55.333%; width:3.2%"></div>
+        <div class="cmd" style="left:55.333%">$ rg -n 'Round' tests/</div>
+        <div class="bar term" style="left:60%; width:7.2%"></div>
+        <div class="cmd" style="left:60%; top:124px">$ ruff check . &middot; cold 5.4s</div>
+        <div class="bar term" style="left:78.667%; width:1.867%"></div>
+        <div class="cmd" style="left:78.667%">$ git diff --stat</div>
+        <div class="bar term" style="left:86.4%; width:1.6%"></div>
+        <div class="cmd" style="left:86.4%; top:124px">$ pytest -q &middot; attach</div>
+        <div class="bar term" style="left:95.067%; width:0.8%"></div>
+        <div class="cmd" style="left:95.867%; transform:translateX(-100%)">$ ruff check . &middot; warm</div>
+
+        <!-- row 3: edits -->
+        <div class="edit-tick" style="left:23.2%"></div>
+        <div class="edit-lab" style="left:23.6%"><span class="b">calc.py +12 &minus;4</span> &rarr; e2</div>
+        <div class="edit-tick oc" style="left:32.533%"></div>
+        <div class="edit-tick oc" style="left:37.6%"></div>
+        <div class="edit-lab" style="left:33%">docs/usage.md &middot; out of closure &middot; no bump</div>
+        <div class="edit-tick" style="left:71.733%"></div>
+        <div class="edit-lab" style="left:66.4%; top:152px"><span class="b">calc.py +3 &minus;1</span> &rarr; e3</div>
+        <div class="edit-tick" style="left:74.4%"></div>
+        <div class="edit-lab" style="left:74.8%"><span class="b">calc.py +2 &minus;2</span> &rarr; e4</div>
+
+        <!-- promote note above served#3 -->
+        <div class="note" style="left:80%; top:183px; background:#ffffff; padding:0 3px"><span class="b">promoted mid-run</span> &middot; lead 1.0s</div>
+        <div class="connector" style="left:87.2%; top:191px; height:4px"></div>
+
+        <!-- row 4: spex test -->
+        <div class="bar spec r4" style="left:23.867%; width:12.667%"><span>spec#1 &middot; pytest -q &middot; e2 &middot; conf .87</span></div>
+        <div class="bar ready r4" style="left:36.533%; width:3.6%" title="ready, waiting for ask"></div>
+        <div class="bar served r4" style="left:40.133%; width:5.467%">served &middot; hid 4.1s</div>
+        <div class="bar discard r4" style="left:72.4%; width:2.667%">#2</div>
+        <span class="killx" style="left:74%; top:194px">&times;</span>
+        <div class="bar spec r4" style="left:75.067%; width:11.333%"><span>spec#3 &middot; pytest -q &middot; e4 &middot; refire</span></div>
+        <div class="bar served r4" style="left:86.4%; width:2.667%">promoted</div>
+
+        <!-- row 5: spex lint -->
+        <div class="bar abstain r5" style="left:60%; width:7.2%">abstain &middot; conf .31 &lt; &tau; .55</div>
+        <div class="note" style="left:60%; top:264px">ran cold on trunk &middot; 5.4s</div>
+        <div class="bar spec r5" style="left:88.4%; width:5.333%"><span>spec#4 &middot; ruff &middot; .78</span></div>
+        <div class="bar ready r5" style="left:93.733%; width:1.333%"></div>
+        <div class="bar served r5" style="left:95.067%; width:1.333%"></div>
+        <div class="note" style="left:92.3%; top:264px">warm hit &middot; <span class="b">hid 1.0s</span></div>
+
+        <!-- leader: parallel annotation -->
+        <div class="connector" style="left:30%; top:69px; height:126px"></div>
+        <div class="callout" style="left:30%; top:116px">parallel &mdash; test ran while model was typing</div>
+
+        <!-- leader: served from cache -->
+        <div class="connector" style="left:42.9%; top:213px; height:22px"></div>
+        <div class="callout" style="left:44%; top:235px">ask &rarr; served from cache &middot; <span class="num">hid 4.1s</span></div>
+
+        <!-- leader: discarded by epoch -->
+        <div class="connector terra" style="left:73.7%; top:213px; height:22px"></div>
+        <div class="callout terra" style="left:71.5%; top:235px">spec#2 discarded &middot; epoch 3&rarr;4 &middot; wasted 1.5s</div>
+      </div>
+
+      <div class="rmargin">
+        <span class="brk"></span>
+        <span class="rot">wait hidden &Sigma; 6.1s</span>
+      </div>
+    </div>
+
+    <!-- axis ruler -->
+    <div class="wgrid">
+      <div class="axis-side">t (s)</div>
+      <div class="axis">
+        <span class="tick" style="left:0%"></span><span class="tl2 t0" style="left:0%">0s</span>
+        <span class="tick" style="left:6.667%"></span><span class="tl2" style="left:6.667%">5s</span>
+        <span class="tick" style="left:13.333%"></span><span class="tl2" style="left:13.333%">10s</span>
+        <span class="tick" style="left:20%"></span><span class="tl2" style="left:20%">15s</span>
+        <span class="tick" style="left:26.667%"></span><span class="tl2" style="left:26.667%">20s</span>
+        <span class="tick" style="left:33.333%"></span><span class="tl2" style="left:33.333%">25s</span>
+        <span class="tick" style="left:40%"></span><span class="tl2" style="left:40%">30s</span>
+        <span class="tick" style="left:46.667%"></span><span class="tl2" style="left:46.667%">35s</span>
+        <span class="tick" style="left:53.333%"></span><span class="tl2" style="left:53.333%">40s</span>
+        <span class="tick" style="left:60%"></span><span class="tl2" style="left:60%">45s</span>
+        <span class="tick" style="left:66.667%"></span><span class="tl2" style="left:66.667%">50s</span>
+        <span class="tick" style="left:73.333%"></span><span class="tl2" style="left:73.333%">55s</span>
+        <span class="tick" style="left:80%"></span><span class="tl2" style="left:80%">60s</span>
+        <span class="tick" style="left:86.667%"></span><span class="tl2" style="left:86.667%">65s</span>
+        <span class="tick" style="left:93.333%"></span><span class="tl2" style="left:93.333%">70s</span>
+        <span class="tick" style="left:100%"></span><span class="tl2" style="left:100%; transform:translateX(-100%)">75s</span>
+      </div>
+      <div class="axis-side" style="justify-content:flex-start; padding-left:8px"></div>
+    </div>
+
+    <!-- epoch track -->
+    <div class="wgrid">
+      <div class="etrack-side" style="padding-top:6px">epochs</div>
+      <div class="etrack-wrap"><div class="etrack">
+        <div class="eseg" style="left:0%; width:23.2%">1</div>
+        <div class="eseg" style="left:23.2%; width:48.533%">2</div>
+        <div class="eseg" style="left:71.733%; width:2.667%">3</div>
+        <div class="eseg cur" style="left:74.4%; width:25.6%">4 <span class="d">&middot; current</span></div>
+        <span class="ekill" style="left:74.4%">&times;</span>
+        <span class="elab" style="left:23.2%; transform:translateX(-50%)">e2 &middot; 14:02:17.4</span>
+        <span class="elab" style="left:71.733%; transform:translateX(calc(-100% - 3px))">e3 &middot; 14:02:53.8</span>
+        <span class="elab terra" style="left:74.4%; transform:translateX(3px)">e4 &middot; 14:02:55.8 &middot; &times; killed spec#2</span>
+      </div></div>
+      <div></div>
+    </div>
+
+  </div>
+  </div>
+
+  <!-- bottom: matrix / ledger / gate tally -->
+  <div class="bottom">
+    <div>
+      <div class="figcap">
+        <span class="fl">per-kind matrix</span>
+        <span class="fr">epoch 4 &middot; frozen 14:03:15</span>
+      </div>
+      <table>
+        <thead>
+          <tr><th>kind</th><th class="n">spec</th><th class="n">served</th><th class="n">hidden</th><th class="n">wasted</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="kind"><span class="swatch" style="background:var(--green)"></span>pytest</td>
+            <td class="n">3</td><td class="n">2</td><td class="n">5.1s</td><td class="n"><span class="terra-t">1.5s</span></td>
+          </tr>
+          <tr>
+            <td class="kind"><span class="swatch" style="border:1px solid var(--g2)"></span>lint</td>
+            <td class="n">1 <span class="cell-note">+1 abstain</span></td><td class="n">1</td><td class="n">1.0s</td><td class="n dim">0.0s</td>
+          </tr>
+          <tr>
+            <td class="kind"><span class="swatch" style="border:1px solid var(--g3)"></span>typecheck</td>
+            <td class="n dim">0</td><td class="n dim">0</td><td class="n dim">&mdash;</td><td class="n dim">&mdash;</td>
+          </tr>
+          <tr class="total">
+            <td>&Sigma;</td><td class="n">4</td><td class="n">3</td><td class="n">6.1s</td><td class="n">1.5s</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <div class="figcap">
+        <span class="fl">event ledger</span>
+        <span class="fr">16 events &middot; ses_9f2c</span>
+      </div>
+      <div class="ledger">
+        <div class="lrow"><span class="lmark hollow"></span><span class="lt">14:02:00.0</span><span class="lk">T&#8320;</span><span class="ld">session open &middot; epoch 1</span></div>
+        <div class="lrow"><span class="lmark hollow"></span><span class="lt">14:02:06.8</span><span class="lk">EXPLORE</span><span class="ld">rg round_mode &middot; CalcCfg &middot; calc.py</span></div>
+        <div class="lrow"><span class="lmark ink"></span><span class="lt">14:02:17.4</span><span class="lk">EDIT</span><span class="ld">calc.py &nbsp;+12 &minus;4 &middot; epoch 1&rarr;2</span></div>
+        <div class="lrow"><span class="lmark ink"></span><span class="lt">14:02:17.9</span><span class="lk">FIRED</span><span class="ld">spec#1 pytest &middot; e2 &middot; conf .87</span></div>
+        <div class="lrow"><span class="lmark hollow"></span><span class="lt">14:02:24.4</span><span class="lk">EDIT</span><span class="ld">docs/usage.md &middot; out of closure &middot; no bump</span></div>
+        <div class="lrow"><span class="lmark green"></span><span class="lt">14:02:27.4</span><span class="lk">READY</span><span class="ld">spec#1 &middot; 12 passed &middot; cached</span></div>
+        <div class="lrow"><span class="lmark green"></span><span class="lt">14:02:30.1</span><span class="lk">SERVED</span><span class="ld">ask: run tests &rarr; cache hit &middot; <em>hid 4.1s</em></span></div>
+        <div class="lrow"><span class="lmark hollow"></span><span class="lt">14:02:45.0</span><span class="lk">ABSTAIN</span><span class="ld">ask: lint &middot; conf .31 &lt; &tau; .55 &middot; ran cold 5.4s</span></div>
+        <div class="lrow"><span class="lmark ink"></span><span class="lt">14:02:53.8</span><span class="lk">EDIT</span><span class="ld">calc.py &nbsp;+3 &minus;1 &middot; epoch 2&rarr;3</span></div>
+        <div class="lrow"><span class="lmark ink"></span><span class="lt">14:02:54.3</span><span class="lk">FIRED</span><span class="ld">spec#2 pytest &middot; e3 &middot; conf .82</span></div>
+        <div class="lrow"><span class="lmark ink"></span><span class="lt">14:02:55.8</span><span class="lk">EDIT</span><span class="ld">calc.py &nbsp;+2 &minus;2 &middot; epoch 3&rarr;4</span></div>
+        <div class="lrow"><span class="lmark terra"></span><span class="lt">14:02:55.8</span><span class="lk">DISCARD</span><span class="ld"><span class="terra-t">spec#2 stale</span> &middot; epoch 3&rarr;4 &middot; wasted 1.5s</span></div>
+        <div class="lrow"><span class="lmark ink"></span><span class="lt">14:02:56.3</span><span class="lk">FIRED</span><span class="ld">spec#3 pytest &middot; e4 &middot; refire</span></div>
+        <div class="lrow"><span class="lmark green"></span><span class="lt">14:03:04.8</span><span class="lk">PROMOTE</span><span class="ld">ask attached mid-run &rarr; spec#3 &middot; <em>lead 1.0s</em></span></div>
+        <div class="lrow"><span class="lmark ink"></span><span class="lt">14:03:06.3</span><span class="lk">FIRED</span><span class="ld">spec#4 ruff &middot; e4 &middot; conf .78 &middot; warm</span></div>
+        <div class="lrow"><span class="lmark green"></span><span class="lt">14:03:11.3</span><span class="lk">SERVED</span><span class="ld">ask: lint &rarr; warm hit &middot; <em>hid 1.0s</em></span></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="figcap">
+        <span class="fl">gate ledger &middot; fire / abstain</span>
+        <span class="fr">door &tau; = .55</span>
+      </div>
+      <table>
+        <thead>
+          <tr><th>trigger</th><th>kind</th><th class="n">conf</th><th>door</th><th>outcome</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>e2 edit</td><td class="kind">pytest</td><td class="n">.87</td><td>fired</td>
+            <td><span class="green-t">served</span> &middot; hid 4.1s</td>
+          </tr>
+          <tr>
+            <td>ask 45.0s</td><td class="kind">lint</td><td class="n"><span class="terra-t">.31</span></td><td class="dim">abstain</td>
+            <td class="dim">ran cold &middot; 5.4s</td>
+          </tr>
+          <tr>
+            <td>e3 edit</td><td class="kind">pytest</td><td class="n">.82</td><td>fired</td>
+            <td><span class="terra-t">discarded</span> &middot; &minus;1.5s</td>
+          </tr>
+          <tr>
+            <td>e4 bump</td><td class="kind">pytest</td><td class="n">.82</td><td>refire</td>
+            <td><span class="green-t">promoted</span> &middot; lead 1.0s</td>
+          </tr>
+          <tr>
+            <td>warm sig</td><td class="kind">lint</td><td class="n">.78</td><td>fired</td>
+            <td><span class="green-t">served</span> &middot; hid 1.0s</td>
+          </tr>
+          <tr class="total">
+            <td>&Sigma; 5</td><td></td><td class="n"></td><td>4 fired</td><td>1 abstain &middot; 3 served</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer>
+    <span>frozen trace &middot; ses_9f2c &middot; codex + spex sidecar &middot; t&#8320; 14:02:00.0</span>
+    <span>4 speculations &middot; 3 served (1 reuse &middot; 1 promotion &middot; 1 warm) &middot; 1 discarded (epoch) &middot; 1 abstain &middot; +0 tokens</span>
+    <span class="stamp"><span class="stamp-inner">
+      <span class="dot"></span>
+      <span>localhost</span><span class="sep">&middot;</span>
+      <span>epoch 4</span><span class="sep">&middot;</span>
+      <span>frozen</span>
+    </span></span>
+  </footer>
+</div>
+</body>
+</html>

@@ -26,8 +26,8 @@ test('serve after done returns identical result, outcome reused', async () => {
   await tick();
   const served = await cache.serve('test', f.job.startedAt + 200);
   assert.equal(served.result, result);
-  assert.equal(events.length, 1);
-  assert.equal(events[0].outcome, 'reused');
+  assert.equal(events.filter((e) => e.type === 'outcome').length, 1);
+  assert.equal(events.filter((e) => e.type === 'outcome')[0].outcome, 'reused');
 });
 
 test('serve while running joins the promise, one execution, outcome promoted', async () => {
@@ -40,8 +40,8 @@ test('serve while running joins the promise, one execution, outcome promoted', a
   const served = await pending;
   assert.equal(served.result, result);
   assert.equal(f.terminatedCount(), 0);
-  assert.equal(events.length, 1);
-  assert.equal(events[0].outcome, 'promoted');
+  assert.equal(events.filter((e) => e.type === 'outcome').length, 1);
+  assert.equal(events.filter((e) => e.type === 'outcome')[0].outcome, 'promoted');
 });
 
 test('serve with nothing returns null', async () => {
@@ -82,8 +82,8 @@ test('ttl expiry serves null, outcome discarded', async () => {
   f.resolve({ exitCode: 0, output: 'ok', durationMs: 500 });
   await tick();
   assert.equal(await cache.serve('test', Date.now() + 601000), null);
-  assert.equal(events.length, 1);
-  assert.equal(events[0].outcome, 'discarded');
+  assert.equal(events.filter((e) => e.type === 'outcome').length, 1);
+  assert.equal(events.filter((e) => e.type === 'outcome')[0].outcome, 'discarded');
 });
 
 test('outcomes emitted sum to jobs created, each exactly once', async () => {

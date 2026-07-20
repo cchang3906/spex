@@ -19,3 +19,5 @@ running list of what live runs taught us that specs and traces did not. no names
 8. status stream is noisy: repeated idle/active flips and multiple turn/completed style notifications per run. renderers must dedupe; raw event log keeps everything
 
 9. steering held live: the model routed verification through prefetch_verify unprompted, including its pre edit repro run. the replay eval's 21 sessions served 21 of 21 eligible asks, and the behavior reproduces on a different machine and repo
+
+10. a historical dashboard does not need a second trace format. the stored daemon events already contain wall-clock timestamps, tool boundaries, speculation launches, and outcomes; rebuilding the timeline from that contract keeps live and postmortem views comparable and avoids persisting browser-specific svg geometry

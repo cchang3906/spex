@@ -85,7 +85,7 @@ const axes: SpecAxis[] = [
     name: "overhead and safety",
     question: "What does being wrong cost?",
     definition:
-      "Wrong guesses burn laptop CPU, never correctness. We report the burn as a rate, and we audit that speculation could never have touched anything: only test, lint, and typecheck commands are ever admitted, results are quarantined until Codex explicitly asks, and both modes must end with the same bug fixed.",
+      "Wrong guesses burn laptop CPU, never correctness. We report the burn as a rate, and we audit that speculation could never have touched anything: only test, lint, typecheck, and build commands are ever admitted, results are quarantined until Codex explicitly asks, and both modes must end with the same bug fixed.",
     metricLabel: "wasted cpu, median per mode",
     pick: (row) => row.wastedMs,
     format: formatSeconds,
@@ -127,6 +127,61 @@ function verdict(
   return improved ? "✓" : "✗";
 }
 
+
+
+function TotalsTable() {
+  const on = results.filter((r) => r.mode === "on");
+  const base = results.filter((r) => r.mode === "baseline");
+  if (on.length === 0 || base.length === 0) return null;
+  const sum = (rows: BenchRow[], pick: (r: BenchRow) => number) =>
+    rows.reduce((a, r) => a + pick(r), 0);
+  const wallOn = sum(on, (r) => r.wallMs);
+  const wallBase = sum(base, (r) => r.wallMs);
+  const stallOn = sum(on, (r) => r.verifyStallMs);
+  const stallBase = sum(base, (r) => r.verifyStallMs);
+  const saved = sum(on, (r) => r.savedMs);
+  const fmtS = (ms: number) => `${Math.round(ms / 1000).toLocaleString()} s`;
+  const pct = (a: number, b: number) => `${((1 - a / b) * 100).toFixed(1)}% less`;
+  return (
+    <div className={styles.boardWrap}>
+      <table className={styles.board}>
+        <thead>
+          <tr>
+            <th className={styles.thAxis}>every second, summed across all runs</th>
+            <th className={styles.thBase}>vanilla codex</th>
+            <th className={styles.thOn}>spex codex</th>
+            <th className={styles.thDelta}>delta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td className={styles.tdAxis}>total wall time</td>
+            <td className={styles.tdBase}>{fmtS(wallBase)}</td>
+            <td className={styles.tdOn}>{fmtS(wallOn)}</td>
+            <td className={styles.tdDelta}>{pct(wallOn, wallBase)}</td>
+          </tr>
+          <tr>
+            <td className={styles.tdAxis}>time blocked waiting on verification</td>
+            <td className={styles.tdBase}>{fmtS(stallBase)}</td>
+            <td className={styles.tdOn}>{fmtS(stallOn)}</td>
+            <td className={styles.tdDelta}>{pct(stallOn, stallBase)}</td>
+          </tr>
+          <tr>
+            <td className={styles.tdAxis}>head starts banked by speculation</td>
+            <td className={styles.tdBase}></td>
+            <td className={styles.tdOn}>{fmtS(saved)}</td>
+            <td className={styles.tdDelta}></td>
+          </tr>
+        </tbody>
+      </table>
+      <p className={styles.boardNote}>
+        wall clock carries the report's directional caveat (uneven resolution
+        under venue network); the verification wait row is measured by local
+        clocks and the network cannot touch it
+      </p>
+    </div>
+  );
+}
 
 function HeroStats() {
   const on = results.filter((r) => r.mode === "on");
@@ -396,6 +451,7 @@ export function EvalSpec6() {
         </p>
       </header>
       <HeroStats />
+      <TotalsTable />
       <Scoreboard />
       {axes.map((axis) => (
         <AxisCard key={axis.num} axis={axis} />
