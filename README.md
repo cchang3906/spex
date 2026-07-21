@@ -87,7 +87,15 @@ This repository is shared for judging. No credentials are required to read it or
 
 ## How Codex built this
 
-Development followed the repository specifications one at a time, with each acceptance gate passed before the next. Codex implemented the daemon, tests, benchmark harness, sandboxing, and trace analysis. The human set product priorities, contamination controls, benchmark policy, claims, and stop gates.
+Spex was built spec by spec, with one Codex session for each written specification. Every spec ended with an acceptance gate that had to pass before work moved to the next one. The Codex-authored commits retain their dated history, and the [per-spec session log](docs/codex-sessions.md) records the `/feedback` session IDs.
+
+Codex implemented the app-server transport that wraps Codex without modifying it, verifier resolution, the trajectory mining pipeline and pattern table, the predictor, the shadow-queue scheduler, the cache and serve path, the `prefetch_verify` tool, multi-session subagent support, the full test suite, the sealed benchmark harness, and the trace analyzer.
+
+Codex accelerated the work by standing up each subsystem from a written spec in a single session and turning debugging around quickly. It diagnosed and fixed the sandbox seal that blocked the virtual environment interpreter, the command mismatch that tanked the serve rate, and the cache accounting.
+
+The humans made the product and evaluation decisions. They set the product priorities, contamination controls and sealing policy, pinned verification command, benchmark instance selection, claims to keep or drop, and stop gates that prevented sessions from over-building.
+
+GPT-5.6 had a dual role. It is the model Spex accelerates in the benchmark and the model that wrote the implementation through Codex.
 
 ## dashboard (prototype)
 
