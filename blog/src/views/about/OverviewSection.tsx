@@ -202,6 +202,55 @@ export function OverviewSection() {
         </p>
       </div>
       <WrapDiagram />
+      <div className={styles.notes}>
+        <div className={styles.note}>
+          <h3 className={styles.noteTitle}>
+            The advantage, proven on 42 real SWE-bench bugs across 7
+            repositories, 84 sealed runs
+          </h3>
+          <ul className={prose.bulletList}>
+            <li className={prose.bulletItem}>
+              Faster with zero downside. 13.9 percent less wall time at
+              identical resolution, 38 of 42 solved in both arms. It is
+              lossless: Spex removes the wait without changing what the agent
+              solves.
+            </li>
+            <li className={prose.bulletItem}>
+              80 percent of verification served instantly. 88 of 110 calls
+              answered from speculation, before the model finished asking.
+            </li>
+            <li className={prose.bulletItem}>
+              Verification becomes free, so the agent checks more and still
+              finishes faster. The steered agent verified 64 percent more
+              often, 110 versus 67, and came out ahead on wall time.
+            </li>
+            <li className={prose.bulletItem}>
+              It scales with your pain. Savings track suite cost, up to 6.6
+              seconds hidden per call, projecting to minutes on real
+              multi-minute CI suites.
+            </li>
+            <li className={prose.bulletItem}>
+              Safe by construction. Served output is byte identical to the
+              terminal, wrong guesses are never shown to the model and cost
+              only local compute, every edit fences stale results. Remove the
+              daemon and Codex is exactly Codex.
+            </li>
+            <li className={prose.bulletItem}>
+              Every number is reproducible. An analyzer recomputes every claim
+              from the committed traces, no live benchmark or model access
+              required.
+            </li>
+          </ul>
+          <p className={styles.noteBody}>
+            <strong>Moat.</strong> Prior speculative-agent work uses an LLM
+            speculator that burns tokens and caps latency gains around 50
+            percent. Spex uses a zero-token table on the highest-value
+            vertical, coding verification, and is the only one proven lossless
+            on real bugs. It is not a faster model. It is the same model with
+            the waiting removed.
+          </p>
+        </div>
+      </div>
       <div className={prose.pillRow}>
         {facts.map((fact) => (
           <span key={fact} className={prose.pill}>
