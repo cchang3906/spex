@@ -54,6 +54,34 @@ authenticated with access to the pinned model. Raw evidence from the reported
 runs is committed: one row per run in `speculator/bench-results.jsonl`, one
 event trace per run in `speculator/bench-runs/`.
 
+## Try it
+
+The ready-made demo instance is `pydata__xarray-6992`, a real SWE-bench bug with a clean pytest verification so the tool fires cleanly.
+
+1. Generate the demo repository offline from the clone cache:
+
+```
+cd speculator && bash scripts/swebench-repo.sh pydata__xarray-6992 /tmp/spex-demo
+```
+
+2. Run the CLI on it:
+
+```
+node src/cli.mjs /tmp/spex-demo
+```
+
+3. Give it exactly this task and nothing more. Do not name a command, so the model routes verification through the tool:
+
+```
+Fix the failing tests in this repo and verify your fix.
+```
+
+Watch for the model to read the seeded `AGENTS.md` and call `prefetch_verify`. The CLI shows a cache-hit line as the pre-run verification is served during the model's own thinking. That is the tool firing.
+
+To see the vanilla baseline instead, generate with `--baseline` for no `AGENTS.md` and no tool, then run plain `codex` in the repository.
+
+The live demo requires an authenticated Codex CLI with access to the pinned model.
+
 ## Installation and testing for judges
 
 Supported platforms: macOS with Node 20 or later. Python 3 is needed for the mining evaluation. An authenticated Codex CLI with access to the pinned model is needed only for the live tool and live benchmark.
