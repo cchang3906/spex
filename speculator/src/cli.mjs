@@ -290,7 +290,7 @@ export function createRenderer(write, opts = {}) {
       .map((l) => l.trim())
       .filter((l) => l && (marker !== -1 || !/^(verifier|exit code|duration):/.test(l)));
 
-    if (evt && (evt.outcome === 'hit' || evt.outcome === 'promoted')) {
+    if (evt && ['hit', 'reused', 'promoted', 'joined'].includes(evt.outcome)) {
       stats.hits++;
       stats.savedMs += evt.savedMs ?? 0;
       // full-row wash (mockup): olive background to the line edge; fg-only color codes
