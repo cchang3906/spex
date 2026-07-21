@@ -86,7 +86,7 @@ test('cache hit renders only with the completed tool result', () => {
   assert.ok(t.startsWith('\x1b[48;5;58m\x1b[33m▌'));
   assert.ok(t.includes('Called prefetch_verify(test)'));
   assert.ok(t.includes('⚡ cache hit'));
-  assert.ok(t.includes('\x1b[94m4.2s saved'));
+  assert.ok(!t.includes('saved'));
   assert.ok(t.includes('3 passed'));
   assert.deepEqual(r.stats(), { hits: 1, savedMs: 4200, tokens: 0 });
 });
@@ -106,7 +106,8 @@ test('promoted result uses the cache-hit row and records saved time', () => {
   const t = text();
   assert.ok(t.startsWith('\x1b[48;5;58m\x1b[33m▌'));
   assert.ok(t.includes('Called prefetch_verify(lint)'));
-  assert.ok(t.includes('\x1b[94m3.1s saved'));
+  assert.ok(t.includes('⚡ cache hit'));
+  assert.ok(!t.includes('saved'));
   assert.ok(t.includes('All checks passed'));
   assert.deepEqual(r.stats(), { hits: 1, savedMs: 3100, tokens: 0 });
 });

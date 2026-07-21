@@ -296,7 +296,7 @@ export function createRenderer(write, opts = {}) {
       // full-row wash (mockup): olive background to the line edge; fg-only color codes
       // inside so the background survives until the trailing \x1b[K
       const left = `${YELLOW}▌\x1b[39m Called prefetch_verify(${kind})`;
-      const ann = `${YELLOW}⚡ cache hit\x1b[39m\x1b[2m · \x1b[22m${BLUE}${fmtS(evt.savedMs)} saved\x1b[39m`;
+      const ann = `${YELLOW}⚡ cache hit\x1b[39m`;
       endLine();
       const pad = Math.max(2, width() - 1 - stripAnsi(left).length - stripAnsi(ann).length);
       write('\x1b[48;5;58m' + left + ' '.repeat(pad) + ann + '\x1b[K' + RESET + '\n');
@@ -901,14 +901,19 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   let submitHook = null; // one-shot: next submitted text is consumed by a command (e.g. custom review)
   const turnOpts = {};
 
+  function statsRight() {
+    const { hits } = renderer.stats();
+    return `${YELLOW}⚡ ${hits} cache${hits === 1 ? '' : 's'} hit${RESET}`;
+  }
+
   // codex status row: model+effort in dark yellow, absolute path in green on the left,
-  // with no aggregate cache counter in the header
+  // cache hit count right-aligned to the terminal edge (draw() does the alignment)
   function statusRow() {
     const eff = turnOpts.effort ?? effort;
     const m = `${turnOpts.model ?? model ?? 'default'}${eff ? ' ' + eff : ''}`;
     return {
       left: `\x1b[38;5;136m${m}${RESET}${DIM} · ${RESET}${GREEN}${repoDir}${RESET}`,
-      right: '',
+      right: statsRight(),
     };
   }
 
@@ -1250,11 +1255,11 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       });
       return; // async; prompt re-shown in callback
     } else if (cmd === '/status') {
-      const { hits, savedMs, tokens } = renderer.stats();
+      const { hits, tokens } = renderer.stats();
       const eff = turnOpts.effort ?? effort;
       print(`model ${turnOpts.model ?? model ?? 'default'}${eff ? ' ' + eff : ''} · thread ${String(thread.id).slice(0, 8)} · ${repoDir}`);
       print(`permissions ${PERMISSION_PROFILES[turnOpts.permissionProfile ?? permissionProfile]?.name ?? 'Default'}${turnOpts.serviceTier ? ' · fast mode on' : ''} · tokens ${tokens || 'n/a'}`);
-      write(`  ${YELLOW}⚡ ${hits} cache${hits === 1 ? '' : 's'} hit${RESET}${DIM} · ${RESET}${BLUE}${fmtS(savedMs)} saved${RESET}\n`);
+      write(`  ${YELLOW}⚡ ${hits} cache${hits === 1 ? '' : 's'} hit${RESET}\n`);
     } else if (cmd === '/usage') {
       try {
         const r = await transport.send('account/rateLimits/read', {});
