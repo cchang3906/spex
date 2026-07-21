@@ -23,7 +23,7 @@ Add up every second across all 84 sealed runs and the picture is simple:
 | verification calls |          110 |           67 | 64% more with Spex |
 | resolved           |        38/42 |        38/42 |          identical |
 
-Spex served 80% of verification calls, 88 of 110, and hid 44,592 ms of verifier time. Savings reached 6.6 seconds per call. The result is lossless because resolution is 38/42 in both arms.
+Spex served 80% of verification calls, 88 of 110, and hid 44,592 ms of verifier time. The result is lossless because resolution is 38/42 in both arms.
 
 Spex mined thousands of agent trajectories from SWEBench and OpenHands using PrefixSpan and created a transition-probability matrix for tool chains. Indexing into this table, Spex instantly loads the most likely tool type based on the previous tool calls, and the most likely path variation for its argument. The client then runs likely commands in a shadow queue with a budget of 2 slots and caches the output upon completion. If a speculation hits while running, the running process is dynamically promoted to the main queue. Agents are instructed to use our custom dynamic tool for testing, linting, and typechecking. Upon calling the tool, the cached results are instantly returned to Codex, cutting verification latency.
 

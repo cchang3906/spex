@@ -30,7 +30,7 @@ Our claim: same model, same prompts, the verification wait deleted.
 | verification calls |          110 |           67 | 64% more with Spex |
 | resolved           |        38/42 |        38/42 |          identical |
 
-Spex served 80% of verification calls, 88 of 110, and hid 44,592 ms of verifier time. Savings reached 6.6 seconds per call. The result is lossless because resolution is 38/42 in both arms. Spex runs likely commands in a shadow queue with a budget of 2 slots.
+Spex served 80% of verification calls, 88 of 110, and hid 44,592 ms of verifier time. The result is lossless because resolution is 38/42 in both arms. Spex runs likely commands in a shadow queue with a budget of 2 slots.
 
 - Offline prediction quality, reproducible by command: top 1 and top 3 recall 75.4 percent on held out trajectories (`python3 mining/eval.py`), top 2 recall 82 percent and post edit recall 100 percent on real out of distribution Codex sessions (`python3 mining/eval_spike.py`).
 - Full protocol, axes, and disclosed non-claims: `docs/benchmark.md`.
