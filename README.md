@@ -25,14 +25,14 @@ Add up every second across all 84 sealed runs and the picture is simple:
 
 Spex served 80% of verification calls, 88 of 110, and hid 44,592 ms of verifier time. The result is lossless because resolution is 38/42 in both arms.
 
-Spex mined thousands of agent trajectories from SWEBench and OpenHands using PrefixSpan and created a transition-probability matrix for tool chains. Indexing into this table, Spex instantly loads the most likely tool type based on the previous tool calls, and the most likely path variation for its argument. The client then runs likely commands in a shadow queue with a budget of 2 slots and caches the output upon completion. If a speculation hits while running, the running process is dynamically promoted to the main queue. Agents are instructed to use our custom dynamic tool for testing, linting, and typechecking. Upon calling the tool, the cached results are instantly returned to Codex, cutting verification latency.
+Spex mined thousands of agent trajectories from SWEBench and OpenHands using PrefixSpan and created a transition-probability matrix for tool chains. Indexing into this table, Spex instantly loads the most likely tool type based on the previous tool calls. The verifier resolver supplies the exact command and arguments from repository conventions. The client then runs likely commands in a shadow queue with a budget of 2 slots and caches the output upon completion. If a speculation hits while running, the running process is dynamically promoted to the main queue. Agents are instructed to use our custom dynamic tool for testing, linting, and typechecking. Upon calling the tool, the cached results are instantly returned to Codex, cutting verification latency.
 
 ## reproduce
 
 From the repo root:
 
 ```
-cd speculator && env -u NODE_OPTIONS node --test                unit tests (51)
+cd speculator && env -u NODE_OPTIONS node --test                unit tests (56)
 env -u NODE_OPTIONS python3 mining/eval.py                      offline recall, held out trajectories
 env -u NODE_OPTIONS python3 mining/eval_spike.py                recall on out of distribution codex sessions
 env -u NODE_OPTIONS node speculator/scripts/bench.mjs 1 --swebench   live a/b on swe bench verified
@@ -73,6 +73,10 @@ node scripts/analyze-harder-bench.mjs
 The test command runs the suite. The analyzer recomputes every published number from the committed traces in `speculator/bench-runs/harder-sealed-r1/`. No live benchmark or model access is needed to check the numbers.
 
 This repository is shared for judging. No credentials are required to read it or run the offline verification.
+
+## How Codex built this
+
+Development followed the repository specifications one at a time, with each acceptance gate passed before the next. Codex implemented the daemon, tests, benchmark harness, sandboxing, and trace analysis. The human set product priorities, contamination controls, benchmark policy, claims, and stop gates.
 
 ## dashboard (prototype)
 
