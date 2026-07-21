@@ -1,62 +1,74 @@
-## spex
+# Spex
 
+Speculative execution for coding agents. Tool calls run while the model is still thinking, and the answers are waiting when it asks.
 
-A speculative execution layer for a coding agent's tool calls.
+## The serial-loop problem
 
-Codex uses a serial tool loop to code: think, call tool, read output, and think again. This sequential process is too slow, and forces Codex to wait for tool results. Our client predicts Codex's future tool calls based on its current trajectory, runs multiple speculative tools in parallel, and caches them so Codex instantly retrieves tool results upon request. Through Spex, Codex has access to tool outputs before it even knows it needs it.
+Coding agents usually edit, request verification, wait for the terminal, and only then continue reasoning. Tests, lint, and type checks are often predictable from the repository and recent tool sequence. That wait sits directly on the model's critical path.
 
-## demo
-<img width="3584" height="2240" alt="Spex Demo Video" src="https://github.com/user-attachments/assets/9407a262-f4cd-4ad6-8ae9-81863acf2ebf" />
+Spex predicts the exact verifier and starts it in a bounded shadow queue. When the model asks for that command, Spex can return the completed terminal result immediately. A wrong prediction uses local compute but stays quarantined and invisible.
 
-## measured results
+## Sealed benchmark
 
-SWE-bench results, head to head against vanilla Codex (25 SWE-bench Verified
-instances, 58 runs): 15.8 percent less total wall time, 37 percent less
-verification waiting. Full report with methodology and disclosures:
-`speculator/evals/report.md`.
+The committed benchmark covers 42 SWE-bench instances from 7 repositories, with paired Spex and baseline arms for 84 sealed runs. It is larger and harder than the previous 25-instance set. Every number comes from [the generated trace report](speculator/evals/harder-sealed-report.md).
 
-Add up every second across all 58 runs and the picture is simple:
+| Measure | Spex | Baseline | Result |
+| --- | ---: | ---: | ---: |
+| Runs | 42 | 42 | 84 total |
+| Trace wall | 2,338,733 ms | 2,715,988 ms | 13.9% less |
+| Verification calls | 110 | 67 | 64% more with Spex |
+| Resolved | 38/42 | 38/42 | identical |
 
-| | vanilla codex | spex codex | delta |
-| --- | --- | --- | --- |
-| total wall time (29 runs each arm) | 3,617 s | 3,047 s | 15.8 percent less |
-| time blocked waiting on verification | 121 s | 76 s | 37 percent less |
-| head starts banked by speculation | none | 85.7 s | |
-| CPU wasted on wrong guesses | none | 0.0 s | nothing thrown away |
+Spex served 88 of 110 verification requests, an 80% serve rate, and hid 44,592 ms of verifier time. Savings rise with vetted suite cost, reaching 6.6 seconds of `savedMs` in one agent call. The agent verified 64% more and still finished faster because a served verification is nearly free on its critical path.
 
-Spex mined thousands of agent trajectories from SWEBench and OpenHands using PrefixSpan and created a transition-probability matrix for tool chains. Indexing into this table, Spex instantly loads the most likely tool type based on the previous tool calls, and the most likely path variation for its argument. The client then executes the top 3 in parallel in a background shadow queue and caches the output upon completion. If a speculation hits while running, the running process is dynamically promoted to the main queue. Agents are instructed to use our custom dynamic tool for testing, linting, and typechecking. Upon calling the tool, the cached results are instantly returned to Codex and cuts any latency and additional tool reasoning from occuring, saving both time and cost.
+Resolution was 38/42 in both arms. This is the lossless result: Spex reduced measured wall time without changing what the agent solved. All 84/84 runs contain both sandbox seal receipts, with 0 workspace escapes and 0 flagged outside-workspace reads.
 
-## reproduce
+The serve rate reflects the intended repository convention, which pins the exact verification command used by cold start and by the model. It will be lower when that convention is absent.
 
-From the repo root:
+## How Spex works
 
+- Predict the next allow-listed verification command from repository conventions and recent tool use.
+- Start likely commands in a shadow queue with a speculative budget of 2.
+- Cold-start the pinned verifier before the first model request.
+- Advance an epoch fence after every edit, terminate stale work, and make old results unservable.
+- Keep speculative output in pull-only quarantine until the model explicitly requests it.
+- Preserve byte identity between a served result and the terminal result it replaces.
+
+Offline prediction quality remains 75.4 percent top 1 and top 3 recall on held-out trajectories.
+
+## Quickstart
+
+Use an authenticated Codex CLI, then run Spex against a repository:
+
+```sh
+cd speculator
+node src/main.mjs /path/to/repository "Fix the issue and verify the change"
 ```
-cd speculator && env -u NODE_OPTIONS node --test                unit tests (51)
-env -u NODE_OPTIONS python3 mining/eval.py                      offline recall, held out trajectories
-env -u NODE_OPTIONS python3 mining/eval_spike.py                recall on out of distribution codex sessions
-env -u NODE_OPTIONS node speculator/scripts/bench.mjs 1 --swebench   live a/b on swe bench verified
+
+## Reproduce the evidence
+
+These commands test the implementation and recompute the committed measurements. They do not rerun the live benchmark.
+
+```sh
+cd speculator
+node --test
+node scripts/analyze-harder-bench.mjs
+cd ..
+python3 mining/eval.py
 ```
 
-Requires Node 20+, python3, and for the live benchmark the `codex` CLI
-authenticated with access to the pinned model. Raw evidence from the reported
-runs is committed: one row per run in `speculator/bench-results.jsonl`, one
-event trace per run in `speculator/bench-runs/`.
+The paired rows are in `speculator/bench-results.jsonl`. The 84 event traces are in `speculator/bench-runs/harder-sealed-r1/`.
 
-## dashboard (prototype)
+## How Codex built this
 
-<img width="722" height="607" alt="Screenshot 2026-07-18 at 2 56 20 PM" src="https://github.com/user-attachments/assets/71a091db-8174-4091-839d-a7d233d6e75b" />
+Development followed the repository specifications one at a time, with each acceptance gate completed before the next change. Codex implemented the daemon, tests, benchmark orchestration, sandboxing, and trace analysis. The human set the product priorities, contamination controls, benchmark policy, claims, and stop gates.
 
+## Repository map
 
-## repo map
-
-- `speculator/` the daemon, its unit tests, the benchmark harness, the eval
-  suite, and the raw evidence traces. Start with `speculator/README.md` and
-  `speculator/DESIGN.md`.
-- `blog/` the site presenting the system and the benchmark evidence.
-- `mining/` + `data/` provenance of the prediction pattern table: the mining
-  pipeline over 2146 real agent trajectories, the offline recall evals, and
-  the tables and corpora they produce.
-- `documentation/` team docs, including the CLI UI spec
-  (`documentation/cli-ui-mvp.md`), the dashboard handoff, and the
-  implementation plan.
-- `schemas/` generated app-server protocol bindings (codex-cli 0.144.4).
+| Path | Purpose |
+| --- | --- |
+| `speculator/` | Daemon, tests, benchmark harness, analyzer, and raw trace evidence |
+| `mining/` and `data/` | Prediction mining, held-out evaluation, and predictor tables |
+| `blog/` | Product and benchmark presentation |
+| `documentation/` | Architecture, benchmark, dashboard, and implementation notes |
+| `schemas/` | Generated app-server protocol bindings |

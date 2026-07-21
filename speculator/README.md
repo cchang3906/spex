@@ -1,37 +1,71 @@
-# spex
+# Spex
 
-It runs your tools before you ask.
+Speculative execution for coding agents. Tool calls run while the model is still thinking, and the answers are waiting when it asks.
 
-Spex is a speculative tool execution daemon for OpenAI Codex. It launches `codex app-server` as a child process, watches every event over JSON RPC, and when Codex edits a file it predicts the verification that usually comes next, tests, lint, typecheck, and runs it in Codex's own sandbox while the model is still generating. When Codex asks, the answer is often already there. Codex itself is never modified, forked, or patched: remove the daemon and Codex is exactly Codex.
+Spex runs `codex app-server` behind a multi-session daemon. It watches parent and subagent events, predicts likely verification, and shares completed work through one cache. Remove the daemon and the underlying Codex workflow is unchanged.
 
-Wrong guesses cost laptop CPU, never correctness and never tokens: speculative results are quarantined until Codex explicitly asks, every file edit fences the cache, and only allow-listed verification commands are ever admitted.
+## Requirements
 
-## requirements
+Node 20 or newer, an installed and authenticated Codex CLI, and Python for benchmark repository setup and the offline evaluation.
 
-Node 20 or newer, the `codex` CLI installed and authenticated, access to the pinned model, and python3.11 for benchmark repo generation.
+## Quickstart
 
-## quickstart
-
-```
-node src/main.mjs <repo> "<task>"          codex through spex
-SPEX_DASH=1 node src/main.mjs <repo>  same, plus live dashboard at :7777
-node --test                                51 unit tests
+```sh
+node src/main.mjs /path/to/repository "Fix the issue and verify the change"
 ```
 
-## the claim, and the proof
+## Sealed benchmark
 
-Our claim: same model, same prompts, the verification wait deleted.
+The committed harder dataset contains 42 paired SWE-bench instances from 7 repositories. Its 84 sealed runs are larger and harder than the old 25-instance set. [The generated report](evals/harder-sealed-report.md) recomputes every result from the traces.
 
-- Live A/B benchmark on [SWE-bench Verified](https://huggingface.co/datasets/princeton-nlp/SWE-bench_Verified) instances (four chosen by measured verification cost: a 0.3 s control plus 1.5 s, 6.7 s, and 19 s suites, so savings can be shown to scale with suite cost and to vanish when there is nothing to hide), vanilla Codex vs Codex plus Spex: `node scripts/bench.mjs 1 --swebench`. Results land in `bench-results.jsonl` (generated at the live run), raw event traces in `bench-runs/` with an extraction map in `bench-runs/README.md`. Steered runs get the repo's verify command seeded into the learned verifier tier; the baseline prompt states the identical command verbatim, so neither arm has to discover it.
-- Offline prediction quality, reproducible by command: top 1 and top 3 recall 75.4 percent on held out trajectories (`python3 mining/eval.py`), top 2 recall 82 percent and post edit recall 100 percent on real out of distribution Codex sessions (`python3 mining/eval_spike.py`).
-- Full protocol, axes, and disclosed non-claims: `docs/benchmark.md`.
+| Measure | Spex | Baseline | Result |
+| --- | ---: | ---: | ---: |
+| Runs | 42 | 42 | 84 total |
+| Trace wall | 2,338,733 ms | 2,715,988 ms | 13.9% less |
+| Verification calls | 110 | 67 | 64% more with Spex |
+| Resolved | 38/42 | 38/42 | identical |
 
-## repo map
+Spex served 88 of 110 verification requests, an 80% serve rate. Those hits hid 44,592 ms of verifier time. Savings scale with vetted suite cost, up to 6.6 seconds of `savedMs` per agent call. The agent verified 64% more and still finished faster because completed verification is nearly free when served.
 
-See `DESIGN.md` for the full layout: the daemon in `src/`, the mining pipeline and offline evals in `mining/` and `evals/`, the benchmark harness in `scripts/`, and the trace evidence in `bench-runs/`.
+Resolution was identical at 38/42 in both arms, so the measured speedup is lossless. Every run was sealed, 84/84, with 0 workspace escapes and 0 flagged forbidden-path attempts.
 
-## build timeline, honestly
+The 80% serve rate uses the intended integration convention: the repository pins the exact verifier used by the seed, cold start, and model request. Serve rate is lower without that command match.
 
-Built before the event: the daemon and its unit tests, the mining pipeline and pattern table, the offline eval suite, the benchmark harness and instance selection, the CLI and dashboard renderers, and the design docs in `documentation/`.
+## Correctness boundaries
 
-Built during the event: the wide benchmark session (25 instances, 58 runs), the offline resilience layer (clone cache, wheelhouse), the live percentage and top-1 accuracy analyses, the blog's evidence fill, the benchmark report, and the adversarial review fixes it demanded.
+- Prediction admits only allow-listed verification commands.
+- The shadow queue has a speculative budget of 2.
+- Cold start launches the pinned verifier before the first request.
+- Every edit advances an epoch fence and makes stale results unservable.
+- Pull-only quarantine keeps unrequested output out of the transcript.
+- Served output is byte-identical to the terminal result.
+- One daemon shares the cache across the parent session and its subagents.
+
+Offline prediction quality remains 75.4 percent top 1 and top 3 recall on held-out trajectories.
+
+## Reproduce the evidence
+
+```sh
+node --test
+node scripts/analyze-harder-bench.mjs
+cd ..
+python3 mining/eval.py
+```
+
+The analyzer reads `bench-results.jsonl` and all 84 traces in `bench-runs/harder-sealed-r1/`. It checks paired arms, wall timing, verification counts, serve accounting, resolution, both seal layers, and outside-workspace command attempts. It regenerates `evals/harder-sealed-report.md` only when every invariant passes.
+
+## How Codex built this
+
+Development followed the repository specifications one at a time, with each acceptance gate completed before the next change. Codex implemented the daemon, tests, benchmark harness, sandbox, and trace analyzer. The human directed product priorities, contamination controls, benchmark policy, claims, and stop gates.
+
+## Repository map
+
+| Path | Purpose |
+| --- | --- |
+| `src/` | Transport, routing, prediction, scheduling, cache, serving, sandbox integration, and CLI |
+| `test/` | Protocol, scheduler, cache, daemon, sandbox, and integration coverage |
+| `scripts/` | Sealed benchmark runner and trace analyzer |
+| `data/` | Vetted SWE-bench instances and predictor inputs |
+| `bench-results.jsonl` | Paired result rows |
+| `bench-runs/harder-sealed-r1/` | Raw event traces for the harder sealed benchmark |
+| `evals/harder-sealed-report.md` | Generated benchmark report |
