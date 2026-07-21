@@ -56,12 +56,12 @@ event trace per run in `speculator/bench-runs/`.
 
 ## Try it
 
-The ready-made demo instance is `pydata__xarray-6992`, a real SWE-bench bug with a clean pytest verification so the tool fires cleanly.
+The ready-made demo instance is `django__django-16560`, a real SWE-bench bug with a small localized fix and a fast verifier, so the tool fires a few times and it resolves quickly.
 
 1. Generate the demo repository offline from the clone cache:
 
 ```
-cd speculator && bash scripts/swebench-repo.sh pydata__xarray-6992 /tmp/spex-demo
+cd speculator && bash scripts/swebench-repo.sh django__django-16560 /tmp/spex-demo
 ```
 
 2. Run the CLI on it:
