@@ -1,9 +1,10 @@
 #!/usr/bin/env node
-import { spawn, execFileSync } from 'node:child_process';
+import { spawn, spawnSync, execFileSync } from 'node:child_process';
 import { appendFileSync, mkdtempSync, readFileSync, mkdirSync, copyFileSync, rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
+import { homedir, tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createCellSandbox } from '../src/cell-sandbox.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const dry = process.argv.includes('--dry');
@@ -18,13 +19,40 @@ const instances = swebench
 const suffix = (row) => ' First reproduce the failure by running: ' + row.verify + ' . Then fix the issue by editing the source files, and verify your fix by running the same command before finishing. The project virtualenv is at .venv; use ./.venv/bin/python for all python commands.';
 
 let current = null;
+let currentSandbox = null;
 function killGroup(child) {
   try { process.kill(-child.pid, 'SIGKILL'); } catch {}
 }
 process.on('SIGINT', () => {
   if (current) killGroup(current);
+  currentSandbox?.cleanup();
   process.exit(130);
 });
+
+function verifierArgv(row) {
+  const argv = String(row?.verify ?? '').trim().split(/\s+/).filter(Boolean);
+  if (!argv.length) throw new Error('benchmark instance has no verifier command');
+  return argv;
+}
+
+function runSealed(sandbox, argv, cwd, timeout = 120000) {
+  const launch = sandbox.wrapExecution(argv, cwd);
+  const result = spawnSync(launch.argv[0], launch.argv.slice(1), {
+    cwd: launch.cwd,
+    env: launch.env,
+    encoding: 'utf8',
+    maxBuffer: 64 * 1024 * 1024,
+    timeout,
+  });
+  if (result.error) throw result.error;
+  if (!Number.isInteger(result.status) || result.status === 126) {
+    throw new Error(`sealed verifier did not reach a real exit code: ${result.status ?? result.signal}`);
+  }
+  return {
+    exitCode: result.status,
+    output: `${result.stdout ?? ''}${result.stderr ?? ''}`,
+  };
+}
 
 const fake = `
 const fs = require('node:fs');
@@ -81,12 +109,36 @@ function aggregate(file) {
   return s;
 }
 
-function runOne(round, mode, inst, row) {
+async function runOne(round, mode, inst, row) {
   const dir = mkdtempSync(join(tmpdir(), 'spex-bench-'));
-  if (inst) execFileSync('bash', [join(root, 'scripts/swebench-repo.sh'), inst, dir, ...(mode === 'baseline' ? ['--baseline'] : [])], { stdio: 'ignore' });
-  else execFileSync('bash', [join(root, 'scripts/make-demo-repo.sh'), dir, ...(mode === 'baseline' ? ['--baseline'] : [])], { stdio: 'ignore' });
+  let sandbox = null;
+  try {
+    if (inst) execFileSync('bash', [join(root, 'scripts/swebench-repo.sh'), inst, dir, ...(mode === 'baseline' ? ['--baseline'] : [])], { stdio: 'ignore' });
+    else execFileSync('bash', [join(root, 'scripts/make-demo-repo.sh'), dir, ...(mode === 'baseline' ? ['--baseline'] : [])], { stdio: 'ignore' });
+    sandbox = createCellSandbox({
+      repoDir: dir,
+      forbiddenReadPaths: [
+        process.env.SWB_CACHE ?? join(homedir(), '.cache', 'spex-swb'),
+        join(root, '..', 'data'),
+        join(tmpdir(), 'tp.diff'),
+      ],
+    });
+    currentSandbox = sandbox;
+    await sandbox.verifyWrappedExecution();
+    if (inst) {
+      const preflight = runSealed(sandbox, verifierArgv(row), dir);
+      if (preflight.exitCode === 0) throw new Error(`${inst} verifier passed before the fix`);
+      const detail = preflight.output.trim().split('\n').at(-1) ?? '';
+      console.log(`  sealed verifier exit=${preflight.exitCode}${detail ? ` · ${detail}` : ''}`);
+    }
+  } catch (error) {
+    sandbox?.cleanup();
+    if (currentSandbox === sandbox) currentSandbox = null;
+    try { rmSync(dir, { recursive: true, force: true }); } catch {}
+    throw error;
+  }
   const runTask = inst ? row.problem_statement + suffix(row) : task;
-  const env = { ...process.env };
+  const env = { ...sandbox.appServerEnvironment };
   delete env.NODE_OPTIONS;
   delete env.SPEX_DASH;
   delete env.SPEX_BASELINE;
@@ -116,11 +168,15 @@ function runOne(round, mode, inst, row) {
           const f2p = readFileSync(join(dir, '.prefetch', 'f2p'), 'utf8');
           const testFiles = f2p.split(/\s+/).filter((t) => t.endsWith('.py'));
           if (testFiles.length) execFileSync('git', ['-C', dir, 'checkout', 'HEAD', '--', ...testFiles], { stdio: 'ignore' });
-          execFileSync('bash', ['-c', `cd "${dir}" && eval ./.venv/bin/python -m pytest -q --no-header ${f2p} > /dev/null 2>&1`], { timeout: 120000 });
-          resolved = true;
-        } catch { resolved = false; }
+          resolved = runSealed(sandbox, verifierArgv(row), dir).exitCode === 0;
+        } catch (error) {
+          console.error(`sealed resolution verifier failed: ${error.message}`);
+          resolved = false;
+        }
       }
       const row = { round, mode, instance: inst ?? 'demo', wallMs, resolved, ...aggregate(join(dir, '.prefetch', 'events.jsonl')), failed, codexVersion };
+      sandbox.cleanup();
+      if (currentSandbox === sandbox) currentSandbox = null;
       try { rmSync(dir, { recursive: true, force: true, maxRetries: 8, retryDelay: 250 }); } catch { /* straggler processes; leftover dir is harmless */ }
       resolve(row);
     };

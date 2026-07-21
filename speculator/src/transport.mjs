@@ -1,7 +1,12 @@
 import { spawn } from 'node:child_process';
 import { createInterface } from 'node:readline';
 
-export function createTransport(cmd = 'codex', args = ['app-server']) {
+export function createTransport(
+  cmd = 'codex',
+  args = process.env.SPEX_CELL_SANDBOX === '1'
+    ? ['app-server', '--stdio', '--strict-config']
+    : ['app-server'],
+) {
   const env = { ...process.env };
   delete env.NODE_OPTIONS;
   const child = spawn(cmd, args, { stdio: ['pipe', 'pipe', 'inherit'], env });

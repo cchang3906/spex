@@ -15,10 +15,12 @@ git -C "$cache" fetch -q origin "$base" 2>/dev/null || true
 
 rm -rf "$out" && mkdir -p "$out"
 git -C "$cache" archive "$base" | tar -x -C "$out"
-python3 -c "import json;open('/tmp/tp.diff','w').write(json.load(open('$meta'))['$inst']['test_patch'])"
 git -C "$out" init -q 2>/dev/null || true
+python3 - "$meta" "$inst" <<'PYPATCH' | git -C "$out" apply -
+import json, sys
+sys.stdout.write(json.load(open(sys.argv[1]))[sys.argv[2]]["test_patch"])
+PYPATCH
 cd "$out"
-git apply /tmp/tp.diff
 rm -rf .git
 printf '__pycache__/\n.prefetch/\n.venv/\n*.egg-info/\n' > .gitignore
 
@@ -70,8 +72,4 @@ json.dump({"repoDir": sys.argv[2], "learned": {"TEST": {"argv": argv, "cwd": sys
           open(".prefetch/verifiers.json", "w"), indent=2)
 PYSEED
 fi
-set +e
-eval ./.venv/bin/python -m pytest -q --no-header $f2p > /tmp/f2p-check.log 2>&1
-rc=$?
-set -e
-echo "$inst -> $out ($mode) · fail_to_pass exit=$rc (must be nonzero) · $(tail -1 /tmp/f2p-check.log)"
+echo "$inst -> $out ($mode) · prepared for sealed verification"

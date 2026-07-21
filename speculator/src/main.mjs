@@ -25,10 +25,16 @@ const PREFETCH_VERIFY = {
   },
 };
 
-export function threadParams(repoDir, baseline = process.env.SPEX_BASELINE === '1') {
+export function threadParams(
+  repoDir,
+  baseline = process.env.SPEX_BASELINE === '1',
+  sealed = process.env.SPEX_CELL_SANDBOX === '1',
+) {
   return {
     cwd: repoDir,
-    sandbox: 'workspace-write',
+    ...(sealed
+      ? { runtimeWorkspaceRoots: [repoDir], approvalPolicy: 'never' }
+      : { sandbox: 'workspace-write' }),
     serviceName: 'spex',
     dynamicTools: baseline ? [] : [PREFETCH_VERIFY],
     ...(process.env.SPEX_MODEL ? { model: process.env.SPEX_MODEL } : {}),
@@ -38,6 +44,7 @@ export function threadParams(repoDir, baseline = process.env.SPEX_BASELINE === '
 export async function boot(repoDir, sinks = []) {
   const emit = createEvents(join(repoDir, '.prefetch'), sinks);
   const baseline = process.env.SPEX_BASELINE === '1';
+  const sealed = process.env.SPEX_CELL_SANDBOX === '1';
   emit({ type: 'mode', baseline });
   const transport = createTransport();
   const executor = createExecutor(transport.send);
@@ -74,8 +81,16 @@ export async function boot(repoDir, sinks = []) {
   });
   transport.notify('initialized', {});
 
+  if (sealed) {
+    const profiles = await transport.send('permissionProfile/list', { cwd: repoDir });
+    const active = profiles?.data?.find(
+      (profile) => profile?.id === 'spex_cell' && profile.allowed === true,
+    );
+    if (!active) throw new Error('benchmark cell sandbox profile is not active');
+  }
+
   // protocol trap: thread/start takes sandbox as a plain string; the sandboxPolicy object belongs to turn/start and command/exec
-  const res = await transport.send('thread/start', threadParams(repoDir, baseline));
+  const res = await transport.send('thread/start', threadParams(repoDir, baseline, sealed));
 
   scheduler.onSessionStart();
 
