@@ -43,6 +43,37 @@ authenticated with access to the pinned model. Raw evidence from the reported
 runs is committed: one row per run in `speculator/bench-results.jsonl`, one
 event trace per run in `speculator/bench-runs/`.
 
+## Installation and testing for judges
+
+Supported platforms: macOS with Node 20 or later. Python 3 is needed for the mining evaluation. An authenticated Codex CLI with access to the pinned model is needed only for the live tool and live benchmark.
+
+Install by cloning the repository and entering `speculator`:
+
+```
+git clone https://github.com/cchang3906/spex.git
+cd spex/speculator
+```
+
+Spex has zero runtime npm dependencies. That is the complete installation.
+
+To test the tool live, run one of these commands and then give it a task:
+
+```
+node src/cli.mjs /path/to/repo
+SPEX_BASELINE=1 node src/cli.mjs /path/to/repo
+```
+
+Judges can verify the published claims without rerunning the benchmark:
+
+```
+node --test
+node scripts/analyze-harder-bench.mjs
+```
+
+The test command runs the suite. The analyzer recomputes every published number from the committed traces in `speculator/bench-runs/harder-sealed-r1/`. No live benchmark or model access is needed to check the numbers.
+
+This repository is shared for judging. No credentials are required to read it or run the offline verification.
+
 ## dashboard (prototype)
 
 <img width="722" height="607" alt="Screenshot 2026-07-18 at 2 56 20 PM" src="https://github.com/user-attachments/assets/71a091db-8174-4091-839d-a7d233d6e75b" />

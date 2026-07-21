@@ -901,19 +901,14 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   let submitHook = null; // one-shot: next submitted text is consumed by a command (e.g. custom review)
   const turnOpts = {};
 
-  function statsRight() {
-    const { hits, savedMs } = renderer.stats();
-    return `${YELLOW}⚡ ${hits} cache${hits === 1 ? '' : 's'} hit${RESET}${DIM} · ${RESET}${BLUE}${fmtS(savedMs)} saved${RESET}`;
-  }
-
   // codex status row: model+effort in dark yellow, absolute path in green on the left,
-  // cache stats right-aligned to the terminal edge (draw() does the alignment)
+  // with no aggregate cache counter in the header
   function statusRow() {
     const eff = turnOpts.effort ?? effort;
     const m = `${turnOpts.model ?? model ?? 'default'}${eff ? ' ' + eff : ''}`;
     return {
       left: `\x1b[38;5;136m${m}${RESET}${DIM} · ${RESET}${GREEN}${repoDir}${RESET}`,
-      right: statsRight(),
+      right: '',
     };
   }
 
