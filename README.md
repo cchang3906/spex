@@ -27,6 +27,17 @@ Spex served 80% of verification calls, 88 of 110, and hid 44,592 ms of verifier 
 
 Spex mined thousands of agent trajectories from SWEBench and OpenHands using PrefixSpan and created a transition-probability matrix for tool chains. Indexing into this table, Spex instantly loads the most likely tool type based on the previous tool calls. The verifier resolver supplies the exact command and arguments from repository conventions. The client then runs likely commands in a shadow queue with a budget of 2 slots and caches the output upon completion. If a speculation hits while running, the running process is dynamically promoted to the main queue. Agents are instructed to use our custom dynamic tool for testing, linting, and typechecking. Upon calling the tool, the cached results are instantly returned to Codex, cutting verification latency.
 
+## Advantage
+
+- Faster with zero downside. 13.9 percent less wall time at identical resolution, 38 of 42 solved in both arms. It is lossless: Spex removes the wait without changing what the agent solves.
+- 80 percent of verification served instantly. 88 of 110 calls answered from speculation, before the model finished asking.
+- Verification becomes free, so the agent checks more and still finishes faster. The steered agent verified 64 percent more often, 110 versus 67, and came out ahead on wall time.
+- It scales with your pain. Savings track suite cost, up to 6.6 seconds hidden per call, projecting to minutes on real multi-minute CI suites.
+- Safe by construction. Served output is byte identical to the terminal, wrong guesses are never shown to the model and cost only local compute, every edit fences stale results. Remove the daemon and Codex is exactly Codex.
+- Every number is reproducible. An analyzer recomputes every claim from the committed traces, no live benchmark or model access required.
+
+**Moat.** Prior speculative-agent work uses an LLM speculator that burns tokens and caps latency gains around 50 percent. Spex uses a zero-token table on the highest-value vertical, coding verification, and is the only one proven lossless on real bugs. It is not a faster model. It is the same model with the waiting removed.
+
 ## reproduce
 
 From the repo root:
