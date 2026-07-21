@@ -74,6 +74,36 @@ export async function boot(repoDir, sinks = []) {
       (profile) => profile?.id === 'spex_cell' && profile.allowed === true,
     );
     if (!active) throw new Error('benchmark cell sandbox profile is not active');
+    let forbiddenReadPaths = [];
+    try {
+      forbiddenReadPaths = JSON.parse(process.env.SPEX_FORBIDDEN_READ_PATHS ?? '[]');
+    } catch {
+      throw new Error('benchmark forbidden-read list is invalid');
+    }
+    if (!Array.isArray(forbiddenReadPaths)) throw new Error('benchmark forbidden-read list is invalid');
+    for (const [index, path] of forbiddenReadPaths.entries()) {
+      const probe = await transport.send('command/exec', {
+        cwd: repoDir,
+        timeoutMs: 10000,
+        processId: `spex-seal-probe-${index}`,
+        command: [
+          '/bin/sh',
+          '-c',
+          'if [ -d "$1" ]; then /bin/ls -la "$1" >/dev/null 2>&1; else /bin/cat "$1" >/dev/null 2>&1; fi',
+          'spex-seal-probe',
+          String(path),
+        ],
+      });
+      if (probe?.exitCode === 0) throw new Error(`benchmark sandbox read forbidden path: ${path}`);
+    }
+    emit({
+      type: 'sandbox_seal',
+      layer: 'app-server',
+      permissionProfile: active.id,
+      workspace: repoDir,
+      forbiddenReadsBlocked: forbiddenReadPaths.length,
+      workspaceEscapes: 0,
+    });
   }
 
   // protocol trap: thread/start takes sandbox as a plain string; the sandboxPolicy object belongs to turn/start and command/exec

@@ -116,7 +116,7 @@ test('subagent threads attach to the root daemon and route by thread id', async 
     },
     observe: async () => {},
   };
-  const { router, inject, responded } = harness({ daemon });
+  const { calls, router, inject, responded } = harness({ daemon });
   inject({ method: 'thread/started', params: { thread: { id: 'child', parentThreadId: 'parent', cwd: process.cwd() } } });
   router.attachRoot('parent');
   assert.equal(sessions.get('parent'), null);
@@ -136,6 +136,14 @@ test('subagent threads attach to the root daemon and route by thread id', async 
     contentItems: [{ type: 'inputText', text: 'shared result' }],
     success: true,
   }]]);
+
+  inject({ method: 'turn/completed', params: { threadId: 'child' } });
+  inject({ method: 'turn/completed', params: { threadId: 'parent' } });
+  const statuses = calls.warns.filter((event) => event.what === 'status');
+  assert.deepEqual(statuses.map((event) => [event.sessionId, event.root]), [
+    ['child', false],
+    ['parent', true],
+  ]);
 
   inject({ method: 'thread/closed', params: { threadId: 'child' } });
   assert.deepEqual(detached, ['child']);

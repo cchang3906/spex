@@ -1,21 +1,37 @@
 #!/usr/bin/env node
 import { spawn, spawnSync, execFileSync } from 'node:child_process';
-import { appendFileSync, mkdtempSync, readFileSync, mkdirSync, copyFileSync, rmSync } from 'node:fs';
+import { appendFileSync, mkdtempSync, readFileSync, mkdirSync, copyFileSync, existsSync, rmSync } from 'node:fs';
 import { homedir, tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createCellSandbox } from '../src/cell-sandbox.mjs';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
+process.env.PYTHONHASHSEED ??= '3741209606';
 const dry = process.argv.includes('--dry');
 const swebench = process.argv.includes('--swebench');
 const args = process.argv.slice(2).filter((a) => a !== '--dry' && a !== '--swebench');
 const rounds = Number(args[0] ?? 3);
 const task = args[1] ?? 'Fix the failing test in this repo and verify your fix.';
 const timeoutMs = swebench ? 900000 : 180000;
+const instanceTable = join(root, 'data', 'swebench-instances.json');
 const instances = swebench
-  ? Object.entries(JSON.parse(readFileSync(join(root, '..', 'data', 'swebench-instances.json'), 'utf8'))).filter(([, r]) => r.verify).filter(([id]) => !process.env.SPEX_ONLY || id === process.env.SPEX_ONLY)
+  ? Object.entries(JSON.parse(readFileSync(instanceTable, 'utf8'))).filter(([, r]) => r.verify).filter(([id]) => !process.env.SPEX_ONLY || id === process.env.SPEX_ONLY)
   : [[null, null]];
+const modes = process.env.SPEX_BASELINE === '1' ? ['baseline'] : ['on'];
+const resultsFile = join(root, 'bench-results.jsonl');
+const completed = new Set();
+if (existsSync(resultsFile)) {
+  for (const line of readFileSync(resultsFile, 'utf8').split('\n')) {
+    if (!line) continue;
+    try {
+      const row = JSON.parse(line);
+      if (row.dataset === 'harder-sealed-r1' && !row.failed && row.trace && existsSync(join(root, row.trace))) {
+        completed.add(`${row.round}\0${row.instance}\0${row.mode}`);
+      }
+    } catch {}
+  }
+}
 const suffix = (row) => ' First reproduce the failure by running: ' + row.verify + ' . Then fix the issue by editing the source files, and verify your fix by running the same command before finishing. The project virtualenv is at .venv; use ./.venv/bin/python for all python commands.';
 
 let current = null;
@@ -30,7 +46,12 @@ process.on('SIGINT', () => {
 });
 
 function verifierArgv(row) {
-  const argv = String(row?.verify ?? '').trim().split(/\s+/).filter(Boolean);
+  const command = String(row?.verify ?? '').trim();
+  const argv = JSON.parse(execFileSync('python3', [
+    '-c',
+    'import json, shlex, sys; print(json.dumps(shlex.split(sys.argv[1])))',
+    command,
+  ], { encoding: 'utf8' }));
   if (!argv.length) throw new Error('benchmark instance has no verifier command');
   return argv;
 }
@@ -78,10 +99,10 @@ setTimeout(() => {}, 5000);
 `;
 
 function aggregate(file) {
-  const s = { savedMs: 0, hits: 0, misses: 0, speculations: 0, wastedMs: 0, tokens: 0, verifyStallMs: 0, toolWaits: [] };
-  let text = '';
-  try { text = readFileSync(file, 'utf8'); } catch {}
+  const s = { savedMs: 0, hits: 0, misses: 0, speculations: 0, wastedMs: 0, tokens: 0, verifyStallMs: 0, toolWaits: [], sealed: 0, sealLayers: [], workspaceEscapes: 0 };
+  const text = readFileSync(file, 'utf8');
   const pending = new Map();
+  const sealLayers = new Set();
   for (const line of text.split('\n')) {
     if (!line) continue;
     let e;
@@ -95,7 +116,7 @@ function aggregate(file) {
       pending.delete(e.command);
     }
     if (e.type === 'serve') {
-      if (e.outcome === 'hit' || e.outcome === 'promoted') s.hits += 1;
+      if (['hit', 'reused', 'promoted', 'joined'].includes(e.outcome)) s.hits += 1;
       else s.misses += 1;
       s.savedMs += e.savedMs || 0;
       if (typeof e.waitMs === 'number') {
@@ -105,7 +126,13 @@ function aggregate(file) {
     } else if (e.type === 'speculate') s.speculations += 1;
     else if (e.type === 'outcome') s.wastedMs += e.wastedMs || 0;
     else if (e.type === 'tokens') s.tokens = Math.max(s.tokens, e.total || 0);
+    else if (e.type === 'sandbox_seal') {
+      sealLayers.add(e.layer);
+      s.workspaceEscapes += e.workspaceEscapes || 0;
+    }
   }
+  s.sealLayers = [...sealLayers].sort();
+  s.sealed = sealLayers.has('wrapper') && sealLayers.has('app-server') ? 1 : 0;
   return s;
 }
 
@@ -120,14 +147,26 @@ async function runOne(round, mode, inst, row) {
       forbiddenReadPaths: [
         process.env.SWB_CACHE ?? join(homedir(), '.cache', 'spex-swb'),
         join(root, '..', 'data'),
+        join(root, 'data'),
         join(tmpdir(), 'tp.diff'),
       ],
     });
     currentSandbox = sandbox;
-    await sandbox.verifyWrappedExecution();
+    const seal = await sandbox.verifyWrappedExecution();
+    appendFileSync(join(dir, '.prefetch', 'events.jsonl'), JSON.stringify({
+      t: Date.now(),
+      type: 'sandbox_seal',
+      layer: 'wrapper',
+      permissionProfile: sandbox.profile,
+      workspace: dir,
+      probes: seal,
+      forbiddenReadPaths: sandbox.forbiddenReadPaths,
+      forbiddenReadsBlocked: sandbox.forbiddenReadPaths.length,
+      workspaceEscapes: 0,
+    }) + '\n');
     if (inst) {
       const preflight = runSealed(sandbox, verifierArgv(row), dir);
-      if (preflight.exitCode === 0) throw new Error(`${inst} verifier passed before the fix`);
+      if (preflight.exitCode !== 1) throw new Error(`${inst} verifier reached unexpected pre-fix exit ${preflight.exitCode}`);
       const detail = preflight.output.trim().split('\n').at(-1) ?? '';
       console.log(`  sealed verifier exit=${preflight.exitCode}${detail ? ` · ${detail}` : ''}`);
     }
@@ -143,13 +182,15 @@ async function runOne(round, mode, inst, row) {
   delete env.SPEX_DASH;
   delete env.SPEX_BASELINE;
   if (mode === 'baseline') env.SPEX_BASELINE = '1';
+  env.SPEX_FORBIDDEN_READ_PATHS = JSON.stringify(sandbox.forbiddenReadPaths);
+  env.PYTHONHASHSEED = process.env.PYTHONHASHSEED;
   env.SPEX_MODEL = process.env.SPEX_MODEL ?? 'gpt-5.6-sol';
   if (inst) env.SPEX_TABLE = join(root, '..', 'data', 'pattern_table_bench.json');
   const argv = dry ? ['-e', fake] : [join(root, 'src/main.mjs'), dir, runTask];
   const t0 = Date.now();
   const child = spawn(process.execPath, argv, { cwd: dir, env, detached: true, stdio: ['ignore', 'pipe', 'inherit'] });
   current = child;
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     let done = false;
     const finish = (failed) => {
       if (done) return;
@@ -159,26 +200,41 @@ async function runOne(round, mode, inst, row) {
       killGroup(child);
       current = null;
       try {
-        mkdirSync(join(root, 'bench-runs'), { recursive: true });
-        copyFileSync(join(dir, '.prefetch', 'events.jsonl'), join(root, 'bench-runs', `r${round}-${(inst ?? 'demo').replace(/[^a-z0-9-]/gi, '_')}-${mode}.jsonl`));
-      } catch {}
-      let resolved = null;
-      if (inst) {
-        try {
+        let resolved = null;
+        let resolutionExitCode = null;
+        if (inst) {
           const f2p = readFileSync(join(dir, '.prefetch', 'f2p'), 'utf8');
           const testFiles = f2p.split(/\s+/).filter((t) => t.endsWith('.py'));
           if (testFiles.length) execFileSync('git', ['-C', dir, 'checkout', 'HEAD', '--', ...testFiles], { stdio: 'ignore' });
-          resolved = runSealed(sandbox, verifierArgv(row), dir).exitCode === 0;
-        } catch (error) {
-          console.error(`sealed resolution verifier failed: ${error.message}`);
-          resolved = false;
+          const gate = runSealed(sandbox, verifierArgv(row), dir);
+          resolutionExitCode = gate.exitCode;
+          if (![0, 1].includes(resolutionExitCode)) {
+            throw new Error(`${inst} resolution verifier reached unexpected exit ${resolutionExitCode}`);
+          }
+          resolved = resolutionExitCode === 0;
         }
+        const eventsFile = join(dir, '.prefetch', 'events.jsonl');
+        appendFileSync(eventsFile, JSON.stringify({
+          t: Date.now(),
+          type: 'resolution',
+          instance: inst ?? 'demo',
+          mode,
+          exitCode: resolutionExitCode,
+          resolved,
+        }) + '\n');
+        const traceDir = join(root, 'bench-runs', 'harder-sealed-r1');
+        mkdirSync(traceDir, { recursive: true });
+        const traceFile = join(traceDir, `r${round}-${(inst ?? 'demo').replace(/[^a-z0-9-]/gi, '_')}-${mode}.jsonl`);
+        copyFileSync(eventsFile, traceFile);
+        const resultRow = { round, mode, instance: inst ?? 'demo', dataset: 'harder-sealed-r1', wallMs, resolved, resolutionExitCode, trace: traceFile.slice(root.length + 1), ...aggregate(eventsFile), failed, codexVersion };
+        resolve(resultRow);
+      } catch (error) {
+        reject(error);
+      } finally {
+        sandbox.cleanup();
+        if (currentSandbox === sandbox) currentSandbox = null;
+        try { rmSync(dir, { recursive: true, force: true, maxRetries: 8, retryDelay: 250 }); } catch { /* straggler processes; leftover dir is harmless */ }
       }
-      const row = { round, mode, instance: inst ?? 'demo', wallMs, resolved, ...aggregate(join(dir, '.prefetch', 'events.jsonl')), failed, codexVersion };
-      sandbox.cleanup();
-      if (currentSandbox === sandbox) currentSandbox = null;
-      try { rmSync(dir, { recursive: true, force: true, maxRetries: 8, retryDelay: 250 }); } catch { /* straggler processes; leftover dir is harmless */ }
-      resolve(row);
     };
     const timer = setTimeout(() => finish(true), timeoutMs);
     let buf = '';
@@ -190,7 +246,7 @@ async function runOne(round, mode, inst, row) {
         buf = buf.slice(i + 1);
         let e;
         try { e = JSON.parse(line); } catch { continue; }
-        if (e.type === 'codex' && e.what === 'status' && String(e.detail).includes('turn/completed')) finish(false);
+        if (e.type === 'codex' && e.what === 'status' && e.root === true && String(e.detail).includes('turn/completed')) finish(false);
       }
     });
     child.on('exit', () => finish(true));
@@ -259,10 +315,16 @@ const results = [];
 for (let round = 1; round <= rounds; round++) {
   // sequential on purpose: runs share the machine and the model account
   for (const [inst, row] of instances) {
-    for (const mode of ['on', 'baseline']) {
+    for (const mode of modes) {
+      const key = `${round}\0${inst ?? 'demo'}\0${mode}`;
+      if (completed.has(key)) {
+        console.log(`round ${round} ${inst ?? 'demo'} ${mode} already complete; skipping`);
+        continue;
+      }
       console.log(`round ${round} ${inst ?? 'demo'} ${mode}${dry ? ' (dry)' : ''} ...`);
       const r = await runOne(round, mode, inst, row);
-      appendFileSync('bench-results.jsonl', JSON.stringify(r) + '\n');
+      appendFileSync(resultsFile, JSON.stringify(r) + '\n');
+      completed.add(key);
       results.push(r);
       console.log(`  wall ${r.wallMs}ms saved ${r.savedMs}ms hits ${r.hits} failed ${r.failed}`);
     }

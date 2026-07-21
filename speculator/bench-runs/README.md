@@ -2,6 +2,8 @@
 
 Every benchmark number in the report is extracted from the raw event logs in this directory. One file per run, named `r{round}-{instance}-{mode}.jsonl`, copied verbatim from the daemon's `.prefetch/events.jsonl` at the end of the run. Nothing is post processed before it lands here: these are the same lines the dashboard streamed live.
 
+The 84 harder sealed A/B traces live in `harder-sealed-r1/`. Recompute their report and invariants with `node scripts/analyze-harder-bench.mjs`.
+
 Readable versions live in `formatted/`, one markdown timeline per trace. Regenerate them any time with:
 
 ```
@@ -25,6 +27,8 @@ Each line is one JSON object with a millisecond timestamp `t` and a `type`:
 | reset | epoch | a file change bumped the epoch, stale entries fenced |
 | tokens | total | codex reported cumulative token usage |
 | codex | what, command | codex activity, including terminal commands |
+| sandbox_seal | layer, probes, workspaceEscapes | wrapper and app-server seal receipts |
+| resolution | mode, exitCode, resolved | sealed post-turn verifier result |
 
 ## how the report reads these
 

@@ -152,7 +152,8 @@ export function createRouter({ scheduler, serve, predictor, verifiers, transport
       return;
     }
     if (method === 'thread/status/changed' || method === 'turn/completed') {
-      emit({ type: 'codex', what: 'status', detail: params?.status ?? method, t: Date.now() });
+      const sessionId = sessionIdFor(params);
+      emit({ type: 'codex', what: 'status', detail: params?.status ?? method, sessionId, root: sessionId === rootSessionId, t: Date.now() });
       return;
     }
     if (method !== 'item/completed' || !item) return;
